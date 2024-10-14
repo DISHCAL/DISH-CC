@@ -34,20 +34,20 @@
 
     <label for="hardwareOption">Hardware Option:</label>
     <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="250" data-monthly-cost="30">S1F2 - Einmalige Kosten: 250 €, Monatliche Kosten: 30 €</option>
-        <option value="P00C" data-once-cost="200" data-monthly-cost="25">P00C - Einmalige Kosten: 200 €, Monatliche Kosten: 25 €</option>
-        <option value="MotoG14" data-once-cost="300" data-monthly-cost="35">Moto G14 - Einmalige Kosten: 300 €, Monatliche Kosten: 35 €</option>
-        <option value="Tap2Pay" data-once-cost="150" data-monthly-cost="20">Tap2Pay - Einmalige Kosten: 150 €, Monatliche Kosten: 20 €</option>
+        <option value="S1F2" data-once-cost="499" data-monthly-cost-12="44.90" data-monthly-cost-36="18.90" data-monthly-cost-60="14.90">S1F2 - Kauf: 499 €, Miete 12M: 44,90 €, 36M: 18,90 €, 60M: 14,90 €</option>
+        <option value="V400C" data-once-cost="399" data-monthly-cost-12="39.90" data-monthly-cost-36="16.90" data-monthly-cost-60="12.90">V400C - Kauf: 399 €, Miete 12M: 39,90 €, 36M: 16,90 €, 60M: 12,90 €</option>
+        <option value="MotoG14" data-once-cost="119" data-monthly-cost-12="7.90" data-monthly-cost-36="-" data-monthly-cost-60="-">Moto G14 - Kauf: 119 €, Miete 12M: 7,90 €, 36M: -, 60M: -</option>
+        <option value="Tap2Pay" data-once-cost="0" data-monthly-cost-12="7.90" data-monthly-cost-36="-" data-monthly-cost-60="-">Tap2Pay - Kauf: 0 €, Miete 12M: 7,90 €, 36M: -, 60M: -</option>
     </select>
 
     <label for="hardwareOptionPurchase">Mieten oder Kaufen:</label>
-    <select id="hardwareOptionPurchase" onchange="toggleCompetitorFields()">
+    <select id="hardwareOptionPurchase" onchange="updateHardwareCosts()">
         <option value="mieten">Mieten</option>
         <option value="kaufen">Kaufen</option>
     </select>
 
     <label for="rentalPeriod">Mietdauer (Monate):</label>
-    <select id="rentalPeriod">
+    <select id="rentalPeriod" onchange="updateHardwareCosts()">
         <option value="12">12 Monate</option>
         <option value="36">36 Monate</option>
         <option value="60">60 Monate</option>
