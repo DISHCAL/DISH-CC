@@ -1,71 +1,59 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #fff3e0; /* Heller Hintergrund in Orange */
+    background-color: #fff;
+    color: #333;
     margin: 0;
     padding: 0;
 }
 
 .container {
-    width: 80%;
     max-width: 600px;
-    margin: 50px auto;
+    margin: auto;
     padding: 20px;
-    background-color: #ffffff; /* Weißer Hintergrund für Container */
     border-radius: 8px;
+    background-color: #ff9800; /* Orange Hintergrund */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-    text-align: center;
-    color: #e65100; /* Dunkles Orange für Überschrift */
-}
-
-h3 {
-    color: #e65100; /* Dunkles Orange für Unterüberschrift */
+h1, h3 {
+    color: #fff;
 }
 
 label {
+    color: #fff;
+    margin-top: 10px;
     display: block;
-    margin: 15px 0 5px;
-    color: #ff9800; /* Helles Orange für Labels */
 }
 
-input[type="number"],
-select {
+input, select {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
+    margin-top: 5px;
+    border: none;
     border-radius: 4px;
 }
 
 button {
-    width: 48%;
+    width: 100%;
     padding: 10px;
-    background-color: #ff9800; /* Helles Orange für Buttons */
-    color: white;
+    margin-top: 20px;
     border: none;
     border-radius: 4px;
+    background-color: #fff;
+    color: #ff9800;
+    font-weight: bold;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #f57c00; /* Dunkleres Orange beim Hover */
+    background-color: #ffcc80; /* Helleres Orange beim Hover */
 }
 
 #results {
     margin-top: 20px;
+    color: #fff;
     padding: 10px;
-    border: 1px solid #ddd;
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
-    background-color: #ffe0b2; /* Helles Orange für Ergebnisbereich */
-}
-
-#info {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #ffe0b2; /* Helles Orange für Infobereich */
 }
 
