@@ -1,127 +1,84 @@
+/* Allgemeine Styles für den Body */
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #fff8f0;
-    color: #333;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
     margin: 0;
     padding: 0;
 }
 
+/* Container-Styling für das Formular */
 .container {
     max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-    color: #ff6600;
-    font-weight: 700;
+/* Überschriften */
+h1, h3 {
     text-align: center;
-    font-size: 2em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: #ff6f00;
 }
 
-h1 img {
-    height: 40px;
-    margin-right: 10px;
-}
-
-h3 {
-    color: #ff6600;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
+/* Label-Styling */
 label {
     display: block;
-    margin: 15px 0 10px;
+    margin: 15px 0 5px;
     font-weight: bold;
-    color: #ff6600;
+    color: #333;
 }
 
-input, select {
+/* Styling für alle Input-Felder und Dropdowns */
+input, select, button {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     margin-bottom: 20px;
-    border: 2px solid #ff6600;
-    border-radius: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
     box-sizing: border-box;
-    font-size: 1em;
 }
 
+/* Styling für den Button */
 button {
-    background-color: #ff6600;
+    background-color: #ff6f00;
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 15px;
-    width: 100%;
     cursor: pointer;
-    font-size: 1.2em;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 16px;
 }
 
+/* Hover-Effekt für den Button */
 button:hover {
     background-color: #e65c00;
 }
 
-#results {
-    margin-top: 30px;
-    padding: 20px;
-    border: 2px solid #ff6600;
-    border-radius: 10px;
-    background-color: #fff4e6;
+/* Ergebnisbereich-Styling */
+#result {
+    text-align: center;
+    margin-top: 20px;
 }
 
-p {
-    margin: 15px 0;
-    font-size: 1.1em;
-    line-height: 1.5;
+#result p {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0;
 }
 
-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%22http://www.w3.org/2000/svg%22 viewBox%3D%220 0 4 5%22%3E%3Cpath fill%3D%22%23ff6600%22 d%3D%22M2 0L0 2h4zM2 5L0 3h4z%22/%3E%3C/svg%3E');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 15px;
+/* Styling für ausgeblendete Sektionen (Wettbewerber) */
+#competitorSection {
+    display: none;
 }
 
-input:focus, select:focus {
-    outline: none;
-    border-color: #e65c00;
-    box-shadow: 0 0 5px rgba(230, 92, 0, 0.5);
-}
-
-/* Mobile Anpassungen */
-@media (max-width: 600px) {
+/* Responsive Design: Layoutanpassung für kleinere Bildschirme */
+@media (max-width: 768px) {
     .container {
-        margin: 20px;
-        padding: 20px;
+        width: 90%;
     }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
-    button {
-        font-size: 1em;
-        padding: 12px;
-    }
-
-    label {
-        font-size: 1em;
-    }
-
-    input, select {
-        font-size: 0.9em;
+    
+    input, select, button {
+        font-size: 14px;
     }
 }
