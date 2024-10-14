@@ -3,14 +3,14 @@ function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
 
-    const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost'));
+    const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost')) || 0;
     let monthlyCost = 0;
 
     if (purchaseOption === "mieten") {
         const rentalPeriod = document.getElementById('rentalPeriod').value;
-        monthlyCost = parseFloat(selectedHardware.getAttribute(`${rentalPeriod}-cost`));
+        monthlyCost = parseFloat(selectedHardware.getAttribute(`${rentalPeriod}-cost`)) || 0;
     } else {
-        monthlyCost = parseFloat(selectedHardware.getAttribute('data-monthly-cost'));
+        monthlyCost = parseFloat(selectedHardware.getAttribute('data-monthly-cost')) || 0;
     }
 
     return { onceCost, monthlyCost };
