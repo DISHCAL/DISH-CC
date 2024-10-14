@@ -33,41 +33,34 @@ function calculateCosts() {
     let hardwareRentalCost = 0;
 
     if (hardwareOptionPurchase === 'mieten') {
-        switch (hardwareOption) {
-            case 'S1F2':
-                hardwareRentalCost = 3.90;
-                break;
-            case 'P00C':
-                hardwareRentalCost = 3.90;
-                break;
-            case 'MotoG14':
-                hardwareRentalCost = 7.90;
-                break;
-            case 'Tap2Pay':
-                hardwareRentalCost = 7.90;
-                break;
-        }
+        hardwareRentalCost = 30; // Monatliche Mietkosten
     } else {
         switch (hardwareOption) {
             case 'S1F2':
-                hardwareCost = 499;
+                hardwareCost = 250; // Kaufpreis
                 break;
             case 'P00C':
-                hardwareCost = 399;
+                hardwareCost = 400;
                 break;
             case 'MotoG14':
-                hardwareCost = 119;
+                hardwareCost = 300;
+                break;
+            case 'Tap2Pay':
+                hardwareCost = 450;
                 break;
         }
     }
 
-    // Berechnung der monatlichen Gebühren für DISH
-    let dishCost = transactions * transactionFee;
-    dishCost += monthlyVolume * girocardPercent * (monthlyVolume < 10000 ? girocardFeeLow : girocardFeeHigh);
+    // Berechnung der DISH Kosten
+    let dishCost = transactions * transactionFee + hardwareRentalCost;
+
+    // Berechnung der Gebühren basierend auf dem Umsatz
+    let girocardFee = monthlyVolume < 10000 ? girocardFeeLow : girocardFeeHigh;
+
+    dishCost += transactions * girocardFee * girocardPercent;
     dishCost += monthlyVolume * maestroPercent * maestroFee;
     dishCost += monthlyVolume * mastercardVisaPercent * mastercardFee;
     dishCost += monthlyVolume * businessCardPercent * businessCardFee;
-    dishCost += hardwareRentalCost;
 
     // Berechnung der Wettbewerberkosten (wenn gewählt)
     let competitorInclude = document.getElementById('competitorInclude').value;
@@ -89,28 +82,43 @@ function calculateCosts() {
 
     // Ergebnisse anzeigen
     document.getElementById('results').innerHTML = `
-        <p><strong>Monatliche DISH Kosten:</strong> ${dishCost.toFixed(2)} €</p>
-        ${competitorInclude === 'ja' ? `<p><strong>Monatliche Wettbewerber Kosten:</strong> ${competitorCost.toFixed(2)} €</p>` : ''}
+        <p><strong>Monatliche DISH Kosten:</strong> ${dishCost.toFixed(2).replace('.', ',')} €</p>
+        ${competitorInclude === 'ja' ? `<p><strong>Monatliche Wettbewerber Kosten:</strong> ${competitorCost.toFixed(2).replace('.', ',')} €</p>` : ''}
     `;
 }
 
 function downloadOffer() {
-    const offerText = `
-        DISH PAY - Angebot
-        -----------------------
-        
-        Hier ist Ihr Angebot basierend auf den eingegebenen Daten.
-        Dieses Angebot ist unverbindlich und dient lediglich zur Information.
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
 
-        Monatliche DISH Kosten: ${document.getElementById('results').innerText.match(/Monatliche DISH Kosten:\s*(\d+,\d+)/)[1]} €
-        ${document.getElementById('results').innerText.includes('Wettbewerber') ? document.getElementById('results').innerText.match(/Monatliche Wettbewerber Kosten:\s*(\d+,\d+)/)[0] : ''}
+    pdf.setFontSize(12);
+    pdf.text('DISH PAY - Angebot', 10, 10);
+    pdf.text('-----------------------', 10, 15);
+    pdf.text('Hier ist Ihr Angebot basierend auf den eingegebenen Daten.', 10, 20);
+    pdf.text('Dieses Angebot ist unverbindlich und dient lediglich zur Information.', 10, 25);
+    
+    // Extrahiere die Ergebnisse aus der Anzeige
+    const dishCost = document.getElementById('results').innerText.match(/Monatliche DISH Kosten:\s*(\d+,\d+)/)[1];
+    const competitorInclude = document.getElementById('competitorInclude').value;
 
-        * Hinweis: Alle Preise verstehen sich zzgl. gesetzlicher Umsatzsteuer.
-        * Dieses Angebot ist freibleibend und unverbindlich.
-    `;
-    const blob = new Blob([offerText], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = 'DISH_PAY_Angebot.txt';
-    link.click();
+    pdf.text(`Monatliche DISH Kosten: ${dishCost} €`, 10, 35);
+    
+    if (competitorInclude === 'ja') {
+        const competitorCost = document.getElementById('results').innerText.match(/Monatliche Wettbewerber Kosten:\s*(\d+,\d+)/)[1];
+        pdf.text(`Monatliche Wettbewerber Kosten: ${competitorCost} €`, 10, 40);
+    }
+
+    // Füge die Gebührenübersicht hinzu
+    pdf.text('Wichtige Informationen zu den Gebühren:', 10, 45);
+    pdf.text('EC-Karten Gebühr unter 10.000 €: 0,39 %', 10, 50);
+    pdf.text('EC-Karten Gebühr über 10.000 €: 0,29 %', 10, 55);
+    pdf.text('Maestro / VPAY Gebühr: 0,79 %', 10, 60);
+    pdf.text('Mastercard Gebühr: 0,89 %', 10, 65);
+    pdf.text('Business Card Gebühr: 2,89 %', 10, 70);
+
+    pdf.text('* Hinweis: Alle Preise verstehen sich zzgl. gesetzlicher Umsatzsteuer.', 10, 80);
+    pdf.text('* Dieses Angebot ist freibleibend und unverbindlich.', 10, 85);
+
+    // Speichern der PDF
+    pdf.save('DISH_PAY_Angebot.pdf');
 }
