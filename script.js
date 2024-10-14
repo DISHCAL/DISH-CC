@@ -1,5 +1,12 @@
 // JavaScript file to handle cost calculations and interaction logic
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Eventlistener für die Kaufoption ändern
+    document.getElementById('purchaseOption').addEventListener('change', toggleRentalOptions);
+    // Eventlistener für den Download-Button
+    document.getElementById('downloadOffer').addEventListener('click', generatePDF);
+});
+
 function toggleRentalOptions() {
     const rentalOptions = document.getElementById('rentalOptions');
     rentalOptions.style.display = document.getElementById('purchaseOption').value === 'mieten' ? 'block' : 'none';
@@ -117,9 +124,3 @@ function generatePDF() {
     // PDF speichern
     doc.save('DISH_PAY_Angebot.pdf');
 }
-
-// Eventlistener für den Download-Button
-document.getElementById('downloadOffer').addEventListener('click', generatePDF);
-
-// Eventlistener für die Kaufoption ändern
-document.getElementById('purchaseOption').addEventListener('change', toggleRentalOptions);
