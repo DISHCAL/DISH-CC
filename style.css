@@ -16,10 +16,44 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Logo Styling */
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-img {
+    max-width: 200px;
+    height: auto;
+}
+
 /* Überschriften */
 h1, h3 {
     text-align: center;
     color: #ff6f00;
+}
+
+/* Info-Bereich für Gebühren */
+.info-section {
+    background-color: #f1f1f1;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.info-section h4 {
+    color: #333;
+    margin: 0 0 10px;
+}
+
+.info-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.info-section ul li {
+    margin-bottom: 5px;
 }
 
 /* Label-Styling */
