@@ -40,18 +40,50 @@
         <p class="info">Schätzen Sie die monatliche Anzahl der Karten-Transaktionen.</p>
 
         <h3>Hardware Optionen:</h3>
+        <label for="hardwareOption">Wählen Sie die Hardware:</label>
         <select id="hardwareOption">
             <option value="S1F2">S1F2 (Kauf: 499€, Miete: 3,90€/Monat)</option>
             <option value="P00C">P00C (Kauf: 399€, Miete: 3,90€/Monat)</option>
             <option value="MotoG14">Moto G14 (Kauf: 119€, Miete: 7,90€/Monat)</option>
             <option value="Tap2Pay">Tap2Pay (Miete: 7,90€/Monat)</option>
         </select>
-        <p class="info">Wählen Sie die für Sie passende Hardware für Kartenzahlungen.</p>
 
-        <h3>Wettbewerber-Vergleich:</h3>
-        <label for="competitorFee">Wettbewerber-Transaktionsgebühr (€):</label>
-        <input type="number" id="competitorFee" value="0.08" />
-        <p class="info">Geben Sie die Transaktionsgebühr des Wettbewerbers ein, um die Kosten zu vergleichen.</p>
+        <label for="hardwareOptionPurchase">Möchten Sie die Hardware mieten oder kaufen?</label>
+        <select id="hardwareOptionPurchase">
+            <option value="mieten">Mieten</option>
+            <option value="kaufen">Kaufen</option>
+        </select>
+        <p class="info">Wählen Sie aus, ob Sie die Hardware mieten oder kaufen möchten.</p>
+
+        <h3>Wettbewerber Vergleich:</h3>
+        <label for="competitorInclude">Wettbewerber mit berechnen?</label>
+        <select id="competitorInclude">
+            <option value="ja">Ja</option>
+            <option value="nein">Nein</option>
+        </select>
+
+        <div id="competitorSection">
+            <h4>Geben Sie die Kosten des Wettbewerbers ein:</h4>
+            <label for="competitorFee">Wettbewerber-Transaktionsgebühr (€):</label>
+            <input type="number" id="competitorFee" value="0.08" />
+            <p class="info">Geben Sie die Transaktionsgebühr des Wettbewerbers ein, um die Kosten zu vergleichen.</p>
+
+            <label for="competitorGirocardFee">Girocard-Gebühr Wettbewerber (%):</label>
+            <input type="number" id="competitorGirocardFee" value="0.39" />
+            <p class="info">Girocard-Gebühr in Prozent, die der Wettbewerber berechnet.</p>
+
+            <label for="competitorMaestroFee">Maestro / VPAY Gebühr Wettbewerber (%):</label>
+            <input type="number" id="competitorMaestroFee" value="0.79" />
+            <p class="info">Maestro oder VPAY Gebühr in Prozent, die der Wettbewerber berechnet.</p>
+
+            <label for="competitorMastercardFee">Mastercard / VISA Gebühr Wettbewerber (%):</label>
+            <input type="number" id="competitorMastercardFee" value="1.29" />
+            <p class="info">Mastercard oder VISA Gebühr in Prozent für Privatkunden, die der Wettbewerber berechnet.</p>
+
+            <label for="competitorBusinessFee">Business-Karten Gebühr Wettbewerber (%):</label>
+            <input type="number" id="competitorBusinessFee" value="2.79" />
+            <p class="info">Gebühr in Prozent für Business-Karten oder außerhalb des EWR-Raums beim Wettbewerber.</p>
+        </div>
 
         <button onclick="calculateCosts()">Berechnen</button>
 
