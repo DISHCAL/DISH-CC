@@ -15,69 +15,43 @@
     <h3>Monatliche Kostenberechnung</h3>
 
     <label for="monthlyVolume">Geplantes Kartenumsatz pro Monat (€):</label>
-    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
+    <input type="number" id="monthlyVolume" value="20000" required>
 
     <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
-    <input type="number" id="transactions" placeholder="z.B. 400" required>
+    <input type="number" id="transactions" value="400" required>
 
     <label for="girocard">Girocard (%):</label>
-    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" required>
+    <input type="number" id="girocard" value="70" step="0.01" required>
 
     <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
+    <input type="number" id="maestro" value="5" step="0.01" required>
 
     <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" required>
+    <input type="number" id="mastercardVisa" value="20" step="0.01" required>
 
     <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
+    <input type="number" id="businessCard" value="5" step="0.01" required>
+
+    <label for="hardwareOption">Hardware Option:</label>
+    <select id="hardwareOption" onchange="updateHardwareCosts()">
+        <option value="S1F2" data-once-cost="499" data-monthly-cost="14.90" data-months="12">S1F2 (Kauf: 499 €, 12M: 14,90 €)</option>
+        <option value="V400C" data-once-cost="399" data-monthly-cost="12.90" data-months="36">V400C (Kauf: 399 €, 36M: 12,90 €)</option>
+        <option value="MotoG14" data-once-cost="119" data-monthly-cost="7.90" data-months="60">Moto G14 (Kauf: 119 €, 60M: 7,90 €)</option>
+        <option value="Tap2Pay" data-once-cost="0" data-monthly-cost="7.90" data-months="12">Tap2Pay (Miete: 7,90 €)</option>
+    </select>
 
     <label for="purchaseOption">Kauf oder Miete:</label>
-    <select id="purchaseOption" onchange="toggleRentalOptions()">
+    <select id="purchaseOption" onchange="toggleRentalFields()">
         <option value="kaufen">Kaufen</option>
         <option value="mieten">Mieten</option>
     </select>
 
-    <div id="rentalOptions" style="display:none;">
-        <label for="rentalPeriod">Mietdauer:</label>
-        <select id="rentalPeriod">
-            <option value="12M" data-monthly-cost="44.90">12 Monate - 44,90 €</option>
-            <option value="36M" data-monthly-cost="18.90">36 Monate - 18,90 €</option>
-            <option value="60M" data-monthly-cost="14.90">60 Monate - 14,90 €</option>
-        </select>
-    </div>
-
-    <label for="hardwareOption">Hardware Option:</label>
-    <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="499" data-12M-cost="44.90" data-36M-cost="18.90" data-60M-cost="14.90">S1F2</option>
-        <option value="V400C" data-once-cost="399" data-12M-cost="39.90" data-36M-cost="16.90" data-60M-cost="12.90">V400C</option>
-        <option value="MotoG14" data-once-cost="119" data-12M-cost="7.90" data-36M-cost="0" data-60M-cost="0">Moto G14 mit Lizenz</option>
-        <option value="Tap2Pay" data-once-cost="0" data-12M-cost="7.90" data-36M-cost="0" data-60M-cost="0">Tap2Pay Lizenz f. Handheld</option>
+    <label for="rentalPeriod" id="rentalPeriodLabel" style="display: none;">Mietdauer (Monate):</label>
+    <select id="rentalPeriod" style="display: none;">
+        <option value="12">12 Monate</option>
+        <option value="36">36 Monate</option>
+        <option value="60">60 Monate</option>
     </select>
-
-    <label for="competitorInclude">Wettbewerber berechnen?</label>
-    <select id="competitorInclude" onchange="toggleCompetitorFields()">
-        <option value="nein">Nein</option>
-        <option value="ja">Ja</option>
-    </select>
-
-    <div id="competitorSection" style="display:none;">
-        <h3>Wettbewerber Daten</h3>
-        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
-        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
-
-        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0,39" step="0.01">
-
-        <label for="competitorMaestroFee">Maestro Gebühr (%):</label>
-        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0,79" step="0.01">
-
-        <label for="competitorMastercardFee">Mastercard Gebühr (%):</label>
-        <input type="number" id="competitorMastercardFee" placeholder="z.B. 0,89" step="0.01">
-
-        <label for="competitorBusinessFee">Business Card Gebühr (%):</label>
-        <input type="number" id="competitorBusinessFee" placeholder="z.B. 2,89" step="0.01">
-    </div>
 
     <button onclick="calculateCosts()">Kosten Berechnen</button>
     <button onclick="downloadOffer()">Angebot herunterladen</button>
@@ -88,9 +62,9 @@
     <div id="info">
         <p><strong>Gebührenübersicht:</strong></p>
         <ul>
-            <li>EC-Karten Gebühr unter 10.000 €: 0,39 %</li>
-            <li>EC-Karten Gebühr über 10.000 €: 0,29 %</li>
-            <li>Maestro / VPAY Gebühr: 0,79 %</li>
+            <li>Girocard-Gebühr bis 10.000 €: 0,39 %</li>
+            <li>Girocard-Gebühr über 10.000 €: 0,29 %</li>
+            <li>Maestro / VPAY Gebühr: 0,89 %</li>
             <li>Mastercard Gebühr: 0,89 %</li>
             <li>Business Card Gebühr: 2,89 %</li>
         </ul>
