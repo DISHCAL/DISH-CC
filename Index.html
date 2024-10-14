@@ -3,90 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISH PAY Rechner</title>
-    <link rel="stylesheet" href="style.css">
+    <title>DISH Pay Kalkulator</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="container">
+        <h1>DISH Pay Kalkulator v1.1</h1>
+        
+        <section class="input-section">
+            <h2>Eingabebereich</h2>
+            <label for="cardRevenue">Geplanter Kartenumsatz pro Monat (€):</label>
+            <input type="number" id="cardRevenue" value="20000">
+            
+            <h3>Verteilung der Umsätze</h3>
+            <label for="girocard">Girocard (€):</label>
+            <input type="number" id="girocard" value="14000">
+            <label for="maestro">Maestro / VPAY (€):</label>
+            <input type="number" id="maestro" value="1000">
+            <label for="mastercardPrivat">Mastercard / VISA Privatkunden (€):</label>
+            <input type="number" id="mastercardPrivat" value="4000">
+            <label for="mastercardBusiness">Mastercard / VISA Business (€):</label>
+            <input type="number" id="mastercardBusiness" value="1000">
+            <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
+            <input type="number" id="transactions" value="400">
+        </section>
 
-<div class="container">
-    <h1>DISH PAY Rechner</h1>
-    <h3>Monatliche Kostenberechnung</h3>
+        <section class="output-section">
+            <h2>Ergebnisse</h2>
+            <p id="monthlyCost"></p>
+            <p id="savings"></p>
+        </section>
 
-    <label for="monthlyVolume">Geplantes Kartenumsatz pro Monat (€):</label>
-    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
+        <section class="hardware-prices">
+            <h2>Hardware / Lizenzpreise DISH</h2>
+            <table>
+                <tr>
+                    <th>Typ</th>
+                    <th>Kauf (€)</th>
+                    <th>Bei Kauf mtl (€)</th>
+                    <th>12M (€)</th>
+                    <th>36M (€)</th>
+                    <th>60M (€)</th>
+                </tr>
+                <tr>
+                    <td>S1F2</td>
+                    <td>499,00</td>
+                    <td>3,90</td>
+                    <td>44,90</td>
+                    <td>18,90</td>
+                    <td>14,90</td>
+                </tr>
+                <tr>
+                    <td>V400C</td>
+                    <td>399,00</td>
+                    <td>3,90</td>
+                    <td>39,90</td>
+                    <td>16,90</td>
+                    <td>12,90</td>
+                </tr>
+                <tr>
+                    <td>Moto G14 mit Lizenz</td>
+                    <td>119,00</td>
+                    <td>7,90</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Tap2Pay Lizenz f. Handheld</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>7,90</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            </table>
+        </section>
 
-    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
-    <input type="number" id="transactions" placeholder="z.B. 400" required>
+        <section class="notes">
+            <h2>Hinweise</h2>
+            <ul>
+                <li>Das zentrale Clearing zur Verhinderung von indirekten Bankgebühren ist bei DISH immer im Transaktionspreis enthalten.</li>
+                <li>Ein bestehender Amex-Vertrag kann auch über DISH Pay hinterlegt werden.</li>
+                <li>I.d.R. fallen keine Setupkosten an, außer es wird mit Kunden abweichend vereinbart.</li>
+                <li>Sofern kein zentrales Clearing abgeschlossen ist, fallen immer zusätzliche indirekte Payment-Kosten in Form von zusätzlichen Kontoführungsgebühren an.</li>
+            </ul>
+        </section>
+        
+        <section class="call-to-action">
+            <h2>Kundenansprache</h2>
+            <p>Vielen Dank, dass Sie sich für DISH Pay interessieren!</p>
+            <p>Dieses Angebot dient lediglich als Vorschlag und ist nicht bindend. Die tatsächlichen Kosten können variieren, abhängig von Ihrer spezifischen Nutzung und den vereinbarten Bedingungen. Wir empfehlen, die genauen Bedingungen mit unserem Verkaufsteam zu besprechen, um das beste Angebot für Ihre Bedürfnisse zu finden.</p>
+            <p>Bitte zögern Sie nicht, uns bei Fragen oder weiteren Informationen zu kontaktieren. Wir freuen uns darauf, Ihnen zu helfen!</p>
+        </section>
 
-    <label for="girocard">Girocard (%):</label>
-    <input type="number" id="girocard" placeholder="z.B. 25" step="0.01" required>
-
-    <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
-
-    <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
-
-    <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 2" step="0.01" required>
-
-    <label for="hardwareOption">Hardware Option:</label>
-    <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="250" data-monthly-cost="30">S1F2 - Einmalige Kosten: 250 €, Monatliche Kosten: 30 €</option>
-        <option value="P00C" data-once-cost="200" data-monthly-cost="25">P00C - Einmalige Kosten: 200 €, Monatliche Kosten: 25 €</option>
-        <option value="MotoG14" data-once-cost="300" data-monthly-cost="35">Moto G14 - Einmalige Kosten: 300 €, Monatliche Kosten: 35 €</option>
-        <option value="Tap2Pay" data-once-cost="150" data-monthly-cost="20">Tap2Pay - Einmalige Kosten: 150 €, Monatliche Kosten: 20 €</option>
-    </select>
-
-    <label for="hardwareOptionPurchase">Mieten oder Kaufen:</label>
-    <select id="hardwareOptionPurchase" onchange="toggleCompetitorFields()">
-        <option value="mieten">Mieten</option>
-        <option value="kaufen">Kaufen</option>
-    </select>
-
-    <label for="competitorInclude">Wettbewerber berechnen?</label>
-    <select id="competitorInclude" onchange="toggleCompetitorFields()">
-        <option value="nein">Nein</option>
-        <option value="ja">Ja</option>
-    </select>
-
-    <div id="competitorSection">
-        <h3>Wettbewerber Daten</h3>
-        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
-        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
-
-        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0,39" step="0.01">
-
-        <label for="competitorMaestroFee">Maestro Gebühr (%):</label>
-        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0,79" step="0.01">
-
-        <label for="competitorMastercardFee">Mastercard Gebühr (%):</label>
-        <input type="number" id="competitorMastercardFee" placeholder="z.B. 2,89" step="0.01">
-
-        <label for="competitorBusinessFee">Business Card Gebühr (%):</label>
-        <input type="number" id="competitorBusinessFee" placeholder="z.B. 1,99" step="0.01">
+        <button id="downloadPdf">PDF-Angebot herunterladen</button>
     </div>
 
-    <button onclick="calculateCosts()">Kosten Berechnen</button>
-    <button onclick="downloadOffer()">Angebot herunterladen</button>
+    <script>
+        const { jsPDF } = window.jspdf;
 
-    <div id="results"></div>
+        document.getElementById('downloadPdf').addEventListener('click', () => {
+            const doc = new jsPDF();
 
-    <h3>Wichtige Informationen zu den Gebühren</h3>
-    <div id="info">
-        <p><strong>Gebührenübersicht:</strong></p>
-        <ul>
-            <li>EC-Karten Gebühr unter 10.000 €: 0,39 %</li>
-            <li>EC-Karten Gebühr über 10.000 €: 0,29 %</li>
-            <li>Maestro / VPAY Gebühr: 0,79 %</li>
-            <li>Mastercard Gebühr: 0,89 %</li>
-            <li>Business Card Gebühr: 2,89 %</li>
-        </ul>
-    </div>
-</div>
+            // PDF Title
+            doc.setFontSize(22);
+            doc.setTextColor(255, 102, 0); // Orange
+            doc.text("DISH Pay Angebot", 20, 20);
+            doc.setTextColor(0, 0, 0); // Black
+            doc.setFontSize(12);
+            doc.text("Geplanter Kartenumsatz pro Monat: " + document.getElementById('cardRevenue').value + " €", 20, 30);
+            doc.text("Girocard: " + document.getElementById('girocard').value + " €", 20, 40);
+            doc.text("Maestro / VPAY: " + document.getElementById('maestro').value + " €", 20, 50);
+            doc.text("Mastercard / VISA Privatkunden: " + document.getElementById('mastercardPrivat').value + " €", 20, 60);
+            doc.text("Mastercard / VISA Business: " + document.getElementById('mastercardBusiness').value + " €", 20, 70);
+            doc.text("Erwartete Anzahl an monatlichen Transaktionen: " + document.getElementById('transactions').value, 20, 80);
+            doc.text("Monatliche Kosten: " + document.getElementById('monthlyCost').textContent, 20, 90);
+            doc.text("Monatliche Ersparnis: " + document.getElementById('savings').textContent, 20, 100);
 
+            // Hardware Prices
+            doc.text("Hardware / Lizenzpreise DISH", 20, 110);
+            doc.text("Typ\tKauf (€)\tBei Kauf mtl (€)\t12M (€)\t36M (€)\t60M (€)", 20, 120);
+            const hardwarePrices = [
+                { type: "S1F2", purchase: 499, monthly: 3.90, twelveM: 44.90, thirtySixM: 18.90, sixtyM: 14.90 },
+                { type: "V400C", purchase: 399, monthly: 3.90, twelveM: 39.90, thirtySixM: 16.90, sixtyM: 12.90 },
+                { type: "Moto G14 mit Lizenz", purchase: 119, monthly: 7.90, twelveM: '-', thirtySixM: '-', sixtyM: '-' },
+                { type: "Tap2Pay Lizenz f. Handheld", purchase: '-', monthly: '-', twelveM: 7.90, thirtySixM: '-', sixtyM: '-' }
+            ];
+            hardwarePrices.forEach((item, index) => {
+                const y = 130 + (10 * index);
+                doc.text(`${item.type}\t${item.purchase}\t${item.monthly}\t${item.twelveM}\t${item.thirtySixM}\t${item.sixtyM}`, 20, y);
+            });
+
+            // Notes
+            doc.text("Hinweise:", 20, 150);
+            const notes = [
+                "Das zentrale Clearing zur Verhinderung von indirekten Bankgebühren ist bei DISH immer im Transaktionspreis enthalten.",
+                "Ein bestehender Amex-Vertrag kann auch über DISH Pay hinterlegt werden.",
+                "I.d.R. fallen keine Setupkosten an, außer es wird mit Kunden abweichend vereinbart.",
+                "Sofern kein zentrales Clearing abgeschlossen ist, fallen immer zusätzliche indirekte Payment-Kosten in Form von zusätzlichen Kontoführungsgebühren an."
+            ];
+            notes.forEach((note, index) => {
+                const y = 160 + (10 * index);
+                doc.text(note, 20, y);
+            });
+
+            // Call to Action
+            doc.text("Kundenansprache:", 20, 200);
+            doc.text("Vielen Dank, dass Sie sich für DISH Pay interessieren!", 20, 210);
+            doc.text("Dieses Angebot dient lediglich als Vorschlag und ist nicht bindend.", 20, 220);
+            doc.text("Wir empfehlen, die genauen Bedingungen mit unserem Verkaufsteam zu besprechen.", 20, 230);
+            doc.text("Bitte zögern Sie nicht, uns bei Fragen oder weiteren Informationen zu kontaktieren.", 20, 240);
+
+            // Save the PDF
+            doc.save('DISH_Pay_Angebot.pdf');
+        });
+    </script>
 </body>
 </html>
