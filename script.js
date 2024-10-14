@@ -7,9 +7,12 @@ function updateHardwareCosts() {
     let monthlyCost = 0;
 
     if (rentalPeriod === "mieten") {
-        monthlyCost = parseFloat(selectedHardware.getAttribute(`data-12m-cost`)); // Standard für Mieten auf 12 Monate
+        const rentalDuration = document.querySelector('input[name="rentalDuration"]:checked');
+        if (rentalDuration) {
+            monthlyCost = parseFloat(selectedHardware.getAttribute(`data-${rentalDuration.value}-m-cost`));
+        }
     } else {
-        monthlyCost = parseFloat(selectedHardware.getAttribute(`data-60m-cost`)); // Standard für Kauf auf 60 Monate
+        monthlyCost = 0; // Beim Kauf gibt es keine monatlichen Kosten, aber einmalige Kosten
     }
 
     return { onceCost, monthlyCost };
@@ -30,56 +33,41 @@ function calculateCosts() {
 
     const { onceCost, monthlyCost } = updateHardwareCosts();
 
-    // Berechnung der Gebühren
-    const girocardFee = monthlyVolume * girocard * 0.0039; // 0,39% für Girocard
-    const maestroFee = monthlyVolume * maestro * 0.0079; // 0,79% für Maestro
-    const mastercardFee = monthlyVolume * mastercardVisa * 0.0089; // 0,89% für Mastercard/VISA
-    const businessFee = monthlyVolume * businessCard * 0.0289; // 2,89% für Business Card
+    if (isNaN(monthlyVolume) || isNaN(transactions) || isNaN(girocard) || isNaN(maestro) || isNaN(mastercardVisa) || isNaN(businessCard)) {
+        alert("Bitte füllen Sie alle erforderlichen Felder aus.");
+        return;
+    }
 
-    const totalFees = girocardFee + maestroFee + mastercardFee + businessFee;
+    // Berechnung der Gebühren
+    const girocardFee = monthlyVolume * girocard * (monthlyVolume < 10000 ? 0.0039 : 0.0029);
+    const maestroFee = monthlyVolume * maestro * 0.0079;
+    const mastercardVisaFee = monthlyVolume * mastercardVisa * 0.0089;
+    const businessCardFee = monthlyVolume * businessCard * 0.0289;
+
+    const totalFees = girocardFee + maestroFee + mastercardVisaFee + businessCardFee;
+
+    // Gesamtkosten
+    const totalMonthlyCosts = totalFees + monthlyCost;
+    const totalOnceCosts = onceCost;
 
     // Ergebnisse anzeigen
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = `
-        <h4>Berechnete Kosten:</h4>
-        <p>Einmalige Hardwarekosten: ${onceCost.toFixed(2)} €</p>
-        <p>Monatliche Hardwarekosten: ${monthlyCost.toFixed(2)} €</p>
-        <p>Gesamte monatliche Transaktionsgebühren: ${totalFees.toFixed(2)} €</p>
-        <p>Gesamtkosten im ersten Monat: ${(totalFees + onceCost + monthlyCost).toFixed(2)} €</p>
-        <p>Monatliche Gesamtkosten (nach dem ersten Monat): ${(totalFees + monthlyCost).toFixed(2)} €</p>
+        <h3>Berechnungsergebnisse</h3>
+        <p><strong>Einmalige Kosten:</strong> ${totalOnceCosts.toFixed(2)} €</p>
+        <p><strong>Monatliche Kosten (inkl. Gebühren):</strong> ${totalMonthlyCosts.toFixed(2)} €</p>
     `;
-
-    // Wettbewerberdaten verarbeiten
-    if (document.getElementById('competitorInclude').value === "ja") {
-        const competitorFee = parseFloat(document.getElementById('competitorFee').value);
-        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100;
-        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100;
-        const competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) / 100;
-        const competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) / 100;
-
-        const competitorTotalFees = transactions * competitorFee
-            + monthlyVolume * competitorGirocardFee
-            + monthlyVolume * competitorMaestroFee
-            + monthlyVolume * competitorMastercardFee
-            + monthlyVolume * competitorBusinessFee;
-
-        resultsDiv.innerHTML += `
-            <h4>Wettbewerber Kosten:</h4>
-            <p>Gesamte monatliche Kosten des Wettbewerbers: ${competitorTotalFees.toFixed(2)} €</p>
-        `;
-    }
 }
 
 function downloadOffer() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    
-    doc.setFontSize(16);
+
     doc.text("DISH PAY Angebot", 20, 20);
-    
-    const resultsDiv = document.getElementById('results');
-    doc.setFontSize(12);
-    doc.text(resultsDiv.innerText, 20, 30);
-    
-    doc.save('DISH_PAY_Angebot.pdf');
+    doc.text(`Geplanter Umsatz: ${document.getElementById('monthlyVolume').value} €`, 20, 30);
+    doc.text(`Anzahl Transaktionen: ${document.getElementById('transactions').value}`, 20, 40);
+    doc.text(`Einmalige Kosten: ${document.getElementById('results').querySelector('strong').innerText.split(': ')[1]}`, 20, 50);
+    doc.text(`Monatliche Kosten: ${document.getElementById('results').querySelectorAll('strong')[1].innerText.split(': ')[1]}`, 20, 60);
+
+    doc.save("DISH_PAY_Angebot.pdf");
 }
