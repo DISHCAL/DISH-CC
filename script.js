@@ -1,3 +1,14 @@
+function toggleCompetitorFields() {
+    const competitorSection = document.getElementById('competitorSection');
+    const competitorSelect = document.getElementById('competitorInclude').value;
+
+    if (competitorSelect === 'ja') {
+        competitorSection.style.display = 'block';
+    } else {
+        competitorSection.style.display = 'none';
+    }
+}
+
 function calculateCosts() {
     // Eingaben des Benutzers
     let monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value);
@@ -33,10 +44,10 @@ function calculateCosts() {
                 hardwareRentalCost = 7.90;
                 break;
             case 'Tap2Pay':
-                hardwareRentalCost = 7.90;  // Kein Kaufpreis, nur Miete
+                hardwareRentalCost = 7.90;
                 break;
         }
-    } else if (hardwareOptionPurchase === 'kaufen') {
+    } else {
         switch (hardwareOption) {
             case 'S1F2':
                 hardwareCost = 499;
@@ -50,12 +61,9 @@ function calculateCosts() {
         }
     }
 
-    // Schwelle für niedrige/höhere Girocard-Gebühr
-    let girocardFee = monthlyVolume > 10000 ? girocardFeeHigh : girocardFeeLow;
-
     // Berechnung der monatlichen Gebühren für DISH
     let dishCost = transactions * transactionFee;
-    dishCost += monthlyVolume * girocardPercent * girocardFee;
+    dishCost += monthlyVolume * girocardPercent * (monthlyVolume < 10000 ? girocardFeeLow : girocardFeeHigh);
     dishCost += monthlyVolume * maestroPercent * maestroFee;
     dishCost += monthlyVolume * mastercardVisaPercent * mastercardFee;
     dishCost += monthlyVolume * businessCardPercent * businessCardFee;
@@ -87,8 +95,19 @@ function calculateCosts() {
 }
 
 function downloadOffer() {
-    let offerText = "Hier ist Ihr Angebot basierend auf den eingegebenen Daten:";
-    // Weitere Details können hinzugefügt werden
+    const offerText = `
+        DISH PAY - Angebot
+        -----------------------
+        
+        Hier ist Ihr Angebot basierend auf den eingegebenen Daten.
+        Dieses Angebot ist unverbindlich und dient lediglich zur Information.
+
+        Monatliche DISH Kosten: ${document.getElementById('results').innerText.match(/Monatliche DISH Kosten:\s*(\d+,\d+)/)[1]} €
+        ${document.getElementById('results').innerText.includes('Wettbewerber') ? document.getElementById('results').innerText.match(/Monatliche Wettbewerber Kosten:\s*(\d+,\d+)/)[0] : ''}
+
+        * Hinweis: Alle Preise verstehen sich zzgl. gesetzlicher Umsatzsteuer.
+        * Dieses Angebot ist freibleibend und unverbindlich.
+    `;
     const blob = new Blob([offerText], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
