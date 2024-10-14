@@ -58,7 +58,7 @@ label {
 input, select, button {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Anpassung für bessere Abstände */
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
@@ -111,6 +111,12 @@ button:hover {
 /* Styling für ausgeblendete Sektionen (Wettbewerber) */
 #competitorSection {
     display: none;
+}
+
+/* Überschrift in der Wettbewerber-Sektion */
+#competitorSection h4 {
+    margin-top: 20px;
+    color: #ff6f00;
 }
 
 /* Responsive Design: Layoutanpassung für kleinere Bildschirme */
