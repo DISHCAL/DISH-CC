@@ -16,25 +16,23 @@
     <h3>Monatliche und einmalige Kostenberechnung</h3>
 
     <!-- Formularfelder -->
-    <!-- (Die bestehenden Formularfelder bleiben unverändert) -->
-
     <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
-    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
+    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
 
     <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
-    <input type="number" id="transactions" placeholder="z.B. 400" required>
+    <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
 
     <label for="girocard">Girocard (%):</label>
-    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" required>
+    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
     <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
+    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" min="0" max="100" required>
 
     <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" required>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" min="0" max="100" required>
 
     <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
+    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" min="0" max="100" required>
 
     <label for="purchaseOption">Kauf oder Miete:</label>
     <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
@@ -73,11 +71,13 @@
     <!-- Wettbewerber Eingabefelder -->
     <div id="competitorSection" style="display: none;">
         <label for="competitorFee">Wettbewerber Gebühr für EC-Transaktion (€):</label>
-        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
+        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01" min="0">
+
         <label for="competitorCreditFee">Wettbewerber Gebühr für Kreditkarten-Transaktion (€):</label>
-        <input type="number" id="competitorCreditFee" placeholder="z.B. 0,08" step="0.01">
+        <input type="number" id="competitorCreditFee" placeholder="z.B. 0,08" step="0.01" min="0">
+
         <label for="competitorClearing">Clearing-Gebühr pro Transaktion (€):</label>
-        <input type="number" id="competitorClearing" value="0.04" step="0.01">
+        <input type="number" id="competitorClearing" value="0.04" step="0.01" min="0">
     </div>
 
     <!-- Berechnungsbuttons -->
