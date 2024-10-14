@@ -1,4 +1,5 @@
 // JavaScript file to handle cost calculations and interaction logic
+
 function toggleRentalOptions() {
     const rentalOptions = document.getElementById('rentalOptions');
     rentalOptions.style.display = document.getElementById('purchaseOption').value === 'mieten' ? 'block' : 'none';
@@ -119,3 +120,6 @@ function generatePDF() {
 
 // Eventlistener für den Download-Button
 document.getElementById('downloadOffer').addEventListener('click', generatePDF);
+
+// Eventlistener für die Kaufoption ändern
+document.getElementById('purchaseOption').addEventListener('change', toggleRentalOptions);
