@@ -20,6 +20,14 @@ h1 {
     font-weight: 700;
     text-align: center;
     font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 img {
+    height: 40px;
+    margin-right: 10px;
 }
 
 h3 {
@@ -91,4 +99,29 @@ input:focus, select:focus {
     outline: none;
     border-color: #e65c00;
     box-shadow: 0 0 5px rgba(230, 92, 0, 0.5);
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 600px) {
+    .container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    button {
+        font-size: 1em;
+        padding: 12px;
+    }
+
+    label {
+        font-size: 1em;
+    }
+
+    input, select {
+        font-size: 0.9em;
+    }
 }
