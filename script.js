@@ -24,31 +24,18 @@ function calculateCosts() {
     const maestroFee = 0.0079;
     const mastercardFee = 0.0089;
     const businessCardFee = 0.0289;
-    const transactionFee = 0.06; // Transaktionsgebühr pro Transaktion (0,06 €)
 
-    // Hardwarekosten je nach Kauf oder Miete
+    // Hardwareoptionen
     let hardwareOption = document.getElementById('hardwareOption').value;
     let hardwareOptionPurchase = document.getElementById('hardwareOptionPurchase').value;
-    let hardwareCost = 0;
     let hardwareRentalCost = 0;
+    let hardwareCost = 0;
 
+    // Hardware Kosten
     if (hardwareOptionPurchase === 'mieten') {
-        hardwareRentalCost = 30; // Monatliche Mietkosten
+        hardwareRentalCost = parseFloat(document.getElementById('monthlyCost').value); // Monatliche Mietkosten
     } else {
-        switch (hardwareOption) {
-            case 'S1F2':
-                hardwareCost = 250; // Kaufpreis
-                break;
-            case 'P00C':
-                hardwareCost = 400;
-                break;
-            case 'MotoG14':
-                hardwareCost = 300;
-                break;
-            case 'Tap2Pay':
-                hardwareCost = 450;
-                break;
-        }
+        hardwareCost = parseFloat(document.getElementById('onceCost').value); // Einmalige Kosten
     }
 
     // Berechnung der DISH Kosten
@@ -84,6 +71,8 @@ function calculateCosts() {
     document.getElementById('results').innerHTML = `
         <p><strong>Monatliche DISH Kosten:</strong> ${dishCost.toFixed(2).replace('.', ',')} €</p>
         ${competitorInclude === 'ja' ? `<p><strong>Monatliche Wettbewerber Kosten:</strong> ${competitorCost.toFixed(2).replace('.', ',')} €</p>` : ''}
+        <p><strong>Einmalige Hardwarekosten:</strong> ${hardwareCost.toFixed(2).replace('.', ',')} €</p>
+        <p><strong>Monatliche Mietkosten der Hardware:</strong> ${hardwareRentalCost.toFixed(2).replace('.', ',')} €</p>
     `;
 }
 
@@ -108,16 +97,24 @@ function downloadOffer() {
         pdf.text(`Monatliche Wettbewerber Kosten: ${competitorCost} €`, 10, 40);
     }
 
-    // Füge die Gebührenübersicht hinzu
-    pdf.text('Wichtige Informationen zu den Gebühren:', 10, 45);
-    pdf.text('EC-Karten Gebühr unter 10.000 €: 0,39 %', 10, 50);
-    pdf.text('EC-Karten Gebühr über 10.000 €: 0,29 %', 10, 55);
-    pdf.text('Maestro / VPAY Gebühr: 0,79 %', 10, 60);
-    pdf.text('Mastercard Gebühr: 0,89 %', 10, 65);
-    pdf.text('Business Card Gebühr: 2,89 %', 10, 70);
+    // Einmalige und monatliche Hardwarekosten
+    const hardwareCost = document.getElementById('results').innerText.match(/Einmalige Hardwarekosten:\s*(\d+,\d+)/)[1];
+    const monthlyRentalCost = document.getElementById('results').innerText.match(/Monatliche Mietkosten der Hardware:\s*(\d+,\d+)/)[1];
 
-    pdf.text('* Hinweis: Alle Preise verstehen sich zzgl. gesetzlicher Umsatzsteuer.', 10, 80);
-    pdf.text('* Dieses Angebot ist freibleibend und unverbindlich.', 10, 85);
+    pdf.text(`Einmalige Hardwarekosten: ${hardwareCost} €`, 10, 45);
+    pdf.text(`Monatliche Mietkosten der Hardware: ${monthlyRentalCost} €`, 10, 50);
+
+    // Füge die Gebührenübersicht hinzu
+    pdf.text('Wichtige Informationen zu den Gebühren:', 10, 55);
+    pdf.text('EC-Karten Gebühr unter 10.000 €: 0,39 %', 10, 60);
+    pdf.text('EC-Karten Gebühr über 10.000 €: 0,29 %', 10, 65);
+    pdf.text('Maestro / VPAY Gebühr: 0,79 %', 10, 70);
+    pdf.text('Mastercard Gebühr: 0,89 %', 10, 75);
+    pdf.text('Business Card Gebühr: 2,89 %', 10, 80);
+
+    pdf.text('* Hinweis: Alle Preise verstehen sich zzgl. gesetzlicher Umsatzsteuer.', 10, 90);
+    pdf.text('* Dieses Angebot ist freibleibend und unverbindlich.', 10, 95);
+    pdf.text('Wir wachen auf gute Geschäfte, Ihr DISH Team.', 10, 100); // Kundenorientierter Text
 
     // Speichern der PDF
     pdf.save('DISH_PAY_Angebot.pdf');
