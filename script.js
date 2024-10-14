@@ -1,24 +1,55 @@
-document.getElementById('calculateBtn').addEventListener('click', function() {
-    const monthlySales = parseFloat(document.getElementById('monthlySales').value);
-    const terminal1 = parseFloat(document.getElementById('terminal1').value);
-    const terminal2 = parseFloat(document.getElementById('terminal2').value);
-    const transactionPrice = parseFloat(document.getElementById('transactionPrice').value);
-    const transactionCount = parseInt(document.getElementById('transactionCount').value);
+function calculateCosts() {
+    // Eingaben
+    let monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value);
+    let girocardPercent = parseFloat(document.getElementById('girocard').value) / 100;
+    let maestroPercent = parseFloat(document.getElementById('maestro').value) / 100;
+    let mastercardVisaPercent = parseFloat(document.getElementById('mastercardVisa').value) / 100;
+    let businessCardPercent = parseFloat(document.getElementById('businessCard').value) / 100;
+    let transactions = parseInt(document.getElementById('transactions').value);
 
-    // Monatliche Kosten berechnen
-    const monthlyCostDISH = terminal1 + terminal2;
-    const totalTransactionCost = transactionCount * transactionPrice;
-    const totalMonthlyCost = monthlyCostDISH + totalTransactionCost;
+    // Gebühren von DISH
+    const girocardFee = 0.0039;
+    const maestroFee = 0.0079;
+    const mastercardFee = 0.0089;
+    const businessCardFee = 0.0289;
 
-    // Monatliche Ersparnis zu Wettbewerber (hier als Beispiel)
-    const competitorMonthlyCost = 245.19; // Beispielwert
-    const monthlySavings = competitorMonthlyCost - totalMonthlyCost;
+    // Hardwarekosten (aus dem Dropdown-Menü ausgewählt)
+    let hardwareOption = document.getElementById('hardwareOption').value;
+    let hardwareCost;
+    switch (hardwareOption) {
+        case 'S1F2':
+            hardwareCost = 499;
+            break;
+        case 'P00C':
+            hardwareCost = 399;
+            break;
+        case 'MotoG14':
+            hardwareCost = 119;
+            break;
+        case 'Tap2Pay':
+            hardwareCost = 79;
+            break;
+    }
+
+    // Wettbewerber-Gebühr
+    let competitorFee = parseFloat(document.getElementById('competitorFee').value);
+
+    // Berechnungen
+    let girocardCost = monthlyVolume * girocardPercent * girocardFee;
+    let maestroCost = monthlyVolume * maestroPercent * maestroFee;
+    let mastercardCost = monthlyVolume * mastercardVisaPercent * mastercardFee;
+    let businessCardCost = monthlyVolume * businessCardPercent * businessCardFee;
+
+    let totalDishCost = girocardCost + maestroCost + mastercardCost + businessCardCost + hardwareCost;
+
+    // Kosten bei Wettbewerbern
+    let competitorCost = transactions * competitorFee;
 
     // Ergebnisse anzeigen
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = `
-        <p><strong>Monatliche Kosten DISH:</strong> €${totalMonthlyCost.toFixed(2)}</p>
-        <p><strong>Gesamtumsatz pro Monat:</strong> €${monthlySales.toFixed(2)}</p>
-        <p><strong>Monatliche Ersparnis zu Wettbewerber:</strong> €${monthlySavings.toFixed(2)}</p>
+    let results = document.getElementById('results');
+    results.innerHTML = `
+        <p>Gesamtkosten DISH: €${totalDishCost.toFixed(2)}</p>
+        <p>Wettbewerberkosten: €${competitorCost.toFixed(2)}</p>
+        <p>Monatliche Einsparungen mit DISH: €${(competitorCost - totalDishCost).toFixed(2)}</p>
     `;
-});
+}
