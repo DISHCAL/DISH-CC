@@ -84,10 +84,10 @@ function calculateCosts() {
     if (competitorIncluded) {
         const transactions = parseFloat(document.getElementById('transactions').value) || 0;
         const competitorFee = parseFloat(document.getElementById('competitorFee').value) || 0;
-        const competitorClearingFee = 0.04; // Zentrale Clearingkosten für den Wettbewerber
-        const competitorTransactionPrice = parseFloat(document.getElementById('competitorFee').value) || 0.08; // Beispielwert für Transaktionsgebühr
+        const competitorCreditFee = parseFloat(document.getElementById('competitorCreditFee').value) || 0;
+        const competitorClearingFee = parseFloat(document.getElementById('competitorClearing').value) || 0;
         
-        const competitorTotal = transactions * (competitorFee + competitorClearingFee + competitorTransactionPrice);
+        const competitorTotal = transactions * (competitorFee + competitorCreditFee + competitorClearingFee);
         const competitorSavings = competitorTotal - totalMonthlyCost;
         
         document.getElementById('competitorTotal').innerText = `Wettbewerberkosten: ${competitorTotal.toFixed(2)} €`;
@@ -111,7 +111,40 @@ function updateRentalPrices() {
     rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
+// PDF-Generierung mit jsPDF
+function downloadPDF() {
+    const doc = new jsPDF();
+    
+    // Kundentext
+    const text = `
+    Guten Tag,
+
+    hier ist Ihr unverbindliches Angebot basierend auf Ihren Berechnungen.
+    Unten sind die detaillierten Kosten aufgelistet.
+
+    Gute Geschäfte wünscht Ihnen
+    Ihr DISH Team
+
+    Wichtige rechtliche Hinweise:
+    Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken.
+
+    Ergebnisse:
+    Gesamte Transaktionsgebühren: ${document.getElementById('totalRevenue').innerText}
+    Gesamtkosten pro Monat (inkl. Hardware + SIM-Karte): ${document.getElementById('totalCost').innerText}
+
+    Ersparnis im Vergleich zum Wettbewerber (falls berechnet): ${document.getElementById('competitorSavings').innerText || 'N/A'}
+    `;
+
+    doc.setTextColor(255, 165, 0); // Setze den Text auf Orange
+    doc.setFontSize(12);
+    doc.text(20, 20, text);
+    
+    // PDF speichern
+    doc.save("dish-pay-angebot.pdf");
+}
+
 window.onload = function() {
     updateRentalPrices();
     toggleRentalOptions();
 };
+
