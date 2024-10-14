@@ -4,43 +4,20 @@ function updateHardwareCosts() {
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
 
     let monthlyCost = 0;
-    
-    if (rentalPeriod === "12") {
-        monthlyCost = selectedHardware.getAttribute('data-12m-cost');
-    } else if (rentalPeriod === "36") {
-        monthlyCost = selectedHardware.getAttribute('data-36m-cost');
-    } else if (rentalPeriod === "60") {
-        monthlyCost = selectedHardware.getAttribute('data-60m-cost');
+    const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost'));
+
+    if (rentalPeriod === "mieten") {
+        const selectedPeriodCost = rentalPeriod === "mieten" ? 
+            selectedHardware.getAttribute(`data-${document.getElementById('rentalPeriod').value}-cost`) : 0;
+        monthlyCost = parseFloat(selectedPeriodCost);
     }
 
-    // Hier könnten Sie auch die monatlichen Kosten in einer Anzeige darstellen
+    return { onceCost, monthlyCost };
 }
 
-function calculateCosts() {
-    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value);
-    const transactions = parseInt(document.getElementById('transactions').value);
-    const girocard = parseFloat(document.getElementById('girocard').value);
-   Hier ist die vollständige JavaScript-Datei (`script.js`) mit den erforderlichen Funktionen zur Berechnung der Kosten und zur Validierung der Eingabefelder:
-
-### JavaScript-Datei: `script.js`
-
-```javascript
-function updateHardwareCosts() {
-    const hardwareSelect = document.getElementById('hardwareOption');
-    const rentalPeriod = document.getElementById('rentalPeriod').value;
-    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-
-    let monthlyCost = 0;
-
-    if (rentalPeriod === "12") {
-        monthlyCost = parseFloat(selectedHardware.getAttribute('data-12m-cost'));
-    } else if (rentalPeriod === "36") {
-        monthlyCost = parseFloat(selectedHardware.getAttribute('data-36m-cost'));
-    } else if (rentalPeriod === "60") {
-        monthlyCost = parseFloat(selectedHardware.getAttribute('data-60m-cost'));
-    }
-
-    return monthlyCost;
+function toggleCompetitorFields() {
+    const competitorSection = document.getElementById('competitorSection');
+    competitorSection.style.display = document.getElementById('competitorInclude').value === "ja" ? 'block' : 'none';
 }
 
 function calculateCosts() {
@@ -53,56 +30,104 @@ function calculateCosts() {
 
     const competitorInclude = document.getElementById('competitorInclude').value;
 
-    // Berechnungen für Hardwarekosten
-    const monthlyHardwareCost = updateHardwareCosts();
+    // Hardwarekosten ermitteln
+    const { onceCost, monthlyCost } = updateHardwareCosts();
 
     // Validierung der Eingaben
-    if (!monthlyVolume || !transactions || !girocard || !maestro || !mastercardVisa || !businessCard) {
-        alert("Daten unvollständig. Bitte alle Felder ausfüllen.");
-        return;
-    }
+    if (isNaN(monthlyVolume) || isNaN(transactions) || 
+        isNaN(girocard) || isNaN(maestro) || 
+        isNaN(mastercardVisa) || isNaN(businessCard)) {
+       Hier ist die vollständige und optimierte Version des DISH PAY Rechners, die alle gewünschten Features umfasst, einschließlich der Kauf- oder Mietoptionen und der korrekten Hardwarepreise. Das Design ist modern und in knalligem Orange gehalten.
 
-    // Berechnung der Gesamtkosten
-    const totalGirocardCosts = (monthlyVolume * girocard) + (monthlyHardwareCost * 12);
-    const totalMaestroCosts = (monthlyVolume * maestro) + (monthlyHardwareCost * 12);
-    const totalMastercardVisaCosts = (monthlyVolume * mastercardVisa) + (monthlyHardwareCost * 12);
-    const totalBusinessCardCosts = (monthlyVolume * businessCard) + (monthlyHardwareCost * 12);
+### HTML-Datei: `index.html`
 
-    let resultText = `<h4>Gesamtkosten pro Monat:</h4>
-                      <p>Girocard: ${totalGirocardCosts.toFixed(2)} €</p>
-                      <p>Maestro: ${totalMaestroCosts.toFixed(2)} €</p>
-                      <p>Mastercard / VISA: ${totalMastercardVisaCosts.toFixed(2)} €</p>
-                      <p>Business Card: ${totalBusinessCardCosts.toFixed(2)} €</p>`;
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISH PAY Rechner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
 
-    // Wettbewerber Berechnungen
-    if (competitorInclude === "ja") {
-        const competitorFee = parseFloat(document.getElementById('competitorFee').value);
-        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100;
-        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100;
-        const competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) / 100;
-        const competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) / 100;
+<div class="container">
+    <h1>DISH PAY Rechner</h1>
+    <h3>Monatliche Kostenberechnung</h3>
 
-        const totalCompetitorCosts = (competitorFee * transactions);
+    <label for="monthlyVolume">Geplantes Kartenumsatz pro Monat (€):</label>
+    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
 
-        resultText += `<h4>Wettbewerber Gesamtkosten:</h4>
-                       <p>Gesamte Gebühren: ${totalCompetitorCosts.toFixed(2)} €</p>`;
-    }
+    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
+    <input type="number" id="transactions" placeholder="z.B. 400" required>
 
-    document.getElementById('results').innerHTML = resultText;
-}
+    <label for="girocard">Girocard (%):</label>
+    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" required>
 
-function toggleCompetitorFields() {
-    const competitorSection = document.getElementById('competitorSection');
-    const competitorInclude = document.getElementById('competitorInclude').value;
+    <label for="maestro">Maestro / VPAY (%):</label>
+    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
-    if (competitorInclude === "ja") {
-        competitorSection.style.display = 'block';
-    } else {
-        competitorSection.style.display = 'none';
-    }
-}
+    <label for="mastercardVisa">Mastercard / VISA (%):</label>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
 
-function downloadOffer() {
-    // Download-Funktion hier implementieren
-    alert("Angebot herunterladen ist derzeit nicht implementiert.");
-}
+    <label for="businessCard">Business Card (%):</label>
+    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
+
+    <label for="hardwareOption">Hardware Option:</label>
+    <select id="hardwareOption" onchange="updateHardwareCosts()">
+        <option value="S1F2" data-once-cost="499" data-12m-cost="44.90" data-36m-cost="18.90" data-60m-cost="14.90">S1F2</option>
+        <option value="V400C" data-once-cost="399" data-12m-cost="39.90" data-36m-cost="16.90" data-60m-cost="12.90">V400C</option>
+        <option value="MotoG14" data-once-cost="119" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Moto G14</option>
+        <option value="Tap2Pay" data-once-cost="0" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Tap2Pay</option>
+    </select>
+
+    <label for="rentalPeriod">Mieten oder Kaufen:</label>
+    <select id="rentalPeriod" onchange="updateHardwareCosts()">
+        <option value="kaufen">Kaufen</option>
+        <option value="mieten">Mieten</option>
+    </select>
+
+    <label for="competitorInclude">Wettbewerber berechnen?</label>
+    <select id="competitorInclude" onchange="toggleCompetitorFields()">
+        <option value="nein">Nein</option>
+        <option value="ja">Ja</option>
+    </select>
+
+    <div id="competitorSection" style="display: none;">
+        <h3>Wettbewerber Daten</h3>
+        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
+        <input type="number" id="competitorFee" placeholder="z.B. 0.08" step="0.01">
+
+        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
+        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01">
+
+        <label for="competitorMaestroFee">Maestro Gebühr (%):</label>
+        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.79" step="0.01">
+
+        <label for="competitorMastercardFee">Mastercard Gebühr (%):</label>
+        <input type="number" id="competitorMastercardFee" placeholder="z.B. 0.89" step="0.01">
+
+        <label for="competitorBusinessFee">Business Card Gebühr (%):</label>
+        <input type="number" id="competitorBusinessFee" placeholder="z.B. 2.89" step="0.01">
+    </div>
+
+    <button onclick="calculateCosts()">Kosten Berechnen</button>
+    <div id="results"></div>
+
+    <h3>Wichtige Informationen zu den Gebühren</h3>
+    <div id="info">
+        <p><strong>Gebührenübersicht:</strong></p>
+        <ul>
+            <li>EC-Karten Gebühr unter 10.000 €: 0,39 %</li>
+            <li>EC-Karten Gebühr über 10.000 €: 0,29 %</li>
+            <li>Maestro / VPAY Gebühr: 0,79 %</li>
+            <li>Mastercard Gebühr: 0,89 %</li>
+            <li>Business Card Gebühr: 2,89 %</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
