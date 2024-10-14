@@ -1,127 +1,122 @@
 function toggleCompetitorFields() {
     const competitorSection = document.getElementById('competitorSection');
-    competitorSection.style.display = document.getElementById('competitorInclude').value === 'ja' ? 'block' : 'none';
+    const competitorSelect = document.getElementById('competitorInclude').value;
+
+    if (competitorSelect === 'ja') {
+        competitorSection.style.display = 'block';
+    } else {
+        competitorSection.style.display = 'none';
+    }
 }
 
 function updateHardwareCosts() {
     const hardwareSelect = document.getElementById('hardwareOption');
-    const purchaseOption = document.getElementById('hardwareOptionPurchase').value;
-    const rentalPeriod = document.getElementById('rentalPeriod').value;
+    const onceCost = hardwareSelect.selectedOptions[0].getAttribute('data-once-cost');
+    const monthlyCost = hardwareSelect.selectedOptions[0].getAttribute('data-monthly-cost');
 
-    let monthlyHardwareCost = purchaseOption === 'kaufen' ? 0 : parseFloat(hardwareSelect.selectedOptions[0].getAttribute(`data-monthly-cost-${rentalPeriod}`)) || 0;
-
-    const resultDiv = document.getElementById('results');
-    resultDiv.innerHTML = `<h4>Monatliche Hardware Kosten: €${monthlyHardwareCost.toFixed(2)}</h4>`;
+    document.getElementById('onceCost').value = onceCost;
+    document.getElementById('monthlyCost').value = monthlyCost;
 }
 
 function calculateCosts() {
-    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-    const transactions = parseInt(document.getElementById('transactions').value) || 0;
-    const girocard = parseFloat(document.getElementById('girocard').value) || 0;
-    const maestro = parseFloat(document.getElementById('maestro').value) || 0;
-    const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
+    // Eingaben des Benutzers
+    let monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value);
+    let transactions = parseFloat(document.getElementById('transactions').value);
 
-    const hardwareSelect = document.getElementById('hardwareOption');
-    const hardwareName = hardwareSelect.options[hardwareSelect.selectedIndex].text;
-
-    const purchaseOption = document.getElementById('hardwareOptionPurchase').value;
-    const rentalPeriod = document.getElementById('rentalPeriod').value;
-
-    let monthlyHardwareCost = purchaseOption === "kaufen"
-        ? parseFloat(hardwareSelect.selectedOptions[0].getAttribute('data-once-cost')) / (rentalPeriod === "12" ? 12 : rentalPeriod === "36" ? 36 : 60)
-        : parseFloat(hardwareSelect.selectedOptions[0].getAttribute(`data-monthly-cost-${rentalPeriod}`)) || 0;
-
-    let totalCost = monthlyHardwareCost;
-
-    if (document.getElementById('competitorInclude').value === 'ja') {
-        const competitorFee = parseFloat(document.getElementById('competitorFee').value) || 0;
-        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) || 0;
-        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) || 0;
-        const competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) || 0;
-        const competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) || 0;
-
-        const competitorTotal = (competitorFee * transactions) +
-            (monthlyVolume * girocard / 100 * competitorGirocardFee) +
-            (monthlyVolume * maestro / 100 * competitorMaestroFee) +
-            (monthlyVolume * mastercardVisa / 100 * competitorMastercardFee) +
-            (monthlyVolume * businessCard / 100 * competitorBusinessFee);
-
-        totalCost += competitorTotal;
+    // Überprüfen auf fehlende Werte
+    if (isNaN(monthlyVolume) || isNaN(transactions)) {
+        alert('Bitte stellen Sie sicher, dass alle Werte eingegeben sind.');
+        return;
     }
 
-    const resultDiv = document.getElementById('results');
-    resultDiv.innerHTML = `
-        <h4>Gesamtkosten:</h4>
-        <p>Hardware: ${hardwareName}</p>
-        <p>Monatliche Hardware Kosten: €${monthlyHardwareCost.toFixed(2)}</p>
-        <p>Geplanter Kartenumsatz pro Monat: €${monthlyVolume.toFixed(2)}</p>
-        <p>Erwartete Transaktionen: ${transactions}</p>
-        <p>Girocard: ${girocard}%</p>
-        <p>Maestro: ${maestro}%</p>
-        <p>Mastercard / VISA: ${mastercardVisa}%</p>
-        <p>Business Card: ${businessCard}%</p>
-        <h4>Gesamtkosten: €${totalCost.toFixed(2)}</h4>
+    // Gebührenprozentwerte
+    const girocardPercent = parseFloat(document.getElementById('girocard').value) / 100;
+    const maestroPercent = parseFloat(document.getElementById('maestro').value) / 100;
+    const mastercardVisaPercent = parseFloat(document.getElementById('mastercardVisa').value) / 100;
+    const businessCardPercent = parseFloat(document.getElementById('businessCard').value) / 100;
+
+    // Hardwareoptionen
+    let hardwareOption = document.getElementById('hardwareOption');
+    let hardwareRentalCost = hardwareOption.selectedOptions[0].getAttribute('data-monthly-cost'); // Monatliche Mietkosten
+    let hardwareCost = hardwareOption.selectedOptions[0].getAttribute('data-once-cost'); // Einmalige Kosten
+
+    // Berechnung der DISH Kosten
+    let dishCost = transactions * 0.0089 + parseFloat(hardwareRentalCost);
+
+    // Gebührenberechnung
+    let girocardFee = monthlyVolume < 10000 ? 0.0039 : 0.0029; // Gebühren je nach Umsatz
+    dishCost += transactions * girocardFee;
+    dishCost += monthlyVolume * maestroPercent * 0.0079;
+    dishCost += monthlyVolume * mastercardVisaPercent * 0.0089;
+    dishCost += monthlyVolume * businessCardPercent * 0.0289;
+
+    // Wettbewerberkosten (wenn gewählt)
+    let competitorInclude = document.getElementById('competitorInclude').value;
+    let competitorCost = 0;
+
+    if (competitorInclude === 'ja') {
+        let competitorFee = parseFloat(document.getElementById('competitorFee').value);
+        let competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100;
+        let competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100;
+        let competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) / 100;
+        let competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) / 100;
+
+        competitorCost = transactions * competitorFee;
+        competitorCost += monthlyVolume * girocardPercent * competitorGirocardFee;
+        competitorCost += monthlyVolume * maestroPercent * competitorMaestroFee;
+        competitorCost += monthlyVolume * mastercardVisaPercent * competitorMastercardFee;
+        competitorCost += monthlyVolume * businessCardPercent * competitorBusinessFee;
+    }
+
+    // Ergebnisse anzeigen
+    document.getElementById('results').innerHTML = `
+        <p><strong>Monatliche DISH Kosten:</strong> ${dishCost.toFixed(2).replace('.', ',')} €</p>
+        ${competitorInclude === 'ja' ? `<p><strong>Monatliche Wettbewerber Kosten:</strong> ${competitorCost.toFixed(2).replace('.', ',')} €</p>` : ''}
+        <p><strong>Einmalige Hardwarekosten:</strong> ${hardwareCost} €</p>
+        <p><strong>Monatliche Mietkosten der Hardware:</strong> ${hardwareRentalCost} €</p>
     `;
 }
 
 function downloadOffer() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const pdf = new jsPDF();
 
-    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-    const transactions = parseInt(document.getElementById('transactions').value) || 0;
-    const girocard = parseFloat(document.getElementById('girocard').value) || 0;
-    const maestro = parseFloat(document.getElementById('maestro').value) || 0;
-    const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
+    pdf.setFontSize(12);
+    pdf.text('DISH PAY - Angebot', 10, 10);
+    pdf.text('-----------------------', 10, 15);
+    pdf.text('Hier ist Ihr Angebot basierend auf den eingegebenen Daten.', 10, 20);
+    pdf.text('Dieses Angebot ist unverbindlich und dient lediglich zur Information.', 10, 25);
+    
+    // Extrahiere die Ergebnisse aus der Anzeige
+    const dishCost = document.getElementById('results').innerText.match(/Monatliche DISH Kosten:\s*(\d+,\d+)/)[1];
+    const competitorInclude = document.getElementById('competitorInclude').value;
 
-    const hardwareSelect = document.getElementById('hardwareOption');
-    const hardwareName = hardwareSelect.options[hardwareSelect.selectedIndex].text;
-
-    const purchaseOption = document.getElementById('hardwareOptionPurchase').value;
-    const rentalPeriod = document.getElementById('rentalPeriod').value;
-
-    let monthlyHardwareCost = purchaseOption === "kaufen"
-        ? parseFloat(hardwareSelect.selectedOptions[0].getAttribute('data-once-cost')) / (rentalPeriod === "12" ? 12 : rentalPeriod === "36" ? 36 : 60)
-        : parseFloat(hardwareSelect.selectedOptions[0].getAttribute(`data-monthly-cost-${rentalPeriod}`)) || 0;
-
-    let totalCost = monthlyHardwareCost;
-
-    if (document.getElementById('competitorInclude').value === 'ja') {
-        const competitorFee = parseFloat(document.getElementById('competitorFee').value) || 0;
-        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) || 0;
-        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) || 0;
-        const competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) || 0;
-        const competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) || 0;
-
-        const competitorTotal = (competitorFee * transactions) +
-            (monthlyVolume * girocard / 100 * competitorGirocardFee) +
-            (monthlyVolume * maestro / 100 * competitorMaestroFee) +
-            (monthlyVolume * mastercardVisa / 100 * competitorMastercardFee) +
-            (monthlyVolume * businessCard / 100 * competitorBusinessFee);
-
-        totalCost += competitorTotal;
+    pdf.text(`Monatliche DISH Kosten: ${dishCost} €`, 10, 35);
+    
+    if (competitorInclude === 'ja') {
+        const competitorCost = document.getElementById('results').innerText.match(/Monatliche Wettbewerber Kosten:\s*(\d+,\d+)/)[1];
+        pdf.text(`Monatliche Wettbewerber Kosten: ${competitorCost} €`, 10, 40);
     }
 
-    // Angebotstext
-    let offerText = `DISH PAY Angebot\n\n`;
-    offerText += `Hardware: ${hardwareName} (Monatliche Kosten: €${monthlyHardwareCost.toFixed(2)})\n`;
-    offerText += `Geplanter Kartenumsatz pro Monat: €${monthlyVolume.toFixed(2)}\n`;
-    offerText += `Erwartete Transaktionen: ${transactions}\n`;
-    offerText += `Girocard: ${girocard}%\n`;
-    offerText += `Maestro: ${maestro}%\n`;
-    offerText += `Mastercard / VISA: ${mastercardVisa}%\n`;
-    offerText += `Business Card: ${businessCard}%\n`;
-    offerText += `\nGesamtkosten: €${totalCost.toFixed(2)}\n\n`;
+    // Einmalige und monatliche Hardwarekosten
+    const hardwareCost = document.getElementById('results').innerText.match(/Einmalige Hardwarekosten:\s*(\d+,\d+)/)[1];
+    const monthlyRentalCost = document.getElementById('results').innerText.match(/Monatliche Mietkosten der Hardware:\s*(\d+,\d+)/)[1];
 
-    // Rechtliche Hinweise
-    offerText += `\nWichtiger Hinweis: Dieses Angebot ist unverbindlich und stellt keine Kaufverpflichtung dar. Wir empfehlen Ihnen, die Optionen zu prüfen und bei Fragen Kontakt mit uns aufzunehmen.\n\n`;
-    offerText += `Wir freuen uns darauf, Sie als Kunden zu gewinnen!`;
+    pdf.text(`Einmalige Hardwarekosten: ${hardwareCost} €`, 10, 45);
+    pdf.text(`Monatliche Mietkosten der Hardware: ${monthlyRentalCost} €`, 10, 50);
 
-    doc.setFont("helvetica");
-    doc.setFontSize(12);
-    doc.setTextColor(40);
-    doc.text(offerText, 10, 10);
-    doc.save('DISH_PAY_Angebot.pdf');
+    // Füge die Gebührenübersicht hinzu
+    pdf.text('Wichtige Informationen zu den Gebühren:', 10, 55);
+    pdf.text('EC-Karten Gebühr unter 10.000 €: 0,39 %', 10, 60);
+    pdf.text('EC-Karten Gebühr über 10.000 €: 0,29 %', 10, 65);
+    pdf.text('Maestro / VPAY Gebühr: 0,79 %', 10, 70);
+    pdf.text('Mastercard Gebühr: 0,89 %', 10, 75);
+    pdf.text('Business Card Gebühr: 2,89 %', 10, 80);
+
+    pdf.text('* Hinweis: Alle Preise verstehen sich zzgl. gesetzlicher Umsatzsteuer.', 10, 90);
+    pdf.text('* Dieses Angebot ist freibleibend und unverbindlich.', 10, 95);
+    pdf.text('Wir wachen auf gute Geschäfte, Ihr DISH Team.', 10, 100); // Kundenorientierter Text
+
+    // Speichern der PDF
+    pdf.save('DISH_PAY_Angebot.pdf');
 }
