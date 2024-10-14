@@ -3,96 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISH PAY Kartentransaktionsrechner</title>
+    <title>DISH PAY Rechner</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h1>DISH PAY Kartentransaktionsrechner</h1>
 
-        <p>Berechnen Sie Ihre monatlichen Kosten basierend auf Ihrem geplanten Kartenumsatz und vergleichen Sie die Kosten mit einem Wettbewerber.</p>
+<div class="container">
+    <h1>DISH PAY Rechner</h1>
+    <h3>Monatliche Kostenberechnung</h3>
 
-        <h3>Eingaben:</h3>
+    <label for="monthlyVolume">Geplantes Kartenumsatz pro Monat (€):</label>
+    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
 
-        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
-        <input type="number" id="monthlyVolume" value="20000" step="0.01" />
-        <p class="info">Geben Sie hier den durchschnittlichen Betrag an, den Sie monatlich über Karten abrechnen.</p>
+    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
+    <input type="number" id="transactions" placeholder="z.B. 400" required>
 
-        <h3>Kartenverteilung (%):</h3>
-        <label for="girocard">Girocard:</label>
-        <input type="number" id="girocard" value="70" step="0.01" />
-        <p class="info">Prozentsatz der Zahlungen, die über Girocard abgewickelt werden.</p>
+    <label for="girocard">Girocard (%) :</label>
+    <input type="number" id="girocard" placeholder="z.B. 25" step="0.01" required>
 
-        <label for="maestro">Maestro / VPAY:</label>
-        <input type="number" id="maestro" value="25" step="0.01" />
-        <p class="info">Prozentsatz der Zahlungen, die über Maestro oder VPAY abgewickelt werden.</p>
+    <label for="maestro">Maestro / VPAY (%) :</label>
+    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
-        <label for="mastercardVisa">Mastercard / VISA Privat:</label>
-        <input type="number" id="mastercardVisa" value="4" step="0.01" />
-        <p class="info">Prozentsatz der Zahlungen, die über Mastercard oder VISA von Privatkunden abgewickelt werden.</p>
+    <label for="mastercardVisa">Mastercard / VISA (%) :</label>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
 
-        <label for="businessCard">Mastercard / VISA Business & Nicht-EWR-Raum:</label>
-        <input type="number" id="businessCard" value="1" step="0.01" />
-        <p class="info">Prozentsatz der Zahlungen, die über Business-Karten oder von Kunden außerhalb des EWR-Raums abgewickelt werden.</p>
+    <label for="businessCard">Business Card (%) :</label>
+    <input type="number" id="businessCard" placeholder="z.B. 2" step="0.01" required>
 
-        <label for="transactions">Erwartete Anzahl der Transaktionen:</label>
-        <input type="number" id="transactions" value="400" />
-        <p class="info">Schätzen Sie die monatliche Anzahl der Karten-Transaktionen.</p>
+    <label for="hardwareOption">Hardware Option:</label>
+    <select id="hardwareOption">
+        <option value="S1F2">S1F2</option>
+        <option value="P00C">P00C</option>
+        <option value="MotoG14">Moto G14</option>
+        <option value="Tap2Pay">Tap2Pay</option>
+    </select>
 
-        <h3>Hardware Optionen:</h3>
-        <label for="hardwareOption">Wählen Sie die Hardware:</label>
-        <select id="hardwareOption">
-            <option value="S1F2">S1F2 (Kauf: 499€, Miete: 3,90€/Monat)</option>
-            <option value="P00C">P00C (Kauf: 399€, Miete: 3,90€/Monat)</option>
-            <option value="MotoG14">Moto G14 (Kauf: 119€, Miete: 7,90€/Monat)</option>
-            <option value="Tap2Pay">Tap2Pay (Miete: 7,90€/Monat)</option>
-        </select>
+    <label for="hardwareOptionPurchase">Mieten oder Kaufen:</label>
+    <select id="hardwareOptionPurchase" onchange="toggleCompetitorFields()">
+        <option value="mieten">Mieten</option>
+        <option value="kaufen">Kaufen</option>
+    </select>
 
-        <label for="hardwareOptionPurchase">Möchten Sie die Hardware mieten oder kaufen?</label>
-        <select id="hardwareOptionPurchase">
-            <option value="mieten">Mieten</option>
-            <option value="kaufen">Kaufen</option>
-        </select>
-        <p class="info">Wählen Sie aus, ob Sie die Hardware mieten oder kaufen möchten.</p>
+    <label for="competitorInclude">Wettbewerber berechnen?</label>
+    <select id="competitorInclude" onchange="toggleCompetitorFields()">
+        <option value="nein">Nein</option>
+        <option value="ja">Ja</option>
+    </select>
 
-        <h3>Wettbewerber Vergleich:</h3>
-        <label for="competitorInclude">Wettbewerber auswählen:</label>
-        <select id="competitorInclude" onchange="toggleCompetitorFields()">
-            <option value="nein">Keinen Wettbewerber</option>
-            <option value="ja">Wettbewerber vergleichen</option>
-        </select>
+    <div id="competitorSection">
+        <h3>Wettbewerber Daten</h3>
+        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
+        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
 
-        <div id="competitorSection" style="display: none;">
-            <h4>Geben Sie die Kosten des Wettbewerbers ein:</h4>
-            <label for="competitorFee">Wettbewerber-Transaktionsgebühr (€):</label>
-            <input type="number" id="competitorFee" value="0.08" step="0.01" />
-            <p class="info">Geben Sie die Transaktionsgebühr des Wettbewerbers ein, um die Kosten zu vergleichen.</p>
+        <label for="competitorGirocardFee">Girocard Gebühr (%) :</label>
+        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0,39" step="0.01">
 
-            <label for="competitorGirocardFee">Girocard-Gebühr Wettbewerber (%):</label>
-            <input type="number" id="competitorGirocardFee" value="0.39" step="0.01" />
-            <p class="info">Girocard-Gebühr in Prozent, die der Wettbewerber berechnet.</p>
+        <label for="competitorMaestroFee">Maestro Gebühr (%) :</label>
+        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0,79" step="0.01">
 
-            <label for="competitorMaestroFee">Maestro / VPAY Gebühr Wettbewerber (%):</label>
-            <input type="number" id="competitorMaestroFee" value="0.79" step="0.01" />
-            <p class="info">Maestro oder VPAY Gebühr in Prozent, die der Wettbewerber berechnet.</p>
+        <label for="competitorMastercardFee">Mastercard Gebühr (%) :</label>
+        <input type="number" id="competitorMastercardFee" placeholder="z.B. 2,89" step="0.01">
 
-            <label for="competitorMastercardFee">Mastercard / VISA Gebühr Wettbewerber (%):</label>
-            <input type="number" id="competitorMastercardFee" value="1.29" step="0.01" />
-            <p class="info">Mastercard oder VISA Gebühr in Prozent für Privatkunden, die der Wettbewerber berechnet.</p>
-
-            <label for="competitorBusinessFee">Business-Karten Gebühr Wettbewerber (%):</label>
-            <input type="number" id="competitorBusinessFee" value="2.79" step="0.01" />
-            <p class="info">Gebühr in Prozent für Business-Karten oder außerhalb des EWR-Raums beim Wettbewerber.</p>
-        </div>
-
-        <button onclick="calculateCosts()">Berechnen</button>
-
-        <h2>Ergebnisse:</h2>
-        <div id="results"></div>
-
-        <button onclick="downloadOffer()">Angebot als PDF herunterladen</button>
+        <label for="competitorBusinessFee">Business Card Gebühr (%) :</label>
+        <input type="number" id="competitorBusinessFee" placeholder="z.B. 1,99" step="0.01">
     </div>
 
-    <script src="script.js"></script>
+    <button onclick="calculateCosts()">Kosten Berechnen</button>
+    <button onclick="downloadOffer()">Angebot herunterladen</button>
+
+    <div id="results"></div>
+
+    <h3>Wichtige Informationen zu den Gebühren</h3>
+    <div id="info">
+        <p><strong>Gebührenübersicht:</strong></p>
+        <ul>
+            <li>EC-Karten Gebühr unter 10.000 €: 0,39 %</li>
+            <li>EC-Karten Gebühr über 10.000 €: 0,29 %</li>
+            <li>Maestro / VPAY Gebühr: 0,79 %</li>
+            <li>Mastercard Gebühr: 0,89 %</li>
+            <li>Business Card Gebühr: 2,89 %</li>
+        </ul>
+    </div>
+</div>
+
 </body>
 </html>
