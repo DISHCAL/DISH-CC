@@ -3,36 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISH Pay Kalkulator</title>
+    <title>Kartentransaktionsrechner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>DISH Pay Kalkulator</h1>
+        <h1>Kartentransaktionsrechner</h1>
+        
+        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
+        <input type="number" id="monthlyVolume" value="20000" />
 
-        <div class="input-section">
-            <label for="monthlySales">Geplanter Kartenumsatz pro Monat (€):</label>
-            <input type="number" id="monthlySales" value="20000" required>
+        <h3>Kartenverteilung:</h3>
+        <label for="girocard">Girocard (%):</label>
+        <input type="number" id="girocard" value="70" />
+        
+        <label for="maestro">Maestro / VPAY (%):</label>
+        <input type="number" id="maestro" value="25" />
+        
+        <label for="mastercardVisa">Mastercard / VISA Privat (%):</label>
+        <input type="number" id="mastercardVisa" value="4" />
+        
+        <label for="businessCard">Mastercard / VISA Business (%):</label>
+        <input type="number" id="businessCard" value="1" />
+        
+        <label for="transactions">Erwartete Anzahl der Transaktionen:</label>
+        <input type="number" id="transactions" value="400" />
 
-            <h2>Terminal-/Lizenzpreise DISH</h2>
-            <label for="terminal1">Terminaltyp 1 (monatlicher Preis €):</label>
-            <input type="number" id="terminal1" value="14.90" required>
+        <h3>Hardware Optionen:</h3>
+        <select id="hardwareOption">
+            <option value="S1F2">S1F2 (499 €)</option>
+            <option value="P00C">P00C (399 €)</option>
+            <option value="MotoG14">Moto G14 (119 €)</option>
+            <option value="Tap2Pay">Tap2Pay (79 €)</option>
+        </select>
 
-            <label for="terminal2">Terminaltyp 2 (monatlicher Preis €):</label>
-            <input type="number" id="terminal2" value="12.90" required>
+        <h3>Wettbewerber-Vergleich:</h3>
+        <label for="competitorFee">Wettbewerber-Transaktionsgebühr (€):</label>
+        <input type="number" id="competitorFee" value="0.08" />
 
-            <label for="transactionPrice">Transaktionspreis (€):</label>
-            <input type="number" id="transactionPrice" value="0.06" required>
-
-            <h2>Transaktionsdetails</h2>
-            <label for="transactionCount">Erwartete Anzahl an monatlichen Transaktionen:</label>
-            <input type="number" id="transactionCount" value="400" required>
-        </div>
-
-        <button id="calculateBtn">Berechnen</button>
-
-        <h2>Ergebnisse</h2>
-        <div id="results" class="results"></div>
+        <button onclick="calculateCosts()">Berechnen</button>
+        
+        <h2>Ergebnisse:</h2>
+        <div id="results"></div>
     </div>
 
     <script src="script.js"></script>
