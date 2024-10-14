@@ -1,8 +1,10 @@
+// Funktion zur Berechnung der Hardwarekosten
 function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
 
+    // Einmalige Kosten und monatliche Kosten aus den Datenattributen des ausgewählten Hardware-Elements
     const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
     let monthlyCost = 0;
 
@@ -22,6 +24,7 @@ function updateHardwareCosts() {
     return { onceCost: priceOnce, monthlyCost };
 }
 
+// Funktion zum Umschalten der Mietoptionen basierend auf der Auswahl von Kauf oder Miete
 function toggleRentalOptions() {
     const rentalOptions = document.getElementById('rentalOptions');
     const hardwareSelect = document.getElementById('hardware');
@@ -35,47 +38,56 @@ function toggleRentalOptions() {
     }
 }
 
+// Funktion zum Umschalten der Wettbewerberfelder
 function toggleCompetitorFields() {
     const competitorSection = document.getElementById('competitorSection');
     competitorSection.style.display = document.getElementById('competitorInclude').value === "ja" ? 'block' : 'none';
 }
 
+// Hauptfunktion zur Berechnung der Kosten
 function calculateCosts() {
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-    const transactions = parseFloat(document.getElementById('transactions').value) || 0;
-
-    const girocardFee = parseFloat(document.getElementById('girocard').value) || 0;
-    const maestroFee = parseFloat(document.getElementById('maestro').value) || 0;
-    const mastercardVisaFee = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const businessCardFee = parseFloat(document.getElementById('businessCard').value) || 0;
-
-    const competitorIncluded = document.getElementById('competitorInclude').value === "ja";
-
-    // Hardware costs
+    
+    // Prozentsätze für die Kartenarten
+    const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
+    const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
+    const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+    const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
+    
+    // Hardwarekosten (aus der Funktion updateHardwareCosts)
     const { onceCost, monthlyCost } = updateHardwareCosts();
+    
+    // Anteile des Umsatzes für die einzelnen Kartenarten
+    const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
+    const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
+    const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
+    const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
+    
+    // Transaktionsgebühren (die relevanten Prozentsätze werden angewendet)
+    const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);  // 0,39% oder 0,29% für Girocard
+    const maestroFee = maestroRevenue * 0.0089;    // 0,89% für Maestro
+    const mastercardVisaFee = mastercardVisaRevenue * 0.0089;  // 0,89% für Mastercard/VISA Privatkunden
+    const businessCardFee = businessCardRevenue * 0.0289;  // 2,89% für Business Card (nicht-EWR Raum)
 
-    // Fee calculations
-    const girocardRevenue = (monthlyVolume * (girocardFee / 100));
-    const maestroRevenue = (monthlyVolume * (maestroFee / 100));
-    const mastercardVisaRevenue = (monthlyVolume * (mastercardVisaFee / 100));
-    const businessCardRevenue = (monthlyVolume * (businessCardFee / 100));
-
-    const totalRevenue = girocardRevenue + maestroRevenue + mastercardVisaRevenue + businessCardRevenue;
-
-    // Competitor fees (if applicable)
-    let competitorTotal = 0;
+    // Gesamtsumme der Transaktionsgebühren
+    const totalTransactionFees = girocardFee + maestroFee + mastercardVisaFee + businessCardFee;
+    
+    // Endgültige monatliche Kosten: Transaktionsgebühren + Hardwarekosten + 3,90 € für SIM-Karte/Servicekosten
+    const totalMonthlyCost = totalTransactionFees + monthlyCost + 3.90;
+    
+    // Ausgabe der Ergebnisse
+    document.getElementById('totalRevenue').innerText = `Gesamte Transaktionsgebühren: ${totalTransactionFees.toFixed(2)} €`;
+    document.getElementById('totalCost').innerText = `Gesamtkosten pro Monat (inkl. Hardware + SIM-Karte): ${totalMonthlyCost.toFixed(2)} €`;
+    
+    // Wenn Wettbewerbsgebühren berechnet werden sollen
+    const competitorIncluded = document.getElementById('competitorInclude').value === "ja";
     if (competitorIncluded) {
+        const transactions = parseFloat(document.getElementById('transactions').value) || 0;
         const competitorFee = parseFloat(document.getElementById('competitorFee').value) || 0;
-        competitorTotal = transactions * competitorFee;
+        const competitorTotal = transactions * competitorFee;
+        const competitorSavings = competitorTotal - totalMonthlyCost;
+        
+        document.getElementById('competitorTotal').innerText = `Wettbewerberkosten: ${competitorTotal.toFixed(2)} €`;
+        document.getElementById('competitorSavings').innerText = `Ersparnis im Vergleich zum Wettbewerber: ${competitorSavings.toFixed(2)} €`;
     }
-
-    // Final calculation
-    const totalCost = totalRevenue + monthlyCost + onceCost;
-    const competitorSavings = competitorTotal - totalCost;
-
-    // Display results
-    document.getElementById('totalRevenue').innerText = `Gesamter Umsatz: ${totalRevenue.toFixed(2)} €`;
-    document.getElementById('competitorTotal').innerText = `Wettbewerberkosten: ${competitorTotal.toFixed(2)} €`;
-    document.getElementById('totalCost').innerText = `Gesamtkosten: ${totalCost.toFixed(2)} €`;
-    document.getElementById('competitorSavings').innerText = `Ersparnis im Vergleich zum Wettbewerber: ${competitorSavings.toFixed(2)} €`;
 }
