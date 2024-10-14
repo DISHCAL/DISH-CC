@@ -26,7 +26,7 @@ h1, h3 {
 .info-section {
     background-color: #f1f1f1;
     padding: 10px;
-    margin-bottom: 20px;
+    margin-top: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 0.85em; /* Verkleinert den Text */
@@ -72,6 +72,7 @@ button {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    margin-bottom: 10px;
 }
 
 /* Hover-Effekt für den Button */
@@ -85,10 +86,26 @@ button:hover {
     margin-top: 20px;
 }
 
+#result .result-section {
+    display: inline-block;
+    text-align: left;
+    padding: 20px;
+    border: 2px solid #ff6f00;
+    border-radius: 8px;
+    background-color: #fff8e1;
+}
+
 #result p {
     font-size: 18px;
     color: #333;
     margin: 10px 0;
+}
+
+/* Hervorhebung der Ergebnisse */
+#result p#oneTimeCost,
+#result p#monthlyCost,
+#result p#totalCost {
+    font-weight: bold;
 }
 
 /* Styling für ausgeblendete Sektionen (Wettbewerber) */
@@ -106,3 +123,4 @@ button:hover {
         font-size: 14px;
     }
 }
+
