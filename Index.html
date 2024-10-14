@@ -46,6 +46,12 @@
         <option value="kaufen">Kaufen</option>
     </select>
 
+    <label for="onceCost">Einmalige Kosten der Hardware (€):</label>
+    <input type="number" id="onceCost" placeholder="z.B. 250" required>
+
+    <label for="monthlyCost">Monatliche Kosten der Hardware (€):</label>
+    <input type="number" id="monthlyCost" placeholder="z.B. 30" required>
+
     <label for="competitorInclude">Wettbewerber berechnen?</label>
     <select id="competitorInclude" onchange="toggleCompetitorFields()">
         <option value="nein">Nein</option>
