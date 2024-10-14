@@ -27,18 +27,10 @@
     <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
     <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" required>
 
     <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 2" step="0.01" required>
-
-    <label for="hardwareOption">Hardware Option:</label>
-    <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="499" data-12m-cost="44.90" data-36m-cost="18.90" data-60m-cost="14.90">S1F2</option>
-        <option value="V400C" data-once-cost="399" data-12m-cost="39.90" data-36m-cost="16.90" data-60m-cost="12.90">V400C</option>
-        <option value="MotoG14" data-once-cost="119" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Moto G14 mit Lizenz</option>
-        <option value="Tap2Pay" data-once-cost="0" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Tap2Pay Lizenz f. Handheld</option>
-    </select>
+    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
 
     <label for="purchaseOption">Kauf oder Miete:</label>
     <select id="purchaseOption" onchange="toggleRentalOptions()">
@@ -48,12 +40,20 @@
 
     <div id="rentalOptions" style="display:none;">
         <label for="rentalPeriod">Mietdauer:</label>
-        <select id="rentalPeriod" onchange="updateHardwareCosts()">
-            <option value="12m">12 Monate</option>
-            <option value="36m">36 Monate</option>
-            <option value="60m">60 Monate</option>
+        <select id="rentalPeriod">
+            <option value="12M" data-monthly-cost="44.90">12 Monate - 44,90 €</option>
+            <option value="36M" data-monthly-cost="18.90">36 Monate - 18,90 €</option>
+            <option value="60M" data-monthly-cost="14.90">60 Monate - 14,90 €</option>
         </select>
     </div>
+
+    <label for="hardwareOption">Hardware Option:</label>
+    <select id="hardwareOption" onchange="updateHardwareCosts()">
+        <option value="S1F2" data-once-cost="499" data-12M-cost="44.90" data-36M-cost="18.90" data-60M-cost="14.90">S1F2</option>
+        <option value="V400C" data-once-cost="399" data-12M-cost="39.90" data-36M-cost="16.90" data-60M-cost="12.90">V400C</option>
+        <option value="MotoG14" data-once-cost="119" data-12M-cost="7.90" data-36M-cost="0" data-60M-cost="0">Moto G14 mit Lizenz</option>
+        <option value="Tap2Pay" data-once-cost="0" data-12M-cost="7.90" data-36M-cost="0" data-60M-cost="0">Tap2Pay Lizenz f. Handheld</option>
+    </select>
 
     <label for="competitorInclude">Wettbewerber berechnen?</label>
     <select id="competitorInclude" onchange="toggleCompetitorFields()">
@@ -61,7 +61,7 @@
         <option value="ja">Ja</option>
     </select>
 
-    <div id="competitorSection">
+    <div id="competitorSection" style="display:none;">
         <h3>Wettbewerber Daten</h3>
         <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
         <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
