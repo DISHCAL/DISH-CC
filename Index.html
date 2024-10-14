@@ -20,24 +20,24 @@
     <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
     <input type="number" id="transactions" placeholder="z.B. 400" required>
 
-    <label for="girocard">Girocard (%) :</label>
+    <label for="girocard">Girocard (%):</label>
     <input type="number" id="girocard" placeholder="z.B. 25" step="0.01" required>
 
-    <label for="maestro">Maestro / VPAY (%) :</label>
+    <label for="maestro">Maestro / VPAY (%):</label>
     <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
-    <label for="mastercardVisa">Mastercard / VISA (%) :</label>
+    <label for="mastercardVisa">Mastercard / VISA (%):</label>
     <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
 
-    <label for="businessCard">Business Card (%) :</label>
+    <label for="businessCard">Business Card (%):</label>
     <input type="number" id="businessCard" placeholder="z.B. 2" step="0.01" required>
 
     <label for="hardwareOption">Hardware Option:</label>
-    <select id="hardwareOption">
-        <option value="S1F2">S1F2</option>
-        <option value="P00C">P00C</option>
-        <option value="MotoG14">Moto G14</option>
-        <option value="Tap2Pay">Tap2Pay</option>
+    <select id="hardwareOption" onchange="updateHardwareCosts()">
+        <option value="S1F2" data-once-cost="250" data-monthly-cost="30">S1F2 - Einmalige Kosten: 250 €, Monatliche Kosten: 30 €</option>
+        <option value="P00C" data-once-cost="200" data-monthly-cost="25">P00C - Einmalige Kosten: 200 €, Monatliche Kosten: 25 €</option>
+        <option value="MotoG14" data-once-cost="300" data-monthly-cost="35">Moto G14 - Einmalige Kosten: 300 €, Monatliche Kosten: 35 €</option>
+        <option value="Tap2Pay" data-once-cost="150" data-monthly-cost="20">Tap2Pay - Einmalige Kosten: 150 €, Monatliche Kosten: 20 €</option>
     </select>
 
     <label for="hardwareOptionPurchase">Mieten oder Kaufen:</label>
@@ -45,12 +45,6 @@
         <option value="mieten">Mieten</option>
         <option value="kaufen">Kaufen</option>
     </select>
-
-    <label for="onceCost">Einmalige Kosten der Hardware (€):</label>
-    <input type="number" id="onceCost" placeholder="z.B. 250" required>
-
-    <label for="monthlyCost">Monatliche Kosten der Hardware (€):</label>
-    <input type="number" id="monthlyCost" placeholder="z.B. 30" required>
 
     <label for="competitorInclude">Wettbewerber berechnen?</label>
     <select id="competitorInclude" onchange="toggleCompetitorFields()">
@@ -63,16 +57,16 @@
         <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
         <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
 
-        <label for="competitorGirocardFee">Girocard Gebühr (%) :</label>
+        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
         <input type="number" id="competitorGirocardFee" placeholder="z.B. 0,39" step="0.01">
 
-        <label for="competitorMaestroFee">Maestro Gebühr (%) :</label>
+        <label for="competitorMaestroFee">Maestro Gebühr (%):</label>
         <input type="number" id="competitorMaestroFee" placeholder="z.B. 0,79" step="0.01">
 
-        <label for="competitorMastercardFee">Mastercard Gebühr (%) :</label>
+        <label for="competitorMastercardFee">Mastercard Gebühr (%):</label>
         <input type="number" id="competitorMastercardFee" placeholder="z.B. 2,89" step="0.01">
 
-        <label for="competitorBusinessFee">Business Card Gebühr (%) :</label>
+        <label for="competitorBusinessFee">Business Card Gebühr (%):</label>
         <input type="number" id="competitorBusinessFee" placeholder="z.B. 1,99" step="0.01">
     </div>
 
