@@ -12,7 +12,6 @@
 <div class="container">
     <!-- DISH Logo -->
     <div class="logo">
-        <!-- Stelle sicher, dass der Pfad zum Logo korrekt ist -->
         <img src="logo.png" alt="DISH by Metro Logo" class="logo-img">
     </div>
 
@@ -65,15 +64,20 @@
         </select>
     </div>
 
+    <!-- Wettbewerber Optionen -->
     <label for="competitorInclude">Wettbewerber berechnen?</label>
     <select id="competitorInclude" onchange="toggleCompetitorFields()">
         <option value="nein">Nein</option>
         <option value="ja">Ja</option>
     </select>
 
+    <!-- Wettbewerber Eingabefelder -->
     <div id="competitorSection" style="display: none;">
         <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
         <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
+
+        <label for="competitorClearing">Clearing-Gebühr pro Transaktion (€):</label>
+        <input type="number" id="competitorClearing" value="0.04" step="0.01">
     </div>
 
     <button onclick="calculateCosts()">Berechnen</button>
@@ -86,7 +90,7 @@
         <p id="competitorSavings"></p>
     </div>
 
-    <!-- Informationsfeld zu Gebühren wurde nach unten verschoben -->
+    <!-- Informationsfeld zu Gebühren -->
     <div class="info-section">
         <h4>Hinweis zu den Gebühren:</h4>
         <ul>
@@ -102,4 +106,3 @@
 
 </body>
 </html>
-
