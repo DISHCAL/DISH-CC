@@ -3,48 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartentransaktionsrechner</title>
+    <title>DISH PAY Kartentransaktionsrechner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Kartentransaktionsrechner</h1>
-        
+        <h1>DISH PAY Kartentransaktionsrechner</h1>
+
+        <p>Berechnen Sie Ihre monatlichen Kosten basierend auf Ihrem geplanten Kartenumsatz und vergleichen Sie die Kosten mit einem Wettbewerber.</p>
+
+        <h3>Eingaben:</h3>
+
         <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
         <input type="number" id="monthlyVolume" value="20000" />
+        <p class="info">Geben Sie hier den durchschnittlichen Betrag an, den Sie monatlich über Karten abrechnen.</p>
 
-        <h3>Kartenverteilung:</h3>
-        <label for="girocard">Girocard (%):</label>
+        <h3>Kartenverteilung (%):</h3>
+        <label for="girocard">Girocard:</label>
         <input type="number" id="girocard" value="70" />
-        
-        <label for="maestro">Maestro / VPAY (%):</label>
+        <p class="info">Prozentsatz der Zahlungen, die über Girocard abgewickelt werden.</p>
+
+        <label for="maestro">Maestro / VPAY:</label>
         <input type="number" id="maestro" value="25" />
-        
-        <label for="mastercardVisa">Mastercard / VISA Privat (%):</label>
+        <p class="info">Prozentsatz der Zahlungen, die über Maestro oder VPAY abgewickelt werden.</p>
+
+        <label for="mastercardVisa">Mastercard / VISA Privat:</label>
         <input type="number" id="mastercardVisa" value="4" />
-        
-        <label for="businessCard">Mastercard / VISA Business (%):</label>
+        <p class="info">Prozentsatz der Zahlungen, die über Mastercard oder VISA von Privatkunden abgewickelt werden.</p>
+
+        <label for="businessCard">Mastercard / VISA Business & Nicht-EWR-Raum:</label>
         <input type="number" id="businessCard" value="1" />
-        
+        <p class="info">Prozentsatz der Zahlungen, die über Business-Karten oder von Kunden außerhalb des EWR-Raums abgewickelt werden.</p>
+
         <label for="transactions">Erwartete Anzahl der Transaktionen:</label>
         <input type="number" id="transactions" value="400" />
+        <p class="info">Schätzen Sie die monatliche Anzahl der Karten-Transaktionen.</p>
 
         <h3>Hardware Optionen:</h3>
         <select id="hardwareOption">
-            <option value="S1F2">S1F2 (499 €)</option>
-            <option value="P00C">P00C (399 €)</option>
-            <option value="MotoG14">Moto G14 (119 €)</option>
-            <option value="Tap2Pay">Tap2Pay (79 €)</option>
+            <option value="S1F2">S1F2 (Kauf: 499€, Miete: 3,90€/Monat)</option>
+            <option value="P00C">P00C (Kauf: 399€, Miete: 3,90€/Monat)</option>
+            <option value="MotoG14">Moto G14 (Kauf: 119€, Miete: 7,90€/Monat)</option>
+            <option value="Tap2Pay">Tap2Pay (Miete: 7,90€/Monat)</option>
         </select>
+        <p class="info">Wählen Sie die für Sie passende Hardware für Kartenzahlungen.</p>
 
         <h3>Wettbewerber-Vergleich:</h3>
         <label for="competitorFee">Wettbewerber-Transaktionsgebühr (€):</label>
         <input type="number" id="competitorFee" value="0.08" />
+        <p class="info">Geben Sie die Transaktionsgebühr des Wettbewerbers ein, um die Kosten zu vergleichen.</p>
 
         <button onclick="calculateCosts()">Berechnen</button>
-        
+
         <h2>Ergebnisse:</h2>
         <div id="results"></div>
+
+        <button onclick="downloadOffer()">Angebot als PDF herunterladen</button>
     </div>
 
     <script src="script.js"></script>
