@@ -4,60 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISH PAY Rechner</title>
-    <link rel="stylesheet" href="dish_pay_style_fixed.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="dish_pay_script_fixed.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
 
 <div class="container">
-    <h1 style="text-align: center;"><img src="dish_logo.png" alt="DISH Logo" style="display: block; margin: 0 auto;"> DISH PAY Rechner</h1>
+    <h1>DISH PAY Rechner</h1>
     <h3>Monatliche Kostenberechnung</h3>
 
     <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
     <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
 
-    <label for="transactions">Erwartete Anzahl monatlicher Transaktionen:</label>
+    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
     <input type="number" id="transactions" placeholder="z.B. 400" required>
 
     <label for="girocard">Girocard (%):</label>
     <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" required>
 
     <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 10" step="0.01" required>
+    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
-    <label for="mastercardVisa">Mastercard / VISA Privatkunden (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 15" step="0.01" required>
+    <label for="mastercardVisa">Mastercard / VISA (%):</label>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" required>
 
-    <label for="businessCard">Mastercard / VISA Business und Nicht-EWR-Raum (%):</label>
+    <label for="businessCard">Business Card (%):</label>
     <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
 
-    <label for="hardwareOption">Hardware-Option:</label>
-    <select id="hardwareOption">
-        <option value="s1f2" data-once-cost="499" data-monthly-cost="3.9" data-12m-cost="44.90" data-36m-cost="18.90">S1F2 Terminal</option>
-        <option value="s12" data-once-cost="399" data-monthly-cost="3.90" data-12m-cost="39.90" data-36m-cost="16.90">S12 Terminal</option>
-        <option value="g14" data-once-cost="119" data-monthly-cost="7.90">Moto G14 Terminal</option>
-    </select>
-
-    <label for="purchaseOption">Kaufoption:</label>
+    <label for="purchaseOption">Kauf oder Miete:</label>
     <select id="purchaseOption" onchange="toggleRentalOptions()">
-        <option value="kaufen">Kaufen</option>
         <option value="mieten">Mieten</option>
+        <option value="kaufen">Kaufen</option>
     </select>
 
-    <div id="rentalOptions" style="display: none;">
-        <label for="rentalPeriod">Mietzeitraum:</label>
-        <select id="rentalPeriod">
-            <option value="12m-cost">12 Monate</option>
-            <option value="36m-cost">36 Monate</option>
+    <!-- Hardware Dropdown -->
+    <div id="hardwareOptions">
+        <label for="hardware">Hardware auswählen:</label>
+        <select id="hardware">
+            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal - 499,00 € Kauf</option>
+            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal - 399,00 € Kauf</option>
+            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal - 119,00 € Kauf, 7,90 € monatlich</option>
+            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz - 7,90 € monatlich</option>
         </select>
+    </div>
+
+    <!-- Mietoptionen für den Mietzeitraum -->
+    <div id="rentalOptions">
+        <label for="rentalPeriod">Mietdauer:</label>
+        <select id="rentalPeriod">
+            <option value="12">12 Monate</option>
+            <option value="36">36 Monate</option>
+            <option value="60">60 Monate</option>
+        </select>
+    </div>
+
+    <label for="competitorInclude">Wettbewerber berechnen?</label>
+    <select id="competitorInclude" onchange="toggleCompetitorFields()">
+        <option value="nein">Nein</option>
+        <option value="ja">Ja</option>
+    </select>
+
+    <div id="competitorSection" style="display: none;">
+        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
+        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
     </div>
 
     <button onclick="calculateCosts()">Berechnen</button>
 
-    <div id="results"></div>
-    <button id="downloadOffer" style="margin-top: 20px;">Angebot als PDF herunterladen</button>
+    <div id="result">
+        <h3>Ergebnisse:</h3>
+        <p id="totalRevenue"></p>
+        <p id="competitorTotal"></p>
+        <p id="totalCost"></p>
+        <p id="competitorSavings"></p>
+    </div>
 </div>
 
 </body>
