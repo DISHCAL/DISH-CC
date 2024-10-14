@@ -15,71 +15,83 @@ function calculateCosts() {
     const businessCardFee = 0.0289;
     const transactionFee = 0.06; // Transaktionsgebühr pro Transaktion (0,06 €)
 
-    // Schwelle für niedrige/höhere Girocard-Gebühr
-    let girocardFee = monthlyVolume > 10000 ? girocardFeeHigh : girocardFeeLow;
-
-    // Hardwarekosten
+    // Hardwarekosten je nach Kauf oder Miete
     let hardwareOption = document.getElementById('hardwareOption').value;
+    let hardwareOptionPurchase = document.getElementById('hardwareOptionPurchase').value;
     let hardwareCost = 0;
     let hardwareRentalCost = 0;
 
-    switch (hardwareOption) {
-        case 'S1F2':
-            hardwareCost = 499;
-            hardwareRentalCost = 3.90;
-            break;
-        case 'P00C':
-            hardwareCost = 399;
-            hardwareRentalCost = 3.90;
-            break;
-        case 'MotoG14':
-            hardwareCost = 119;
-            hardwareRentalCost = 7.90;
-            break;
-        case 'Tap2Pay':
-            hardwareRentalCost = 7.90;  // Kein Kaufpreis, nur Miete
-            break;
+    if (hardwareOptionPurchase === 'mieten') {
+        switch (hardwareOption) {
+            case 'S1F2':
+                hardwareRentalCost = 3.90;
+                break;
+            case 'P00C':
+                hardwareRentalCost = 3.90;
+                break;
+            case 'MotoG14':
+                hardwareRentalCost = 7.90;
+                break;
+            case 'Tap2Pay':
+                hardwareRentalCost = 7.90;  // Kein Kaufpreis, nur Miete
+                break;
+        }
+    } else if (hardwareOptionPurchase === 'kaufen') {
+        switch (hardwareOption) {
+            case 'S1F2':
+                hardwareCost = 499;
+                break;
+            case 'P00C':
+                hardwareCost = 399;
+                break;
+            case 'MotoG14':
+                hardwareCost = 119;
+                break;
+        }
     }
 
-    // Berechnungen für DISH
-    let girocardCost = monthlyVolume * girocardPercent * girocardFee;
-    let maestroCost = monthlyVolume * maestroPercent * maestroFee;
-    let mastercardCost = monthlyVolume * mastercardVisaPercent * mastercardFee;
-    let businessCardCost = monthlyVolume * businessCardPercent * businessCardFee;
-    let transactionCost = transactions * transactionFee;
+    // Schwelle für niedrige/höhere Girocard-Gebühr
+    let girocardFee = monthlyVolume > 10000 ? girocardFeeHigh : girocardFeeLow;
 
-    let totalDishCost = girocardCost + maestroCost + mastercardCost + businessCardCost + transactionCost + hardwareRentalCost;
+    // Berechnung der monatlichen Gebühren für DISH
+    let dishCost = transactions * transactionFee;
+    dishCost += monthlyVolume * girocardPercent * girocardFee;
+    dishCost += monthlyVolume * maestroPercent * maestroFee;
+    dishCost += monthlyVolume * mastercardVisaPercent * mastercardFee;
+    dishCost += monthlyVolume * businessCardPercent * businessCardFee;
+    dishCost += hardwareRentalCost;
 
-    // Wettbewerberkosten
-    let competitorFee = parseFloat(document.getElementById('competitorFee').value);
-    let competitorCost = transactions * competitorFee;
+    // Berechnung der Wettbewerberkosten (wenn gewählt)
+    let competitorInclude = document.getElementById('competitorInclude').value;
+    let competitorCost = 0;
+
+    if (competitorInclude === 'ja') {
+        let competitorFee = parseFloat(document.getElementById('competitorFee').value);
+        let competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100;
+        let competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100;
+        let competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) / 100;
+        let competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) / 100;
+
+        competitorCost = transactions * competitorFee;
+        competitorCost += monthlyVolume * girocardPercent * competitorGirocardFee;
+        competitorCost += monthlyVolume * maestroPercent * competitorMaestroFee;
+        competitorCost += monthlyVolume * mastercardVisaPercent * competitorMastercardFee;
+        competitorCost += monthlyVolume * businessCardPercent * competitorBusinessFee;
+    }
 
     // Ergebnisse anzeigen
-    let results = document.getElementById('results');
-    results.innerHTML = `
-        <p><strong>Gesamtkosten DISH:</strong> €${totalDishCost.toFixed(2)}</p>
-        <p><strong>Wettbewerberkosten:</strong> €${competitorCost.toFixed(2)}</p>
-        <p><strong>Monatliche Einsparungen mit DISH:</strong> €${(competitorCost - totalDishCost).toFixed(2)}</p>
+    document.getElementById('results').innerHTML = `
+        <p><strong>Monatliche DISH Kosten:</strong> ${dishCost.toFixed(2)} €</p>
+        ${competitorInclude === 'ja' ? `<p><strong>Monatliche Wettbewerber Kosten:</strong> ${competitorCost.toFixed(2)} €</p>` : ''}
     `;
 }
 
 function downloadOffer() {
-    const element = document.createElement('a');
-    const offerText = `
-        DISH PAY - Kartenzahlung Angebot
-
-        Geplanter Umsatz pro Monat: €${document.getElementById('monthlyVolume').value}
-        Anzahl der Transaktionen: ${document.getElementById('transactions').value}
-
-        Gesamtkosten DISH: €${totalDishCost.toFixed(2)}
-        Wettbewerberkosten: €${competitorCost.toFixed(2)}
-        Monatliche Einsparungen mit DISH: €${(competitorCost - totalDishCost).toFixed(2)}
-
-        Hardware: ${document.getElementById('hardwareOption').value}
-    `;
-    const file = new Blob([offerText], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = 'DISH_PAY_Angebot.txt';
-    document.body.appendChild(element); 
-    element.click();
+    let offerText = "Hier ist Ihr Angebot basierend auf den eingegebenen Daten:";
+    // Weitere Details können hinzugefügt werden
+    const blob = new Blob([offerText], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'DISH_PAY_Angebot.txt';
+    link.click();
 }
