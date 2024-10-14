@@ -1,118 +1,105 @@
-/* Allgemeine Styles für den Body */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
-}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISH PAY Rechner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
 
-/* Container-Styling für das Formular */
-.container {
-    max-width: 600px;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+<div class="container">
+    <!-- DISH Logo -->
+    <div class="logo">
+        <!-- Stelle sicher, dass der Pfad zum Logo korrekt ist -->
+        <img src="logo.png" alt="DISH by Metro Logo" class="logo-img">
+    </div>
 
-/* Logo Styling */
-.logo {
-    text-align: center;
-    margin-bottom: 20px;
-}
+    <h1>DISH PAY Rechner</h1>
+    <h3>Monatliche Kostenberechnung</h3>
 
-.logo-img {
-    max-width: 200px;
-    height: auto;
-}
+    <!-- Formularfelder -->
+    <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
+    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
 
-/* Überschriften */
-h1, h3 {
-    text-align: center;
-    color: #ff6f00;
-}
+    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
+    <input type="number" id="transactions" placeholder="z.B. 400" required>
 
-/* Info-Bereich für Gebühren */
-.info-section {
-    background-color: #f1f1f1;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+    <label for="girocard">Girocard (%):</label>
+    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" required>
 
-.info-section h4 {
-    color: #333;
-    margin: 0 0 10px;
-}
+    <label for="maestro">Maestro / VPAY (%):</label>
+    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
-.info-section ul {
-    list-style-type: none;
-    padding: 0;
-}
+    <label for="mastercardVisa">Mastercard / VISA (%):</label>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" required>
 
-.info-section ul li {
-    margin-bottom: 5px;
-}
+    <label for="businessCard">Business Card (%):</label>
+    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
 
-/* Label-Styling */
-label {
-    display: block;
-    margin: 15px 0 5px;
-    font-weight: bold;
-    color: #333;
-}
+    <label for="purchaseOption">Kauf oder Miete:</label>
+    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+        <option value="mieten">Mieten</option>
+        <option value="kaufen">Kaufen</option>
+    </select>
 
-/* Styling für alle Input-Felder und Dropdowns */
-input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
+    <!-- Hardware Dropdown -->
+    <div id="hardwareOptions">
+        <label for="hardware">Hardware auswählen:</label>
+        <select id="hardware" onchange="updateRentalPrices()">
+            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+        </select>
+    </div>
 
-/* Styling für den Button */
-button {
-    background-color: #ff6f00;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
+    <!-- Mietoptionen für den Mietzeitraum -->
+    <div id="rentalOptions">
+        <label for="rentalPeriod">Mietdauer:</label>
+        <select id="rentalPeriod">
+            <option value="12">12 Monate</option>
+            <option value="36">36 Monate</option>
+            <option value="60">60 Monate</option>
+        </select>
+    </div>
 
-/* Hover-Effekt für den Button */
-button:hover {
-    background-color: #e65c00;
-}
+    <label for="competitorInclude">Wettbewerber berechnen?</label>
+    <select id="competitorInclude" onchange="toggleCompetitorFields()">
+        <option value="nein">Nein</option>
+        <option value="ja">Ja</option>
+    </select>
 
-/* Ergebnisbereich-Styling */
-#result {
-    text-align: center;
-    margin-top: 20px;
-}
+    <div id="competitorSection" style="display: none;">
+        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
+        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
+    </div>
 
-#result p {
-    font-size: 18px;
-    color: #333;
-    margin: 10px 0;
-}
+    <button onclick="calculateCosts()">Berechnen</button>
 
-/* Styling für ausgeblendete Sektionen (Wettbewerber) */
-#competitorSection {
-    display: none;
-}
+    <div id="result">
+        <h3>Ergebnisse:</h3>
+        <p id="totalRevenue"></p>
+        <p id="competitorTotal"></p>
+        <p id="totalCost"></p>
+        <p id="competitorSavings"></p>
+    </div>
 
-/* Responsive Design: Layoutanpassung für kleinere Bildschirme */
-@media (max-width: 768px) {
-    .container {
-        width: 90%;
-    }
-    
-    input, select, button {
-        font-size: 14px;
-    }
-}
+    <!-- Informationsfeld zu Gebühren wurde nach unten verschoben -->
+    <div class="info-section">
+        <h4>Hinweis zu den Gebühren:</h4>
+        <ul>
+            <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
+            <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
+            <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
+            <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
+            <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>
+
