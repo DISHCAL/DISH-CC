@@ -27,23 +27,24 @@
     <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
 
     <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" required>
 
     <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 2" step="0.01" required>
+    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
 
     <label for="hardwareOption">Hardware Option:</label>
     <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="499" data-monthly-cost="18,90">S1F2 - Einmalige Kosten: 499 €, Monatliche Kosten: 18,90 €</option>
-        <option value="P00C" data-once-cost="200" data-monthly-cost="25">P00C - Einmalige Kosten: 200 €, Monatliche Kosten: 25 €</option>
-        <option value="MotoG14" data-once-cost="300" data-monthly-cost="35">Moto G14 - Einmalige Kosten: 300 €, Monatliche Kosten: 35 €</option>
-        <option value="Tap2Pay" data-once-cost="150" data-monthly-cost="20">Tap2Pay - Einmalige Kosten: 150 €, Monatliche Kosten: 20 €</option>
+        <option value="S1F2" data-12m-cost="18.90" data-36m-cost="14.90" data-60m-cost="12.90">S1F2 - Monatliche Kosten: 12,90 €</option>
+        <option value="V400C" data-12m-cost="16.90" data-36m-cost="12.90" data-60m-cost="10.90">V400C - Monatliche Kosten: 10,90 €</option>
+        <option value="MotoG14" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Moto G14 - Monatliche Kosten: 0 €</option>
+        <option value="Tap2Pay" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Tap2Pay - Monatliche Kosten: 0 €</option>
     </select>
 
-    <label for="hardwareOptionPurchase">Mieten oder Kaufen:</label>
-    <select id="hardwareOptionPurchase" onchange="toggleCompetitorFields()">
-        <option value="mieten">Mieten</option>
-        <option value="kaufen">Kaufen</option>
+    <label for="rentalPeriod">Mietdauer (Monate):</label>
+    <select id="rentalPeriod" onchange="updateHardwareCosts()">
+        <option value="12">12 Monate</option>
+        <option value="36">36 Monate</option>
+        <option value="60">60 Monate</option>
     </select>
 
     <label for="competitorInclude">Wettbewerber berechnen?</label>
