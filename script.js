@@ -11,8 +11,18 @@ function toggleCompetitorFields() {
 
 function updateHardwareCosts() {
     const hardwareSelect = document.getElementById('hardwareOption');
-    const onceCost = hardwareSelect.selectedOptions[0].getAttribute('data-once-cost');
-    const monthlyCost = hardwareSelect.selectedOptions[0].getAttribute('data-monthly-cost');
+    const rentalPeriodSelect = document.getElementById('rentalPeriod');
+    const purchaseOption = document.getElementById('hardwareOptionPurchase').value;
+
+    const onceCost = parseFloat(hardwareSelect.selectedOptions[0].getAttribute('data-once-cost')) || 0;
+    let monthlyCost = 0;
+
+    if (purchaseOption === "kaufen") {
+        monthlyCost = parseFloat(hardwareSelect.selectedOptions[0].getAttribute('data-monthly-cost-12')) || 0; // kein Mietpreis
+    } else {
+        const rentalPeriod = rentalPeriodSelect.value;
+        monthlyCost = parseFloat(hardwareSelect.selectedOptions[0].getAttribute(`data-monthly-cost-${rentalPeriod}`)) || 0;
+    }
 
     document.getElementById('onceCost').value = onceCost;
     document.getElementById('monthlyCost').value = monthlyCost;
@@ -27,9 +37,9 @@ function calculateCosts() {
     const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
 
     const hardwareSelect = document.getElementById('hardwareOption');
-    const monthlyHardwareCost = parseFloat(hardwareSelect.selectedOptions[0].getAttribute('data-monthly-cost')) || 0;
-
-    const competitorInclude = document.getElementById('competitorInclude').value;
+    const purchaseOption = document.getElementById('hardwareOptionPurchase').value;
+    const rentalPeriod = document.getElementById('rentalPeriod').value;
+    const monthlyHardwareCost = purchaseOption === 'kaufen' ? 0 : parseFloat(hardwareSelect.selectedOptions[0].getAttribute(`data-monthly-cost-${rentalPeriod}`)) || 0;
 
     let totalCost = monthlyHardwareCost;
 
@@ -67,9 +77,19 @@ function downloadOffer() {
     const hardwareSelect = document.getElementById('hardwareOption');
     const hardwareName = hardwareSelect.options[hardwareSelect.selectedIndex].text;
 
+    const purchaseOption = document.getElementById('hardwareOptionPurchase').value;
+    const rentalPeriod = document.getElementById('rentalPeriod').value;
+
+    let monthlyHardwareCost = 0;
+    if (purchaseOption === "kaufen") {
+        monthlyHardwareCost = 0;
+    } else {
+        monthlyHardwareCost = parseFloat(hardwareSelect.selectedOptions[0].getAttribute(`data-monthly-cost-${rentalPeriod}`)) || 0;
+    }
+
     const competitorInclude = document.getElementById('competitorInclude').value;
 
-    let offerText = `DISH PAY Angebot\n\nHardware: ${hardwareName}\n`;
+    let offerText = `DISH PAY Angebot\n\nHardware: ${hardwareName} (Monatliche Kosten: €${monthlyHardwareCost.toFixed(2)})\n`;
     offerText += `Geplanter Kartenumsatz pro Monat: €${monthlyVolume.toFixed(2)}\n`;
     offerText += `Erwartete Transaktionen: ${transactions}\n`;
     offerText += `Girocard: ${girocard}%\n`;
