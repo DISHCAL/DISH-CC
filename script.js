@@ -9,47 +9,48 @@ function toggleCompetitorFields() {
     }
 }
 
+function updateHardwareCosts() {
+    const hardwareSelect = document.getElementById('hardwareOption');
+    const onceCost = hardwareSelect.selectedOptions[0].getAttribute('data-once-cost');
+    const monthlyCost = hardwareSelect.selectedOptions[0].getAttribute('data-monthly-cost');
+
+    document.getElementById('onceCost').value = onceCost;
+    document.getElementById('monthlyCost').value = monthlyCost;
+}
+
 function calculateCosts() {
     // Eingaben des Benutzers
     let monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value);
-    let girocardPercent = parseFloat(document.getElementById('girocard').value) / 100;
-    let maestroPercent = parseFloat(document.getElementById('maestro').value) / 100;
-    let mastercardVisaPercent = parseFloat(document.getElementById('mastercardVisa').value) / 100;
-    let businessCardPercent = parseFloat(document.getElementById('businessCard').value) / 100;
-    let transactions = parseInt(document.getElementById('transactions').value);
+    let transactions = parseFloat(document.getElementById('transactions').value);
 
-    // Transaktionsgebühren von DISH
-    const girocardFeeLow = 0.0039;  // Girocard Gebühr unter 10.000€
-    const girocardFeeHigh = 0.0029; // Girocard Gebühr über 10.000€
-    const maestroFee = 0.0079;
-    const mastercardFee = 0.0089;
-    const businessCardFee = 0.0289;
-
-    // Hardwareoptionen
-    let hardwareOption = document.getElementById('hardwareOption').value;
-    let hardwareOptionPurchase = document.getElementById('hardwareOptionPurchase').value;
-    let hardwareRentalCost = 0;
-    let hardwareCost = 0;
-
-    // Hardware Kosten
-    if (hardwareOptionPurchase === 'mieten') {
-        hardwareRentalCost = parseFloat(document.getElementById('monthlyCost').value); // Monatliche Mietkosten
-    } else {
-        hardwareCost = parseFloat(document.getElementById('onceCost').value); // Einmalige Kosten
+    // Überprüfen auf fehlende Werte
+    if (isNaN(monthlyVolume) || isNaN(transactions)) {
+        alert('Bitte stellen Sie sicher, dass alle Werte eingegeben sind.');
+        return;
     }
 
+    // Gebührenprozentwerte
+    const girocardPercent = parseFloat(document.getElementById('girocard').value) / 100;
+    const maestroPercent = parseFloat(document.getElementById('maestro').value) / 100;
+    const mastercardVisaPercent = parseFloat(document.getElementById('mastercardVisa').value) / 100;
+    const businessCardPercent = parseFloat(document.getElementById('businessCard').value) / 100;
+
+    // Hardwareoptionen
+    let hardwareOption = document.getElementById('hardwareOption');
+    let hardwareRentalCost = hardwareOption.selectedOptions[0].getAttribute('data-monthly-cost'); // Monatliche Mietkosten
+    let hardwareCost = hardwareOption.selectedOptions[0].getAttribute('data-once-cost'); // Einmalige Kosten
+
     // Berechnung der DISH Kosten
-    let dishCost = transactions * transactionFee + hardwareRentalCost;
+    let dishCost = transactions * 0.0089 + parseFloat(hardwareRentalCost);
 
-    // Berechnung der Gebühren basierend auf dem Umsatz
-    let girocardFee = monthlyVolume < 10000 ? girocardFeeLow : girocardFeeHigh;
+    // Gebührenberechnung
+    let girocardFee = monthlyVolume < 10000 ? 0.0039 : 0.0029; // Gebühren je nach Umsatz
+    dishCost += transactions * girocardFee;
+    dishCost += monthlyVolume * maestroPercent * 0.0079;
+    dishCost += monthlyVolume * mastercardVisaPercent * 0.0089;
+    dishCost += monthlyVolume * businessCardPercent * 0.0289;
 
-    dishCost += transactions * girocardFee * girocardPercent;
-    dishCost += monthlyVolume * maestroPercent * maestroFee;
-    dishCost += monthlyVolume * mastercardVisaPercent * mastercardFee;
-    dishCost += monthlyVolume * businessCardPercent * businessCardFee;
-
-    // Berechnung der Wettbewerberkosten (wenn gewählt)
+    // Wettbewerberkosten (wenn gewählt)
     let competitorInclude = document.getElementById('competitorInclude').value;
     let competitorCost = 0;
 
@@ -71,8 +72,8 @@ function calculateCosts() {
     document.getElementById('results').innerHTML = `
         <p><strong>Monatliche DISH Kosten:</strong> ${dishCost.toFixed(2).replace('.', ',')} €</p>
         ${competitorInclude === 'ja' ? `<p><strong>Monatliche Wettbewerber Kosten:</strong> ${competitorCost.toFixed(2).replace('.', ',')} €</p>` : ''}
-        <p><strong>Einmalige Hardwarekosten:</strong> ${hardwareCost.toFixed(2).replace('.', ',')} €</p>
-        <p><strong>Monatliche Mietkosten der Hardware:</strong> ${hardwareRentalCost.toFixed(2).replace('.', ',')} €</p>
+        <p><strong>Einmalige Hardwarekosten:</strong> ${hardwareCost} €</p>
+        <p><strong>Monatliche Mietkosten der Hardware:</strong> ${hardwareRentalCost} €</p>
     `;
 }
 
@@ -119,3 +120,4 @@ function downloadOffer() {
     // Speichern der PDF
     pdf.save('DISH_PAY_Angebot.pdf');
 }
+
