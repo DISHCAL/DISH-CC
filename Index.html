@@ -13,9 +13,16 @@
 
 <div class="container">
     <h1>DISH PAY Rechner</h1>
-    <h3>Monatliche und einmalige Kostenberechnung</h3>
+    <h3>Kostenberechnung</h3>
 
-    <!-- Formularfelder -->
+    <!-- Dropdown zur Auswahl der Berechnungsart -->
+    <label for="calculationType">Berechnungsart:</label>
+    <select id="calculationType" onchange="toggleCalculationFields()">
+        <option value="schnell">Schnelle Berechnung</option>
+        <option value="ausführlich">Ausführliche Berechnung</option>
+    </select>
+
+    <!-- Felder für Umsatz und Transaktionen, die immer angezeigt werden -->
     <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
     <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
 
@@ -25,66 +32,43 @@
     <label for="girocard">Girocard (%):</label>
     <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
-    <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" min="0" max="100" required>
-
     <label for="mastercardVisa">Mastercard / VISA (%):</label>
     <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" min="0" max="100" required>
 
-    <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" min="0" max="100" required>
+    <!-- Zusätzliche Felder für die ausführliche Berechnung, die bei Bedarf eingeblendet werden -->
+    <div id="detailedFields" style="display: none;">
+        <label for="maestro">Maestro / VPAY (%):</label>
+        <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" min="0" max="100">
 
-    <label for="purchaseOption">Kauf oder Miete:</label>
-    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
-        <option value="mieten">Mieten</option>
-        <option value="kaufen">Kaufen</option>
-    </select>
+        <label for="businessCard">Business Card (%):</label>
+        <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" min="0" max="100">
 
-    <!-- Hardware Dropdown -->
-    <div id="hardwareOptions">
-        <label for="hardware">Hardware auswählen:</label>
-        <select id="hardware" onchange="updateRentalPrices()">
-            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
-            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+        <label for="purchaseOption">Kauf oder Miete:</label>
+        <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+            <option value="mieten">Mieten</option>
+            <option value="kaufen">Kaufen</option>
         </select>
-    </div>
 
-    <!-- Mietoptionen für den Mietzeitraum -->
-    <div id="rentalOptions">
-        <label for="rentalPeriod">Mietdauer:</label>
-        <select id="rentalPeriod">
-            <option value="12">12 Monate</option>
-            <option value="36">36 Monate</option>
-            <option value="60">60 Monate</option>
-        </select>
-    </div>
+        <!-- Hardware Dropdown -->
+        <div id="hardwareOptions">
+            <label for="hardware">Hardware auswählen:</label>
+            <select id="hardware" onchange="updateRentalPrices()">
+                <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+                <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+                <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+                <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+            </select>
+        </div>
 
-    <!-- Wettbewerber Optionen -->
-    <label for="competitorInclude">Wettbewerber berechnen?</label>
-    <select id="competitorInclude" onchange="toggleCompetitorFields()">
-        <option value="nein">Nein</option>
-        <option value="ja">Ja</option>
-    </select>
-
-    <!-- Wettbewerber Eingabefelder -->
-    <div id="competitorSection" style="display: none;">
-        <h4>Wettbewerber Gebühren:</h4>
-        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
-
-        <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
-        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
-
-        <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
-        <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
-
-        <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
-        <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
-
-        <label for="competitorFixedFee">Feste Gebühr pro Transaktion (€):</label>
-        <input type="number" id="competitorFixedFee" placeholder="z.B. 0.08" step="0.01" min="0">
+        <!-- Mietoptionen für den Mietzeitraum -->
+        <div id="rentalOptions">
+            <label for="rentalPeriod">Mietdauer:</label>
+            <select id="rentalPeriod">
+                <option value="12">12 Monate</option>
+                <option value="36">36 Monate</option>
+                <option value="60">60 Monate</option>
+            </select>
+        </div>
     </div>
 
     <!-- Berechnungsbuttons -->
@@ -98,6 +82,7 @@
             <p id="oneTimeCost"></p>
             <p id="monthlyCost"></p>
             <p id="totalRevenue"></p>
+            <p id="simServiceFee"></p>
             <p id="totalCost"></p>
             <p id="competitorTotal"></p>
             <p id="competitorSavings"></p>
