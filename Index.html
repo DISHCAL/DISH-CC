@@ -34,10 +34,10 @@
 
     <label for="hardwareOption">Hardware Option:</label>
     <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-12m-cost="18.90" data-36m-cost="14.90" data-60m-cost="12.90">S1F2 - Monatliche Kosten: 12,90 €</option>
-        <option value="V400C" data-12m-cost="16.90" data-36m-cost="12.90" data-60m-cost="10.90">V400C - Monatliche Kosten: 10,90 €</option>
-        <option value="MotoG14" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Moto G14 - Monatliche Kosten: 0 €</option>
-        <option value="Tap2Pay" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Tap2Pay - Monatliche Kosten: 0 €</option>
+        <option value="S1F2" data-12m-cost="44.90" data-36m-cost="18.90" data-60m-cost="14.90">S1F2 - Einmalige Kosten: 499,00 €</option>
+        <option value="V400C" data-12m-cost="39.90" data-36m-cost="16.90" data-60m-cost="12.90">V400C - Einmalige Kosten: 399,00 €</option>
+        <option value="MotoG14" data-12m-cost="0" data-36m-cost="0" data-60m-cost="0">Moto G14 mit Lizenz - Einmalige Kosten: 119,00 €</option>
+        <option value="Tap2Pay" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Tap2Pay Lizenz f. Handheld - Einmalige Kosten: 0,00 €</option>
     </select>
 
     <label for="rentalPeriod">Mietdauer (Monate):</label>
@@ -53,7 +53,7 @@
         <option value="ja">Ja</option>
     </select>
 
-    <div id="competitorSection">
+    <div id="competitorSection" style="display:none;">
         <h3>Wettbewerber Daten</h3>
         <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
         <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
