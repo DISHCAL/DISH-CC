@@ -1,54 +1,58 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    background-color: #fff8f0;
     color: #333;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     max-width: 600px;
-    margin: 0 auto;
+    margin: auto;
     padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    color: #ff6600; /* Knallorange */
+    color: #ff7f20;
 }
 
 h3 {
-    color: #ff6600; /* Knallorange */
+    color: #ff7f20;
 }
 
 label {
     display: block;
-    margin-top: 10px;
+    margin: 10px 0 5px;
 }
 
-input, select, button {
+input, select {
     width: 100%;
     padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin-bottom: 10px;
+    border: 1px solid #ff7f20;
+    border-radius: 5px;
 }
 
 button {
-    background-color: #ff6600; /* Knallorange */
+    background-color: #ff7f20;
     color: white;
     border: none;
+    border-radius: 5px;
+    padding: 10px;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #e55b00; /* Dunkleres Orange */
+    background-color: #ff5e00;
 }
 
 #results {
     margin-top: 20px;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    border: 1px solid #ff7f20;
+    border-radius: 5px;
 }
+
