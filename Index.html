@@ -9,30 +9,32 @@
 <body>
     <div class="container">
         <h1>DISH Pay Kalkulator</h1>
-        
-        <div>
+
+        <div class="input-section">
             <label for="monthlySales">Geplanter Kartenumsatz pro Monat (€):</label>
-            <input type="number" id="monthlySales" value="20000">
-        </div>
-        
-        <div>
+            <input type="number" id="monthlySales" value="20000" required>
+
             <h2>Terminal-/Lizenzpreise DISH</h2>
             <label for="terminal1">Terminaltyp 1 (monatlicher Preis €):</label>
-            <input type="number" id="terminal1" value="14.90">
+            <input type="number" id="terminal1" value="14.90" required>
+
             <label for="terminal2">Terminaltyp 2 (monatlicher Preis €):</label>
-            <input type="number" id="terminal2" value="12.90">
+            <input type="number" id="terminal2" value="12.90" required>
+
             <label for="transactionPrice">Transaktionspreis (€):</label>
-            <input type="number" id="transactionPrice" value="0.06">
+            <input type="number" id="transactionPrice" value="0.06" required>
+
+            <h2>Transaktionsdetails</h2>
+            <label for="transactionCount">Erwartete Anzahl an monatlichen Transaktionen:</label>
+            <input type="number" id="transactionCount" value="400" required>
         </div>
 
-        <div>
-            <button id="calculateBtn">Berechnen</button>
-        </div>
+        <button id="calculateBtn">Berechnen</button>
 
         <h2>Ergebnisse</h2>
-        <div id="results"></div>
+        <div id="results" class="results"></div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
