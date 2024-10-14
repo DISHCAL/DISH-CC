@@ -1,82 +1,81 @@
-function updateHardwareCosts() {
-    const hardwareSelect = document.getElementById('hardwareOption');
+function toggleRentalFields() {
     const purchaseOption = document.getElementById('purchaseOption').value;
-    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    const rentalPeriod = document.getElementById('rentalPeriod');
+    const rentalPeriodLabel = document.getElementById('rentalPeriodLabel');
 
-    const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost')) || 0;
-    let monthlyCost = 0;
-
-    if (purchaseOption === "mieten") {
-        const rentalPeriod = document.getElementById('rentalPeriod').value;
-        monthlyCost = parseFloat(selectedHardware.getAttribute(`${rentalPeriod}-cost`)) || 0;
+    if (purchaseOption === 'mieten') {
+        rentalPeriod.style.display = 'block';
+        rentalPeriodLabel.style.display = 'block';
     } else {
-        // Use the monthly cost of the hardware for purchase option
-        monthlyCost = parseFloat(selectedHardware.getAttribute('data-monthly-cost')) || 0;
+        rentalPeriod.style.display = 'none';
+        rentalPeriodLabel.style.display = 'none';
+    }
+}
+
+function updateHardwareCosts() {
+    const hardwareOption = document.getElementById('hardwareOption');
+    const selectedHardware = hardwareOption.options[hardwareOption.selectedIndex];
+    const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost'));
+    const monthlyCost12 = parseFloat(selectedHardware.getAttribute('data-monthly-cost-12'));
+    const monthlyCost36 = parseFloat(selectedHardware.getAttribute('data-monthly-cost-36'));
+    const monthlyCost60 = parseFloat(selectedHardware.getAttribute('data-monthly-cost-60'));
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    const rentalPeriod = document.getElementById('rentalPeriod').value;
+
+    let totalMonthlyCost = 0;
+
+    if (purchaseOption === 'kaufen') {
+        totalMonthlyCost = 0; // Keine monatlichen Kosten, wenn gekauft
+    } else if (purchaseOption === 'mieten') {
+        if (rentalPeriod === '12') {
+            totalMonthlyCost = monthlyCost12;
+        } else if (rentalPeriod === '36') {
+            totalMonthlyCost = monthlyCost36;
+        } else if (rentalPeriod === '60') {
+            totalMonthlyCost = monthlyCost60;
+        }
     }
 
-    return { onceCost, monthlyCost };
-}
-
-function toggleRentalOptions() {
-    const rentalOptions = document.getElementById('rentalOptions');
-    rentalOptions.style.display = document.getElementById('purchaseOption').value === "mieten" ? 'block' : 'none';
-}
-
-function toggleCompetitorFields() {
-    const competitorSection = document.getElementById('competitorSection');
-    competitorSection.style.display = document.getElementById('competitorInclude').value === "ja" ? 'block' : 'none';
+    const results = document.getElementById('results');
+    results.innerHTML = `
+        <p><strong>Einmalige Kosten:</strong> ${onceCost.toFixed(2)} €</p>
+        <p><strong>Monatliche Kosten:</strong> ${totalMonthlyCost.toFixed(2)} €</p>
+    `;
 }
 
 function calculateCosts() {
-    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-    const transactions = parseFloat(document.getElementById('transactions').value) || 0;
+    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value);
+    const girocardPercentage = parseFloat(document.getElementById('girocard').value) / 100;
+    const maestroPercentage = parseFloat(document.getElementById('maestro').value) / 100;
+    const mastercardVisaPercentage = parseFloat(document.getElementById('mastercardVisa').value) / 100;
+    const businessCardPercentage = parseFloat(document.getElementById('businessCard').value) / 100;
 
-    const girocardFee = parseFloat(document.getElementById('girocard').value) || 0;
-    const maestroFee = parseFloat(document.getElementById('maestro').value) || 0;
-    const mastercardVisaFee = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const businessCardFee = parseFloat(document.getElementById('businessCard').value) || 0;
+    // Umsatzverteilung
+    const girocardAmount = monthlyVolume * girocardPercentage;
+    const maestroAmount = monthlyVolume * maestroPercentage;
+    const mastercardVisaAmount = monthlyVolume * mastercardVisaPercentage;
+    const businessCardAmount = monthlyVolume * businessCardPercentage;
 
-    const competitorIncluded = document.getElementById('competitorInclude').value === "ja";
+    // Gebührenberechnung
+    const girocardFee = (girocardAmount <= 10000) ? girocardAmount * 0.0039 : girocardAmount * 0.0029;
+    const maestroFee = maestroAmount * 0.0089;
+    const mastercardVisaFee = mastercardVisaAmount * 0.0089;
+    const businessCardFee = businessCardAmount * 0.0289;
 
-    // Hardware costs
+    const totalFees = girocardFee + maestroFee + mastercardVisaFee + businessCardFee;
+
+    const hardwareOption = document.getElementById('hardwareOption');
+    const selectedHardware = hardwareOption.options[hardwareOption.selectedIndex];
+    const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost'));
     const purchaseOption = document.getElementById('purchaseOption').value;
-    const { onceCost, monthlyCost } = updateHardwareCosts();
 
-    // Fee calculations
-    const girocardRevenue = (monthlyVolume * (girocardFee / 100));
-    const maestroRevenue = (monthlyVolume * (maestroFee / 100));
-    const mastercardVisaRevenue = (monthlyVolume * (mastercardVisaFee / 100));
-    const businessCardRevenue = (monthlyVolume * (businessCardFee / 100));
+    let totalMonthlyCost = totalFees + ((purchaseOption === 'kaufen') ? 0 : parseFloat(document.getElementById('rentalPeriod').value));
 
-    const totalRevenue = girocardRevenue + maestroRevenue + mastercardVisaRevenue + businessCardRevenue;
-
-    // Competitor fees (if applicable)
-    let competitorTotal = 0;
-    if (competitorIncluded) {
-        const competitorFee = parseFloat(document.getElementById('competitorFee').value) || 0;
-        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) || 0;
-        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) || 0;
-        const competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) || 0;
-        const competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) || 0;
-
-        competitorTotal = (competitorFee * transactions) +
-            (monthlyVolume * (competitorGirocardFee / 100)) +
-            (monthlyVolume * (competitorMaestroFee / 100)) +
-            (monthlyVolume * (competitorMastercardFee / 100)) +
-            (monthlyVolume * (competitorBusinessFee / 100));
-    }
-
-    // Final calculations
-    const totalMonthlyCost = monthlyCost + competitorTotal;
-    const totalOnceCost = purchaseOption === "kaufen" ? onceCost : 0;
-
-    // Display results
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = `
-        <h3>Berechnungsergebnisse</h3>
-        <p>Einmalige Kosten: €${totalOnceCost.toFixed(2)}</p>
-        <p>Monatliche Kosten: €${totalMonthlyCost.toFixed(2)}</p>
-        <p>Gesamte Transaktionsgebühren: €${totalRevenue.toFixed(2)}</p>
+    const results = document.getElementById('results');
+    results.innerHTML = `
+        <h3>Ergebnis</h3>
+        <p><strong>Einmalige Kosten:</strong> ${onceCost.toFixed(2)} €</p>
+        <p><strong>Monatliche Gebühren (inkl. Transaktionskosten):</strong> ${totalMonthlyCost.toFixed(2)} €</p>
     `;
 }
 
@@ -84,7 +83,11 @@ function downloadOffer() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.text("DISH PAY Angebot", 10, 10);
-    doc.text(document.getElementById('results').innerText, 10, 20);
-    doc.save("angebot.pdf");
+    doc.text("DISH PAY Angebot", 20, 20);
+    doc.text("Monatliche Kostenberechnung", 20, 30);
+
+    const results = document.getElementById('results').innerHTML;
+    doc.fromHTML(results, 20, 40);
+
+    doc.save("angebot_dish_pay.pdf");
 }
