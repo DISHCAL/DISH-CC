@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    color: #333;
     margin: 0;
     padding: 20px;
 }
@@ -9,23 +8,18 @@ body {
 .container {
     max-width: 800px;
     margin: auto;
+    background: white;
     padding: 20px;
-    background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    color: #ff6600; /* Orange */
-    text-align: center;
-}
-
-h2 {
-    color: #ff6600; /* Orange */
+    color: #ff7f27; /* Orange Farbe */
 }
 
 h3 {
-    color: #333;
+    border-bottom: 2px solid #ff7f27;
 }
 
 label {
@@ -33,46 +27,48 @@ label {
     margin: 10px 0 5px;
 }
 
-input {
-    width: calc(100% - 22px);
-    padding: 10px;
+input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    border-radius: 4px;
 }
 
 button {
-    background-color: #ff6600; /* Orange */
+    background-color: #ff7f27; /* Orange Farbe */
     color: white;
-    padding: 10px 20px;
+    padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
 }
 
 button:hover {
-    background-color: #e65c00; /* Darker Orange */
+    background-color: #ff5c0d; /* Dunkleres Orange beim Hover */
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+.info {
+    font-size: 0.9em;
+    color: #666;
 }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ccc;
+#competitorSection {
+    display: none; /* Versteckt, bis "ja" gewählt wird */
 }
 
-th {
-    background-color: #ff6600; /* Orange */
-    color: white;
-}
-
-.notes {
+#results {
     margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#info {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff8e1; /* Heller Hintergrund für Informationsfeld */
+    border: 1px solid #ffcc80; /* Orange Rand */
+    border-radius: 5px;
 }
