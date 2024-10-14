@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+    background-color: #f0f0f0;
     color: #333;
 }
 
@@ -10,11 +10,18 @@ body {
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1, h2, h3 {
-    color: #007BFF;
+    color: #FF6F00;
+}
+
+p.info {
+    color: #888;
+    font-size: 0.9em;
+    margin-top: -10px;
+    margin-bottom: 20px;
 }
 
 label {
@@ -31,19 +38,24 @@ input, select {
 }
 
 button {
-    background-color: #007BFF;
+    background-color: #FF6F00;
     color: #fff;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: 100%;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #e65a00;
+}
+
+#results {
+    margin-top: 20px;
+    font-size: 18px;
 }
 
 #results p {
-    font-size: 18px;
-    margin: 10px 0;
+    margin: 5px 0;
 }
