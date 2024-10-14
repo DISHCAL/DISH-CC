@@ -9,6 +9,8 @@ function updateHardwareCosts() {
     if (purchaseOption === "mieten") {
         const rentalPeriod = document.getElementById('rentalPeriod').value;
         monthlyCost = parseFloat(selectedHardware.getAttribute(`${rentalPeriod}-cost`));
+    } else {
+        monthlyCost = parseFloat(selectedHardware.getAttribute('data-monthly-cost'));
     }
 
     return { onceCost, monthlyCost };
@@ -52,9 +54,9 @@ function calculateCosts() {
     // Gesamtkosten abhängig von Kauf oder Miete
     let totalMonthlyCost;
     if (purchaseOption === "mieten") {
-        totalMonthlyCost = monthlyCost + totalFees;
+        totalMonthlyCost = monthlyCost + totalFees; // Bei Miete fallen keine Kaufkosten an
     } else {
-        totalMonthlyCost = monthlyCost + totalFees;
+        totalMonthlyCost = monthlyCost + totalFees; // Bei Kauf fallen keine Mietkosten an
     }
 
     // Ergebnis anzeigen
