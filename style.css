@@ -6,15 +6,20 @@ body {
 
 .container {
     width: 80%;
-    margin: auto;
+    margin: 0 auto;
     padding: 20px;
-    border: 2px solid #ff7f00;
+    border: 1px solid #ccc;
     border-radius: 10px;
-    background-color: #fdf5e6;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
-h1, h3 {
-    color: #ff7f00;
+h1 {
+    color: #ff6f00; /* Helle orange Farbe */
+}
+
+h3 {
+    color: #ff6f00; /* Helle orange Farbe */
 }
 
 label {
@@ -26,26 +31,28 @@ input, select, button {
     width: 100%;
     padding: 10px;
     margin-top: 5px;
-    border: 1px solid #ff7f00;
+    border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 1em;
 }
 
 button {
-    background-color: #ff7f00;
-    color: white;
+    background-color: #ff6f00; /* Helle orange Farbe */
+    color: #fff;
     border: none;
     cursor: pointer;
     margin-top: 20px;
 }
 
 button:hover {
-    background-color: #ff5e00;
+    background-color: #ff8c00; /* Dunklere orange Farbe */
 }
 
 #results {
     margin-top: 20px;
     padding: 10px;
-    border: 1px solid #ff7f00;
+    border: 1px solid #ff6f00;
     border-radius: 5px;
-    background-color: #fff8e1;
+    background-color: #fff9e6;
 }
+
