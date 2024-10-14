@@ -33,42 +33,43 @@
     <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
     <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 20" step="0.01" min="0" max="100" required>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
 
-    <!-- Zusätzliche Felder für die ausführliche Berechnung, die bei Bedarf eingeblendet werden -->
+    <!-- Hardware-Auswahl immer anzeigen -->
+    <label for="purchaseOption">Kauf oder Miete:</label>
+    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+        <option value="mieten">Mieten</option>
+        <option value="kaufen">Kaufen</option>
+    </select>
+
+    <!-- Hardware Dropdown -->
+    <div id="hardwareOptions">
+        <label for="hardware">Hardware auswählen:</label>
+        <select id="hardware" onchange="updateRentalPrices()">
+            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+        </select>
+    </div>
+
+    <!-- Mietoptionen für den Mietzeitraum -->
+    <div id="rentalOptions">
+        <label for="rentalPeriod">Mietdauer:</label>
+        <select id="rentalPeriod">
+            <option value="12">12 Monate</option>
+            <option value="36">36 Monate</option>
+            <option value="60">60 Monate</option>
+        </select>
+    </div>
+
+    <!-- Zusätzliche Felder für die ausführliche Berechnung -->
     <div id="detailedFields" style="display: none;">
         <label for="maestro">Maestro / VPAY (%):</label>
-        <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" min="0" max="100">
+        <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
 
         <label for="businessCard">Business Card (%):</label>
-        <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" min="0" max="100">
-
-        <label for="purchaseOption">Kauf oder Miete:</label>
-        <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
-            <option value="mieten">Mieten</option>
-            <option value="kaufen">Kaufen</option>
-        </select>
-
-        <!-- Hardware Dropdown -->
-        <div id="hardwareOptions">
-            <label for="hardware">Hardware auswählen:</label>
-            <select id="hardware" onchange="updateRentalPrices()">
-                <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-                <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-                <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
-                <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
-            </select>
-        </div>
-
-        <!-- Mietoptionen für den Mietzeitraum -->
-        <div id="rentalOptions">
-            <label for="rentalPeriod">Mietdauer:</label>
-            <select id="rentalPeriod">
-                <option value="12">12 Monate</option>
-                <option value="36">36 Monate</option>
-                <option value="60">60 Monate</option>
-            </select>
-        </div>
+        <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
     </div>
 
     <!-- Berechnungsbuttons -->
