@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISH Pay Kalkulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DISH Pay Kalkulator</h1>
+        
+        <div>
+            <label for="monthlySales">Geplanter Kartenumsatz pro Monat (€):</label>
+            <input type="number" id="monthlySales" value="20000">
+        </div>
+        
+        <div>
+            <h2>Terminal-/Lizenzpreise DISH</h2>
+            <label for="terminal1">Terminaltyp 1 (monatlicher Preis €):</label>
+            <input type="number" id="terminal1" value="14.90">
+            <label for="terminal2">Terminaltyp 2 (monatlicher Preis €):</label>
+            <input type="number" id="terminal2" value="12.90">
+            <label for="transactionPrice">Transaktionspreis (€):</label>
+            <input type="number" id="transactionPrice" value="0.06">
+        </div>
+
+        <div>
+            <button id="calculateBtn">Berechnen</button>
+        </div>
+
+        <h2>Ergebnisse</h2>
+        <div id="results"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
