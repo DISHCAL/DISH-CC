@@ -3,100 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISH PAY Rechner</title>
+    <title>DISH PAY Angebot</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="container">
+        <h1>DISH PAY Angebot</h1>
+        <form id="offerForm">
+            <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
+            <input type="number" id="monthlyVolume" required>
 
-<div class="container">
-    <h1>DISH PAY Rechner</h1>
-    <h3>Monatliche Kostenberechnung</h3>
+            <label for="transactions">Erwartete Transaktionen:</label>
+            <input type="number" id="transactions" required>
 
-    <label for="monthlyVolume">Geplantes Kartenumsatz pro Monat (€):</label>
-    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
+            <label for="girocard">Girocard (%) :</label>
+            <input type="number" id="girocard" required>
 
-    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
-    <input type="number" id="transactions" placeholder="z.B. 400" required>
+            <label for="maestro">Maestro (%) :</label>
+            <input type="number" id="maestro" required>
 
-    <label for="girocard">Girocard (%):</label>
-    <input type="number" id="girocard" placeholder="z.B. 25" step="0.01" required>
+            <label for="mastercardVisa">Mastercard / VISA (%):</label>
+            <input type="number" id="mastercardVisa" required>
 
-    <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
+            <label for="businessCard">Business Card (%):</label>
+            <input type="number" id="businessCard" required>
 
-    <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
+            <label for="hardwareOption">Hardware Auswahl:</label>
+            <select id="hardwareOption" onchange="updateHardwareCosts()">
+                <option value="S1F2" data-once-cost="499.00" data-monthly-cost-12="44.90" data-monthly-cost-36="18.90" data-monthly-cost-60="14.90">Dish Terminal S1F2</option>
+                <option value="V400C" data-once-cost="399.00" data-monthly-cost-12="39.90" data-monthly-cost-36="16.90" data-monthly-cost-60="12.90">Dish Terminal V400C</option>
+                <option value="MotoG14" data-once-cost="119.00" data-monthly-cost-12="7.90">Moto G14 mit Lizenz</option>
+                <option value="Tap2Pay" data-once-cost="0.00" data-monthly-cost-12="7.90">Tap2Pay Lizenz f. Handheld</option>
+            </select>
 
-    <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 2" step="0.01" required>
+            <label for="hardwareOptionPurchase">Kauf oder Miete:</label>
+            <select id="hardwareOptionPurchase" onchange="updateHardwareCosts()">
+                <option value="kaufen">Kaufen</option>
+                <option value="mieten">Mieten</option>
+            </select>
 
-    <label for="hardwareOption">Hardware Option:</label>
-    <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="499" data-monthly-cost-12="44.90" data-monthly-cost-36="18.90" data-monthly-cost-60="14.90">S1F2 - Kauf: 499 €, Miete 12M: 44,90 €, 36M: 18,90 €, 60M: 14,90 €</option>
-        <option value="V400C" data-once-cost="399" data-monthly-cost-12="39.90" data-monthly-cost-36="16.90" data-monthly-cost-60="12.90">V400C - Kauf: 399 €, Miete 12M: 39,90 €, 36M: 16,90 €, 60M: 12,90 €</option>
-        <option value="MotoG14" data-once-cost="119" data-monthly-cost-12="7.90" data-monthly-cost-36="-" data-monthly-cost-60="-">Moto G14 - Kauf: 119 €, Miete 12M: 7,90 €, 36M: -, 60M: -</option>
-        <option value="Tap2Pay" data-once-cost="0" data-monthly-cost-12="7.90" data-monthly-cost-36="-" data-monthly-cost-60="-">Tap2Pay - Kauf: 0 €, Miete 12M: 7,90 €, 36M: -, 60M: -</option>
-        <!-- Neue Hardware Optionen -->
-        <option value="S2F3" data-once-cost="599" data-monthly-cost-12="49.90" data-monthly-cost-36="24.90" data-monthly-cost-60="19.90">S2F3 - Kauf: 599 €, Miete 12M: 49,90 €, 36M: 24,90 €, 60M: 19,90 €</option>
-        <option value="X300" data-once-cost="399" data-monthly-cost-12="39.90" data-monthly-cost-36="16.90" data-monthly-cost-60="12.90">X300 - Kauf: 399 €, Miete 12M: 39,90 €, 36M: 16,90 €, 60M: 12,90 €</option>
-    </select>
+            <label for="rentalPeriod">Mietdauer:</label>
+            <select id="rentalPeriod">
+                <option value="12">12 Monate</option>
+                <option value="36">36 Monate</option>
+                <option value="60">60 Monate</option>
+            </select>
 
-    <label for="hardwareOptionPurchase">Mieten oder Kaufen:</label>
-    <select id="hardwareOptionPurchase" onchange="updateHardwareCosts()">
-        <option value="mieten">Mieten</option>
-        <option value="kaufen">Kaufen</option>
-    </select>
+            <label for="competitorInclude">Wettbewerber berücksichtigen?</label>
+            <select id="competitorInclude" onchange="toggleCompetitorFields()">
+                <option value="nein">Nein</option>
+                <option value="ja">Ja</option>
+            </select>
 
-    <label for="rentalPeriod">Mietdauer (Monate):</label>
-    <select id="rentalPeriod" onchange="updateHardwareCosts()">
-        <option value="12">12 Monate</option>
-        <option value="36">36 Monate</option>
-        <option value="60">60 Monate</option>
-    </select>
+            <div id="competitorSection" style="display:none;">
+                <label for="competitorFee">Wettbewerber Gebühren (€):</label>
+                <input type="number" id="competitorFee">
 
-    <label for="competitorInclude">Wettbewerber berechnen?</label>
-    <select id="competitorInclude" onchange="toggleCompetitorFields()">
-        <option value="nein">Nein</option>
-        <option value="ja">Ja</option>
-    </select>
+                <label for="competitorGirocardFee">Girocard Gebühren (%):</label>
+                <input type="number" id="competitorGirocardFee">
 
-    <div id="competitorSection">
-        <h3>Wettbewerber Daten</h3>
-        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
-        <input type="number" id="competitorFee" placeholder="z.B. 0,08" step="0.01">
+                <label for="competitorMaestroFee">Maestro Gebühren (%):</label>
+                <input type="number" id="competitorMaestroFee">
 
-        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0,39" step="0.01">
+                <label for="competitorMastercardFee">Mastercard Gebühren (%):</label>
+                <input type="number" id="competitorMastercardFee">
 
-        <label for="competitorMaestroFee">Maestro Gebühr (%):</label>
-        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0,79" step="0.01">
+                <label for="competitorBusinessFee">Business Card Gebühren (%):</label>
+                <input type="number" id="competitorBusinessFee">
+            </div>
 
-        <label for="competitorMastercardFee">Mastercard Gebühr (%):</label>
-        <input type="number" id="competitorMastercardFee" placeholder="z.B. 2,89" step="0.01">
+            <button type="button" onclick="calculateCosts()">Berechnen</button>
+            <button type="button" onclick="downloadOffer()">Download Angebot</button>
+        </form>
 
-        <label for="competitorBusinessFee">Business Card Gebühr (%):</label>
-        <input type="number" id="competitorBusinessFee" placeholder="z.B. 1,99" step="0.01">
+        <div id="results"></div>
+        <div id="info">
+            <p>Für Fragen oder weitere Informationen stehen wir Ihnen gerne zur Verfügung!</p>
+        </div>
     </div>
 
-    <button onclick="calculateCosts()">Kosten Berechnen</button>
-    <button onclick="downloadOffer()">Angebot herunterladen</button>
-
-    <div id="results"></div>
-
-    <h3>Wichtige Informationen zu den Gebühren</h3>
-    <div id="info">
-        <p><strong>Gebührenübersicht:</strong></p>
-        <ul>
-            <li>EC-Karten Gebühr unter 10.000 €: 0,39 %</li>
-            <li>EC-Karten Gebühr über 10.000 €: 0,29 %</li>
-            <li>Maestro / VPAY Gebühr: 0,79 %</li>
-            <li>Mastercard Gebühr: 0,89 %</li>
-            <li>Business Card Gebühr: 2,89 %</li>
-        </ul>
-    </div>
-</div>
-
+    <script src="script.js"></script>
 </body>
 </html>
