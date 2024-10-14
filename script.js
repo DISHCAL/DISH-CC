@@ -26,26 +26,16 @@ function updateHardwareCosts() {
 
 // Funktion zum Umschalten der Mietoptionen basierend auf der Auswahl von Kauf oder Miete
 function toggleRentalOptions() {
+    const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
-    const hardwareSelect = document.getElementById('hardware');
-    const selectedHardware = hardwareSelect.value;
 
-    // Zeige Mietoptionen nur an, wenn "Mieten" ausgewählt ist und Hardware Mietoptionen hat
-    if (selectedHardware === "MotoG14" || selectedHardware === "Tap2Pay") {
-        rentalOptions.style.display = 'none'; // Keine Mietoptionen für MotoG14 oder Tap2Pay
-    } else {
-        rentalOptions.style.display = document.getElementById('purchaseOption').value === "mieten" ? 'block' : 'none';
-    }
-}
-
-// Funktion zum Umschalten der Wettbewerberfelder
-function toggleCompetitorFields() {
-    const competitorSection = document.getElementById('competitorSection');
-    competitorSection.style.display = document.getElementById('competitorInclude').value === "ja" ? 'block' : 'none';
+    // Mietoptionen nur anzeigen, wenn "Mieten" ausgewählt ist
+    rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
 }
 
 // Hauptfunktion zur Berechnung der Kosten
 function calculateCosts() {
+    const purchaseOption = document.getElementById('purchaseOption').value;
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
     
     // Prozentsätze für die Kartenarten
@@ -72,15 +62,21 @@ function calculateCosts() {
     // Gesamtsumme der Transaktionsgebühren
     const totalTransactionFees = girocardFee + maestroFee + mastercardVisaFee + businessCardFee;
     
-    // Monatliche Gesamtkosten: Transaktionsgebühren + Hardware-Mietkosten (falls vorhanden) + 3,90 € für SIM-Karte/Servicekosten
-    const totalMonthlyCost = totalTransactionFees + hardwareMonthlyCost + 3.90;
+    // Berechnung der monatlichen Gesamtkosten, falls gemietet
+    let totalMonthlyCost = totalTransactionFees + hardwareMonthlyCost + 3.90;
 
-    // Einmalige Gesamtkosten: Hardware-Kaufpreis (falls vorhanden)
-    const totalOneTimeCost = onceCost;
+    // Berechnung der einmaligen Kosten, falls gekauft
+    let totalOneTimeCost = purchaseOption === "kaufen" ? onceCost : 0;
 
     // Ausgabe der Ergebnisse
-    document.getElementById('oneTimeCost').innerText = `Einmalige Kosten: ${totalOneTimeCost.toFixed(2)} €`;
-    document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten: ${hardwareMonthlyCost.toFixed(2)} €`;
+    if (purchaseOption === "kaufen") {
+        document.getElementById('oneTimeCost').innerText = `Einmalige Kosten (Kauf): ${totalOneTimeCost.toFixed(2)} €`;
+        document.getElementById('monthlyCost').innerText = "";  // Keine monatlichen Mietkosten bei Kauf
+    } else {
+        document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €`;
+        document.getElementById('oneTimeCost').innerText = "";  // Keine einmaligen Kaufkosten bei Miete
+    }
+
     document.getElementById('totalRevenue').innerText = `Transaktionsgebühren pro Monat: ${totalTransactionFees.toFixed(2)} €`;
     document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
@@ -164,3 +160,4 @@ window.onload = function() {
     updateRentalPrices();
     toggleRentalOptions();
 };
+
