@@ -18,7 +18,7 @@ function updateHardwareCosts() {
             monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
         }
     } else if (purchaseOption === "kaufen") {
-        monthlyCost = 0;  // Keine monatlichen Kosten bei Kauf
+        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
     }
 
     return { onceCost: priceOnce, monthlyCost };
@@ -55,7 +55,7 @@ function calculateCosts() {
     const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
     
     // Hardwarekosten (aus der Funktion updateHardwareCosts)
-    const { onceCost, monthlyCost } = updateHardwareCosts();
+    const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
     
     // Anteile des Umsatzes für die einzelnen Kartenarten
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
@@ -64,7 +64,7 @@ function calculateCosts() {
     const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
     
     // Transaktionsgebühren (die relevanten Prozentsätze werden angewendet)
-    const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);  // 0,39% oder 0,29% für Girocard
+    const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);  // 0,29% oder 0,39% für Girocard
     const maestroFee = maestroRevenue * 0.0089;    // 0,89% für Maestro
     const mastercardVisaFee = mastercardVisaRevenue * 0.0089;  // 0,89% für Mastercard/VISA Privatkunden
     const businessCardFee = businessCardRevenue * 0.0289;  // 2,89% für Business Card (nicht-EWR Raum)
@@ -72,13 +72,18 @@ function calculateCosts() {
     // Gesamtsumme der Transaktionsgebühren
     const totalTransactionFees = girocardFee + maestroFee + mastercardVisaFee + businessCardFee;
     
-    // Endgültige monatliche Kosten: Transaktionsgebühren + Hardwarekosten + 3,90 € für SIM-Karte/Servicekosten
-    const totalMonthlyCost = totalTransactionFees + monthlyCost + 3.90;
-    
+    // Monatliche Gesamtkosten: Transaktionsgebühren + Hardware-Mietkosten (falls vorhanden) + 3,90 € für SIM-Karte/Servicekosten
+    const totalMonthlyCost = totalTransactionFees + hardwareMonthlyCost + 3.90;
+
+    // Einmalige Gesamtkosten: Hardware-Kaufpreis (falls vorhanden)
+    const totalOneTimeCost = onceCost;
+
     // Ausgabe der Ergebnisse
-    document.getElementById('totalRevenue').innerText = `Gesamte Transaktionsgebühren: ${totalTransactionFees.toFixed(2)} €`;
-    document.getElementById('totalCost').innerText = `Gesamtkosten pro Monat (inkl. Hardware + SIM-Karte): ${totalMonthlyCost.toFixed(2)} €`;
-    
+    document.getElementById('oneTimeCost').innerText = `Einmalige Kosten: ${totalOneTimeCost.toFixed(2)} €`;
+    document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten: ${hardwareMonthlyCost.toFixed(2)} €`;
+    document.getElementById('totalRevenue').innerText = `Transaktionsgebühren pro Monat: ${totalTransactionFees.toFixed(2)} €`;
+    document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
+
     // Wenn Wettbewerbsgebühren berechnet werden sollen
     const competitorIncluded = document.getElementById('competitorInclude').value === "ja";
     if (competitorIncluded) {
@@ -90,8 +95,8 @@ function calculateCosts() {
         const competitorTotal = transactions * (competitorFee + competitorCreditFee + competitorClearingFee);
         const competitorSavings = competitorTotal - totalMonthlyCost;
         
-        document.getElementById('competitorTotal').innerText = `Wettbewerberkosten: ${competitorTotal.toFixed(2)} €`;
-        document.getElementById('competitorSavings').innerText = `Ersparnis im Vergleich zum Wettbewerber: ${competitorSavings.toFixed(2)} €`;
+        document.getElementById('competitorTotal').innerText = `Wettbewerberkosten pro Monat: ${competitorTotal.toFixed(2)} €`;
+        document.getElementById('competitorSavings').innerText = `Monatliche Ersparnis gegenüber Wettbewerber: ${competitorSavings.toFixed(2)} €`;
     }
 }
 
@@ -111,34 +116,46 @@ function updateRentalPrices() {
     rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
-// PDF-Generierung mit jsPDF
+// PDF-Generierung mit jsPDF (angepasst)
 function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+
     const doc = new jsPDF();
-    
+
+    // Orange Farbe definieren
+    const orangeColor = [255, 111, 0];
+
+    // Setze Schriftart und Farbe
+    doc.setFontSize(12);
+    doc.setTextColor(...orangeColor);
+
     // Kundentext
     const text = `
-    Guten Tag,
+Guten Tag,
 
-    hier ist Ihr unverbindliches Angebot basierend auf Ihren Berechnungen.
-    Unten sind die detaillierten Kosten aufgelistet.
+hier ist Ihr unverbindliches Angebot basierend auf Ihren Berechnungen.
+Unten sind die detaillierten Kosten aufgelistet.
 
-    Gute Geschäfte wünscht Ihnen
-    Ihr DISH Team
+Gute Geschäfte wünscht Ihnen
+Ihr DISH Team
 
-    Wichtige rechtliche Hinweise:
-    Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken.
+Wichtige rechtliche Hinweise:
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken.
 
-    Ergebnisse:
-    Gesamte Transaktionsgebühren: ${document.getElementById('totalRevenue').innerText}
-    Gesamtkosten pro Monat (inkl. Hardware + SIM-Karte): ${document.getElementById('totalCost').innerText}
+Ergebnisse:
+${document.getElementById('oneTimeCost').innerText}
+${document.getElementById('monthlyCost').innerText}
+${document.getElementById('totalRevenue').innerText}
+${document.getElementById('totalCost').innerText}
 
-    Ersparnis im Vergleich zum Wettbewerber (falls berechnet): ${document.getElementById('competitorSavings').innerText || 'N/A'}
-    `;
+Ersparnis im Vergleich zum Wettbewerber (falls berechnet):
+${document.getElementById('competitorSavings').innerText || 'N/A'}
+`;
 
-    doc.setTextColor(255, 165, 0); // Setze den Text auf Orange
-    doc.setFontSize(12);
-    doc.text(20, 20, text);
-    
+    // Text in die PDF einfügen
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(15, 20, lines);
+
     // PDF speichern
     doc.save("dish-pay-angebot.pdf");
 }
@@ -147,4 +164,3 @@ window.onload = function() {
     updateRentalPrices();
     toggleRentalOptions();
 };
-
