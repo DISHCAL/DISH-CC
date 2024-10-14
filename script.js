@@ -3,13 +3,11 @@ function updateHardwareCosts() {
     const rentalPeriod = document.getElementById('rentalPeriod').value;
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
 
-    let monthlyCost = 0;
     const onceCost = parseFloat(selectedHardware.getAttribute('data-once-cost'));
+    let monthlyCost = 0;
 
     if (rentalPeriod === "mieten") {
-        const selectedPeriodCost = rentalPeriod === "mieten" ? 
-            selectedHardware.getAttribute(`data-${document.getElementById('rentalPeriod').value}-cost`) : 0;
-        monthlyCost = parseFloat(selectedPeriodCost);
+        monthlyCost = parseFloat(selectedHardware.getAttribute(`data-12m-cost`)); // Standard für Mieten auf 12 Monate
     }
 
     return { onceCost, monthlyCost };
@@ -37,97 +35,40 @@ function calculateCosts() {
     if (isNaN(monthlyVolume) || isNaN(transactions) || 
         isNaN(girocard) || isNaN(maestro) || 
         isNaN(mastercardVisa) || isNaN(businessCard)) {
-       Hier ist die vollständige und optimierte Version des DISH PAY Rechners, die alle gewünschten Features umfasst, einschließlich der Kauf- oder Mietoptionen und der korrekten Hardwarepreise. Das Design ist modern und in knalligem Orange gehalten.
+        document.getElementById('results').innerHTML = '<p>Bitte geben Sie gültige Werte ein.</p>';
+        return; // Abbrechen, wenn ungültige Eingaben vorliegen
+    }
 
-### HTML-Datei: `index.html`
+    // Gebührenberechnung
+    const girocardFee = monthlyVolume * girocard * (monthlyVolume < 10000 ? 0.0039 : 0.0029);
+    const maestroFee = monthlyVolume * maestro * 0.0079;
+    const mastercardVisaFee = monthlyVolume * mastercardVisa * 0.0089;
+    const businessCardFee = monthlyVolume * businessCard * 0.0289;
 
-```html
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISH PAY Rechner</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-</head>
-<body>
+    const totalFees = girocardFee + maestroFee + mastercardVisaFee + businessCardFee;
+    const totalMonthlyCost = monthlyCost + (totalFees / transactions); // Verteilung der Gebühren auf Transaktionen
 
-<div class="container">
-    <h1>DISH PAY Rechner</h1>
-    <h3>Monatliche Kostenberechnung</h3>
+    let resultsHtml = `<h3>Ergebnisse</h3>
+                       <p>Einmalige Kosten: €${onceCost.toFixed(2)}</p>
+                       <p>Monatliche Kosten: €${monthlyCost.toFixed(2)}</p>
+                       <p>Gesamte Gebühren pro Monat: €${totalFees.toFixed(2)}</p>
+                       <p>Gesamtkosten pro Transaktion: €${(totalFees / transactions).toFixed(2)}</p>
+                       <p>Gesamtkosten: €${(onceCost + totalMonthlyCost * 12).toFixed(2)}</p>`;
 
-    <label for="monthlyVolume">Geplantes Kartenumsatz pro Monat (€):</label>
-    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
+    if (competitorInclude === "ja") {
+        const competitorFee = parseFloat(document.getElementById('competitorFee').value) || 0;
+        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
+        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
+        const competitorMastercardFee = parseFloat(document.getElementById('competitorMastercardFee').value) / 100 || 0;
+        const competitorBusinessFee = parseFloat(document.getElementById('competitorBusinessFee').value) / 100 || 0;
 
-    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
-    <input type="number" id="transactions" placeholder="z.B. 400" required>
+        const competitorTotalFees = (monthlyVolume * competitorGirocardFee * (monthlyVolume < 10000 ? 0.0039 : 0.0029)) + 
+                                    (monthlyVolume * competitorMaestroFee * 0.0079) + 
+                                    (monthlyVolume * competitorMastercardFee * 0.0089) + 
+                                    (monthlyVolume * competitorBusinessFee * 0.0289);
 
-    <label for="girocard">Girocard (%):</label>
-    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" required>
+        resultsHtml += `<p>Wettbewerber Gebühren pro Monat: €${competitorTotalFees.toFixed(2)}</p>`;
+    }
 
-    <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 5" step="0.01" required>
-
-    <label for="mastercardVisa">Mastercard / VISA (%):</label>
-    <input type="number" id="mastercardVisa" placeholder="z.B. 10" step="0.01" required>
-
-    <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 5" step="0.01" required>
-
-    <label for="hardwareOption">Hardware Option:</label>
-    <select id="hardwareOption" onchange="updateHardwareCosts()">
-        <option value="S1F2" data-once-cost="499" data-12m-cost="44.90" data-36m-cost="18.90" data-60m-cost="14.90">S1F2</option>
-        <option value="V400C" data-once-cost="399" data-12m-cost="39.90" data-36m-cost="16.90" data-60m-cost="12.90">V400C</option>
-        <option value="MotoG14" data-once-cost="119" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Moto G14</option>
-        <option value="Tap2Pay" data-once-cost="0" data-12m-cost="7.90" data-36m-cost="0" data-60m-cost="0">Tap2Pay</option>
-    </select>
-
-    <label for="rentalPeriod">Mieten oder Kaufen:</label>
-    <select id="rentalPeriod" onchange="updateHardwareCosts()">
-        <option value="kaufen">Kaufen</option>
-        <option value="mieten">Mieten</option>
-    </select>
-
-    <label for="competitorInclude">Wettbewerber berechnen?</label>
-    <select id="competitorInclude" onchange="toggleCompetitorFields()">
-        <option value="nein">Nein</option>
-        <option value="ja">Ja</option>
-    </select>
-
-    <div id="competitorSection" style="display: none;">
-        <h3>Wettbewerber Daten</h3>
-        <label for="competitorFee">Wettbewerber Gebühr pro Transaktion (€):</label>
-        <input type="number" id="competitorFee" placeholder="z.B. 0.08" step="0.01">
-
-        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01">
-
-        <label for="competitorMaestroFee">Maestro Gebühr (%):</label>
-        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.79" step="0.01">
-
-        <label for="competitorMastercardFee">Mastercard Gebühr (%):</label>
-        <input type="number" id="competitorMastercardFee" placeholder="z.B. 0.89" step="0.01">
-
-        <label for="competitorBusinessFee">Business Card Gebühr (%):</label>
-        <input type="number" id="competitorBusinessFee" placeholder="z.B. 2.89" step="0.01">
-    </div>
-
-    <button onclick="calculateCosts()">Kosten Berechnen</button>
-    <div id="results"></div>
-
-    <h3>Wichtige Informationen zu den Gebühren</h3>
-    <div id="info">
-        <p><strong>Gebührenübersicht:</strong></p>
-        <ul>
-            <li>EC-Karten Gebühr unter 10.000 €: 0,39 %</li>
-            <li>EC-Karten Gebühr über 10.000 €: 0,29 %</li>
-            <li>Maestro / VPAY Gebühr: 0,79 %</li>
-            <li>Mastercard Gebühr: 0,89 %</li>
-            <li>Business Card Gebühr: 2,89 %</li>
-        </ul>
-    </div>
-</div>
-
-</body>
-</html>
+    document.getElementById('results').innerHTML = resultsHtml;
+}
