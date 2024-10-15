@@ -1,33 +1,19 @@
-// Funktion zur Umschaltung zwischen schneller und ausführlicher Berechnung
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
     const detailedFields = document.getElementById('detailedFields');
-
-    if (calculationType === 'schnell') {
-        // Zusätzliche Felder ausblenden bei schneller Berechnung
-        detailedFields.style.display = 'none';
-    } else {
-        // Zusätzliche Felder einblenden bei ausführlicher Berechnung
-        detailedFields.style.display = 'block';
-    }
+    detailedFields.style.display = calculationType === 'schnell' ? 'none' : 'block';
 }
 
-// Funktion zur Umschaltung der Mietoptionen basierend auf der Auswahl von Kauf oder Miete
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
-    
-    // Mietoptionen nur anzeigen, wenn "Mieten" ausgewählt ist
     rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
 }
 
-// Funktion zur Aktualisierung der Mietpreise
 function updateRentalPrices() {
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-
     const rentalPeriodSelect = document.getElementById('rentalPeriod');
-
     const price12 = selectedHardware.getAttribute('data-price-12');
     const price36 = selectedHardware.getAttribute('data-price-36');
     const price60 = selectedHardware.getAttribute('data-price-60');
@@ -37,7 +23,6 @@ function updateRentalPrices() {
     rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
-// Funktion zur Berechnung der Hardwarekosten
 function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
@@ -63,14 +48,12 @@ function updateHardwareCosts() {
     return { onceCost: priceOnce, monthlyCost };
 }
 
-// Hauptfunktion zur Berechnung der Kosten
 function calculateCosts() {
     const calculationType = document.getElementById('calculationType').value;
     const purchaseOption = document.getElementById('purchaseOption').value;
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
     const transactions = parseFloat(document.getElementById('transactions').value) || 0;
-
-    // Prozentsätze für die Kartenarten
+    
     const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
     const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
     let maestroFeePercentage = 0;
@@ -122,7 +105,8 @@ function calculateCosts() {
     if (calculationType === 'schnell') {
         // Bei schneller Berechnung: Gebühren und Hardware getrennt anzeigen
         document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
-        document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+        document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €`;
+        document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €` : "";
         document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
         // Einmalige Kosten nur bei Kauf anzeigen
@@ -160,50 +144,3 @@ function calculateCosts() {
         document.getElementById('competitorSavings').innerText = "";
     }
 }
-
-// PDF-Generierung mit jsPDF
-function downloadPDF() {
-    const { jsPDF } = window.jspdf;
-
-    const doc = new jsPDF();
-
-    // Orange Farbe definieren
-    const orangeColor = [255, 111, 0];
-
-    // Setze Schriftart und Farbe
-    doc.setFontSize(12);
-    doc.setTextColor(...orangeColor);
-
-    // Kundentext für PDF
-    const text = `
-Guten Tag,
-
-hier ist Ihr unverbindliches Angebot basierend auf Ihren Berechnungen.
-Unten sind die detaillierten Kosten aufgelistet.
-
-Gute Geschäfte wünscht Ihnen
-Ihr DISH Team
-
-Ergebnisse:
-${document.getElementById('oneTimeCost').innerText}
-${document.getElementById('monthlyCost').innerText}
-${document.getElementById('disagioFees').innerText}
-${document.getElementById('transactionFee').innerText}
-${document.getElementById('totalCost').innerText}
-${document.getElementById('competitorTotal').innerText}
-${document.getElementById('competitorSavings').innerText || 'N/A'}
-`;
-
-    // Text in die PDF einfügen
-    const lines = doc.splitTextToSize(text, 180);
-    doc.text(15, 20, lines);
-
-    // PDF speichern
-    doc.save("dish-pay-angebot.pdf");
-}
-
-window.onload = function() {
-    updateRentalPrices();
-    toggleRentalOptions();
-    toggleCalculationFields();
-};
