@@ -134,9 +134,11 @@
         function generatePDF() {
             const doc = new jspdf.jsPDF();
 
+            // Header des Dokuments
             doc.setFontSize(18);
             doc.text("DISH PAY Angebot", 10, 10);
 
+            // Berechnungsergebnisse
             doc.setFontSize(12);
             doc.text(`Gebühren gesamt: ${document.getElementById('disagioFees').innerText}`, 10, 30);
             doc.text(`Monatliche Hardwarekosten: ${document.getElementById('monthlyCost').innerText}`, 10, 40);
@@ -144,7 +146,32 @@
             doc.text(`Monatliche Gesamtkosten: ${document.getElementById('totalCost').innerText}`, 10, 60);
             doc.text(`Einmalige Kosten (bei Kauf): ${document.getElementById('oneTimeCost').innerText}`, 10, 70);
 
-            doc.save("DISH_PAY_Angebot.pdf");
+            // Kundenorientierter Text
+            doc.setFontSize(16);
+            doc.text("Wir freuen uns, Ihnen dieses attraktive Angebot von DISH PAY", 10, 90);
+            doc.text("präsentieren zu dürfen.", 10, 100);
+            
+            doc.setFontSize(12);
+            doc.text("Mit unserer Lösung ermöglichen wir Ihnen eine schnelle, sichere", 10, 110);
+            doc.text("und effiziente Zahlungsabwicklung, die perfekt auf die Bedürfnisse", 10, 120);
+            doc.text("Ihres Geschäfts zugeschnitten ist. Profitieren Sie von transparenter", 10, 130);
+            doc.text("Preisgestaltung, unkomplizierter Nutzung und modernster Technologie.", 10, 140);
+            
+            doc.text("Sichern Sie sich jetzt Ihre maßgeschneiderte Lösung und starten Sie durch!", 10, 160);
+
+            doc.text("Ihr DISH Team", 10, 180);
+            doc.text("Zuverlässige Zahlungsabwicklung für erfolgreiche Geschäfte.", 10, 190);
+
+            // Rechtlicher Hinweis
+            doc.setFontSize(10);
+            doc.text("Rechtlicher Hinweis:", 10, 210);
+            doc.text("Dieses Angebot ist unverbindlich und dient ausschließlich zu", 10, 220);
+            doc.text("Informationszwecken. Die angegebenen Preise und Konditionen", 10, 230);
+            doc.text("können sich ändern. Für eine rechtsverbindliche Auskunft", 10, 240);
+            doc.text("kontaktieren Sie uns bitte direkt.", 10, 250);
+
+            // PDF speichern
+            doc.save("DISH_Angebot.pdf");
         }
     </script>
 </head>
@@ -238,8 +265,6 @@
             <p id="transactionFee"></p>
             <p id="simServiceFee"></p>
             <p id="totalCost"></p>
-            <p id="competitorTotal"></p>
-            <p id="competitorSavings"></p>
         </div>
     </div>
 
