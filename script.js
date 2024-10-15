@@ -1,15 +1,35 @@
+// Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
-    const detailedFields = document.getElementById('detailedFields');
-    detailedFields.style.display = calculationType === 'schnell' ? 'none' : 'block';
+    const businessCardField = document.getElementById('businessCardField');
+    const maestroField = document.getElementById('maestroField');
+    const competitorMaestroField = document.getElementById('competitorMaestroField');
+    const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
+    const competitorSection = document.getElementById('competitorSection');
+
+    if (calculationType === 'schnell') {
+        businessCardField.classList.add('hidden');
+        maestroField.classList.add('hidden');
+        competitorMaestroField.classList.add('hidden');
+        competitorBusinessCardField.classList.add('hidden');
+        competitorSection.classList.add('hidden');
+    } else {
+        businessCardField.classList.remove('hidden');
+        maestroField.classList.remove('hidden');
+        competitorMaestroField.classList.remove('hidden');
+        competitorBusinessCardField.classList.remove('hidden');
+        competitorSection.classList.remove('hidden');
+    }
 }
 
+// Funktion zum Umschalten der Mietoptionen
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
     rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
 }
 
+// Funktion zum Aktualisieren der Mietpreise basierend auf der Hardware-Auswahl
 function updateRentalPrices() {
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
@@ -23,12 +43,12 @@ function updateRentalPrices() {
     rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
+// Funktion zum Aktualisieren der Hardwarekosten
 function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
     
-    // Hardwarekosten
     const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
     let monthlyCost = 0;
 
@@ -42,13 +62,34 @@ function updateHardwareCosts() {
             monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
         }
     } else {
-        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
+        monthlyCost = 0;
     }
 
     return { onceCost: priceOnce, monthlyCost };
 }
 
+// Funktion zur Sicherstellung, dass die Summe der Prozentsätze 100 ergibt
+function validatePercentages() {
+    const girocard = parseFloat(document.getElementById('girocard').value) || 0;
+    const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+    const maestro = parseFloat(document.getElementById('maestro').value) || 0;
+    const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
+    
+    const totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+
+    if (totalPercentage !== 100) {
+        alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
+        return false;
+    }
+    return true;
+}
+
+// Funktion zur Berechnung der Kosten
 function calculateCosts() {
+    if (!validatePercentages()) {
+        return;
+    }
+
     const calculationType = document.getElementById('calculationType').value;
     const purchaseOption = document.getElementById('purchaseOption').value;
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
@@ -56,22 +97,9 @@ function calculateCosts() {
     
     const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
     const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    let maestroFeePercentage = 0;
-    let businessCardFeePercentage = 0;
+    const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
+    const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
 
-    if (calculationType === 'ausführlich') {
-        maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
-        businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
-    }
-
-    // Validierung der Kartenprozentsätze
-    const totalPercentage = girocardFeePercentage + mastercardVisaFeePercentage + maestroFeePercentage + businessCardFeePercentage;
-    if (totalPercentage !== 100) {
-        alert("Die Summe der Kartenprozentsätze muss 100% ergeben.");
-        return;
-    }
-
-    // Hardwarekosten
     const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
     // Berechnung des Kartenumsatzes (Disagio-Gebühren)
@@ -91,10 +119,10 @@ function calculateCosts() {
     // Transaktionsgebühren
     const transactionFee = transactions * 0.06;
 
-    // SIM/Servicegebühr (nur bei bestimmten Terminals)
+    // SIM/Servicegebühr (nur beim Kauf der Hardware, fällt bei Miete weg)
     let simServiceFee = 0;
     const hardwareSelect = document.getElementById('hardware').value;
-    if (hardwareSelect === "S1F2" || hardwareSelect === "V400C") {
+    if (purchaseOption === "kaufen" && (hardwareSelect === "S1F2" || hardwareSelect === "V400C")) {
         simServiceFee = 3.90;
     }
 
@@ -102,26 +130,12 @@ function calculateCosts() {
     const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
 
     // Anzeige der Ergebnisse
-    if (calculationType === 'schnell') {
-        // Bei schneller Berechnung: Gebühren und Hardware getrennt anzeigen
-        document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
-        document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €`;
-        document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €` : "";
-        document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
+    document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
+    document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+    document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr";
+    document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
-        // Einmalige Kosten nur bei Kauf anzeigen
-        document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
-    } else {
-        // Bei ausführlicher Berechnung: Einzelne Kostenarten anzeigen
-        document.getElementById('disagioFees').innerText = `Gebühren (Disagio): ${totalDisagioFees.toFixed(2)} €`;
-        document.getElementById('transactionFee').innerText = `Transaktionsgebühren: ${transactionFee.toFixed(2)} €`;
-        document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
-        document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €` : "";
-        document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
-
-        // Einmalige Kosten nur bei Kauf anzeigen
-        document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
-    }
+    document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
 
     // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
     if (calculationType === 'ausführlich') {
@@ -143,4 +157,26 @@ function calculateCosts() {
         document.getElementById('competitorTotal').innerText = "";
         document.getElementById('competitorSavings').innerText = "";
     }
+}
+
+// Funktion zur Generierung eines PDFs
+function generatePDF() {
+    const doc = new jspdf.jsPDF();
+
+    doc.setFontSize(18);
+    doc.setTextColor("#e67e22");
+    doc.text("DISH PAY Angebot", 10, 10);
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Gebühren gesamt: ${document.getElementById('disagioFees').innerText}`, 10, 30);
+    doc.text(`Monatliche Hardwarekosten: ${document.getElementById('monthlyCost').innerText}`, 10, 40);
+    doc.text(`SIM/Servicegebühr: ${document.getElementById('simServiceFee').innerText}`, 10, 50);
+    doc.text(`Monatliche Gesamtkosten: ${document.getElementById('totalCost').innerText}`, 10, 60);
+    doc.text(`Einmalige Kosten (bei Kauf): ${document.getElementById('oneTimeCost').innerText}`, 10, 70);
+
+    doc.setFontSize(10);
+    doc.text("Rechtlicher Hinweis:", 10, 90);
+    doc.text("Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken.", 10, 100);
+    doc.save("DISH_Angebot.pdf");
 }
