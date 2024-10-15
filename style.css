@@ -129,3 +129,14 @@ button:hover {
         font-size: 14px;
     }
 }
+
+/* Wettbewerber-Bereich */
+h4 {
+    color: #ff6f00;
+    margin-bottom: 10px;
+}
+
+/* Verstecken von zusätzlichen Feldern bei schneller Berechnung */
+#detailedFields {
+    display: none;
+}
