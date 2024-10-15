@@ -74,6 +74,7 @@
     </style>
 
     <script defer>
+        // Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
         function toggleCalculationFields() {
             const calculationType = document.getElementById('calculationType').value;
             const businessCardField = document.getElementById('businessCardField');
@@ -140,7 +141,6 @@
             return { onceCost: priceOnce, monthlyCost };
         }
 
-        // Funktion zur Sicherstellung, dass die Summe der Prozentsätze 100 ergibt
         function validatePercentages() {
             const girocard = parseFloat(document.getElementById('girocard').value) || 0;
             const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
@@ -171,10 +171,8 @@
             const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
             const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
 
-            // Hardwarekosten
             const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
-            // Berechnung des Kartenumsatzes (Disagio-Gebühren)
             const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
             const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
             const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
@@ -185,32 +183,23 @@
             const maestroFee = maestroRevenue * 0.0089;
             const businessCardFee = businessCardRevenue * 0.0289;
 
-            // Gesamte Disagio-Gebühren
             const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
-
-            // Transaktionsgebühren
             const transactionFee = transactions * 0.06;
 
-            // SIM/Servicegebühr (nur beim Kauf der Hardware, fällt bei Miete weg)
             let simServiceFee = 0;
             const hardwareSelect = document.getElementById('hardware').value;
             if (purchaseOption === "kaufen" && (hardwareSelect === "S1F2" || hardwareSelect === "V400C")) {
                 simServiceFee = 3.90;
             }
 
-            // Monatliche Gesamtkosten
             const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
 
-            // Anzeige der Ergebnisse
             document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
             document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
             document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr";
             document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
-
-            // Einmalige Kosten nur bei Kauf anzeigen
             document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
 
-            // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
             if (calculationType === 'ausführlich') {
                 const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
                 const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
@@ -233,14 +222,13 @@
         }
 
         function generatePDF() {
-            const doc = new jspdf.jsPDF();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-            // Tabellenform für Ergebnisse
             doc.setFontSize(18);
             doc.setTextColor("#e67e22");
             doc.text("DISH PAY Angebot", 10, 10);
 
-            // Tabelle erstellen
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
 
@@ -262,7 +250,6 @@
                 ]
             });
 
-            // Kundenorientierter Text
             doc.setFontSize(16);
             doc.setTextColor("#e67e22");
             doc.text("Wir freuen uns, Ihnen dieses attraktive Angebot von DISH PAY", 10, doc.autoTable.previous.finalY + 10);
@@ -280,7 +267,6 @@
             doc.text("Ihr DISH Team", 10, doc.autoTable.previous.finalY + 100);
             doc.text("Zuverlässige Zahlungsabwicklung für erfolgreiche Geschäfte.", 10, doc.autoTable.previous.finalY + 110);
 
-            // Rechtlicher Hinweis
             doc.setFontSize(10);
             doc.text("Rechtlicher Hinweis:", 10, doc.autoTable.previous.finalY + 130);
             doc.text("Dieses Angebot ist unverbindlich und dient ausschließlich zu", 10, doc.autoTable.previous.finalY + 140);
@@ -288,7 +274,6 @@
             doc.text("können sich ändern. Für eine rechtsverbindliche Auskunft", 10, doc.autoTable.previous.finalY + 160);
             doc.text("kontaktieren Sie uns bitte direkt.", 10, doc.autoTable.previous.finalY + 170);
 
-            // PDF speichern
             doc.save("DISH_Angebot.pdf");
         }
     </script>
@@ -299,28 +284,24 @@
     <h1>DISH PAY Rechner</h1>
     <h3>Kostenberechnung</h3>
 
-    <!-- Dropdown zur Auswahl der Berechnungsart -->
     <label for="calculationType">Berechnungsart: <span>*</span></label>
     <select id="calculationType" onchange="toggleCalculationFields()">
         <option value="schnell">Schnelle Berechnung</option>
         <option value="ausführlich">Ausführliche Berechnung</option>
     </select>
 
-    <!-- Felder für Umsatz und Transaktionen, die immer angezeigt werden -->
     <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
     <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
 
     <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
     <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
 
-    <!-- Prozentsatz Eingaben -->
     <label for="girocard">Girocard (%): <span>*</span></label>
     <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
     <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
     <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
 
-    <!-- Maestro und Business Card Felder nur bei ausführlicher Berechnung -->
     <div id="maestroField" class="hidden">
         <label for="maestro">Maestro / VPAY (%):</label>
         <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
@@ -331,14 +312,12 @@
         <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
     </div>
 
-    <!-- Hardware-Auswahl immer anzeigen -->
     <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
     <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
         <option value="mieten">Mieten</option>
         <option value="kaufen">Kaufen</option>
     </select>
 
-    <!-- Hardware Dropdown -->
     <div id="hardwareOptions">
         <label for="hardware">Hardware auswählen: <span>*</span></label>
         <select id="hardware" onchange="updateRentalPrices()">
@@ -349,7 +328,6 @@
         </select>
     </div>
 
-    <!-- Mietoptionen für den Mietzeitraum -->
     <div id="rentalOptions">
         <label for="rentalPeriod">Mietdauer: <span>*</span></label>
         <select id="rentalPeriod">
@@ -359,7 +337,6 @@
         </select>
     </div>
 
-    <!-- Wettbewerber Feld - bei ausführlicher Berechnung -->
     <div id="competitorSection" class="competitor-section hidden">
         <h4>Wettbewerber Gebühren:</h4>
         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
@@ -379,11 +356,9 @@
         </div>
     </div>
 
-    <!-- Berechnungsbuttons -->
     <button onclick="calculateCosts()">Berechnen</button>
     <button onclick="generatePDF()">PDF Angebot herunterladen</button>
 
-    <!-- Ergebnisbereich -->
     <div id="result">
         <h3>Ergebnisse:</h3>
         <div class="result-section">
@@ -398,7 +373,6 @@
         </div>
     </div>
 
-    <!-- Informationsfeld zu Gebühren -->
     <div class="info-section">
         <h4>Hinweis zu den Gebühren:</h4>
         <ul>
