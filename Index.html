@@ -74,26 +74,6 @@
         </select>
     </div>
 
-    <!-- Wettbewerber Feld - bei ausführlicher Berechnung -->
-    <div id="competitorSection" class="competitor-section hidden">
-        <h4>Wettbewerber Gebühren:</h4>
-        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
-
-        <div id="competitorMaestroField" class="hidden">
-            <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
-            <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
-        </div>
-
-        <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
-        <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
-
-        <div id="competitorBusinessCardField" class="hidden">
-            <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
-            <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
-        </div>
-    </div>
-
     <!-- Berechnungsbuttons -->
     <button onclick="calculateCosts()">Berechnen</button>
     <button onclick="generatePDF()">PDF Angebot herunterladen</button>
