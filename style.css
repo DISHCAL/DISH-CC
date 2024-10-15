@@ -26,4 +26,28 @@ h1, h3 {
     border: 1px solid #ddd;
 }
 
-/* Weitere Stile ... */
+/* Ausgeblendete Felder */
+.hidden {
+    display: none;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #e67e22;
+}
+
+/* Tabellenstile */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
