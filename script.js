@@ -131,8 +131,19 @@ function calculateCosts() {
         document.getElementById('oneTimeCost').innerText = "";  // Keine einmaligen Kaufkosten bei Miete
     }
 
-    // Nur eine Zeile für die monatlichen Gesamtkosten anzeigen
-    document.getElementById('totalCost').innerText = `Monatliche Gebühren: ${totalMonthlyCost.toFixed(2)} €`;
+    // Aufteilung der Gebühren
+    document.getElementById('disagioFees').innerText = `Gebühren (Disagio): ${totalDisagioFees.toFixed(2)} €`;
+    document.getElementById('transactionFee').innerText = `Transaktionsgebühren: ${transactionFee.toFixed(2)} €`;
+
+    // SIM/Servicegebühr
+    if (simServiceFee > 0) {
+        document.getElementById('simServiceFee').innerText = `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €`;
+    } else {
+        document.getElementById('simServiceFee').innerText = ""; // Leer lassen, wenn keine Gebühr anfällt
+    }
+
+    // Monatliche Gesamtkosten
+    document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
     // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
     if (calculationType === 'ausführlich') {
@@ -192,6 +203,8 @@ Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecke
 Ergebnisse:
 ${document.getElementById('oneTimeCost').innerText}
 ${document.getElementById('monthlyCost').innerText}
+${document.getElementById('disagioFees').innerText}
+${document.getElementById('transactionFee').innerText}
 ${simServiceFeeText}
 ${document.getElementById('totalCost').innerText}
 ${document.getElementById('competitorTotal').innerText}
