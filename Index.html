@@ -55,13 +55,39 @@
             padding: 8px;
             text-align: left;
         }
+
+        .competitor-section {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            clear: both;
+        }
+
+        .competitor-section h4 {
+            color: #e67e22;
+        }
     </style>
 
     <script defer>
         function toggleCalculationFields() {
             const calculationType = document.getElementById('calculationType').value;
             const detailedFields = document.getElementById('detailedFields');
-            detailedFields.style.display = calculationType === 'schnell' ? 'none' : 'block';
+            const businessCardField = document.getElementById('businessCardField');
+            const maestroField = document.getElementById('maestroField');
+            const competitorFields = document.querySelectorAll('.competitor-field');
+
+            if (calculationType === 'schnell') {
+                detailedFields.style.display = 'none';
+                businessCardField.style.display = 'none';
+                maestroField.style.display = 'none';
+                competitorFields.forEach(field => field.style.display = 'none');
+            } else {
+                detailedFields.style.display = 'block';
+                businessCardField.style.display = 'block';
+                maestroField.style.display = 'block';
+                competitorFields.forEach(field => field.style.display = 'block');
+            }
         }
 
         function toggleRentalOptions() {
@@ -260,11 +286,16 @@
     <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
     <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
 
-    <label for="maestro">Maestro / VPAY (%):</label>
-    <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
+    <!-- Maestro und Business Card Felder nur bei ausführlicher Berechnung -->
+    <div id="maestroField">
+        <label for="maestro">Maestro / VPAY (%):</label>
+        <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
+    </div>
 
-    <label for="businessCard">Business Card (%):</label>
-    <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
+    <div id="businessCardField">
+        <label for="businessCard">Business Card (%):</label>
+        <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
+    </div>
 
     <!-- Hardware-Auswahl immer anzeigen -->
     <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
@@ -294,8 +325,9 @@
         </select>
     </div>
 
-    <!-- Zusätzliche Felder für die ausführliche Berechnung -->
-    <div id="detailedFields" style="display: none;">
+    <!-- Wettbewerber Feld - bei schneller Berechnung nur Girocard und Mastercard/VISA -->
+    <div class="competitor-section competitor-field">
+        <h4>Wettbewerber Gebühren:</h4>
         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
         <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
 
