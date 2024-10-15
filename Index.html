@@ -6,17 +6,275 @@
     <title>DISH PAY Rechner</title>
     <!-- Einbindung von jsPDF für die PDF-Funktion -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Grundlegendes Design */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h3 {
+            color: #e67e22;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+
+        .info-section {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .competitor-section {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            clear: both;
+        }
+
+        .competitor-section h4 {
+            color: #e67e22;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+
+    <script defer>
+        // Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
+        function toggleCalculationFields() {
+            const calculationType = document.getElementById('calculationType').value;
+            const detailedFields = document.getElementById('detailedFields');
+            const businessCardField = document.getElementById('businessCardField');
+            const maestroField = document.getElementById('maestroField');
+            const competitorMaestroField = document.getElementById('competitorMaestroField');
+            const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
+
+            // Bei schneller Berechnung nur Girocard und Mastercard/VISA anzeigen
+            if (calculationType === 'schnell') {
+                businessCardField.classList.add('hidden');
+                maestroField.classList.add('hidden');
+                competitorMaestroField.classList.add('hidden');
+                competitorBusinessCardField.classList.add('hidden');
+            } else {
+                // Bei ausführlicher Berechnung alle Felder anzeigen
+                businessCardField.classList.remove('hidden');
+                maestroField.classList.remove('hidden');
+                competitorMaestroField.classList.remove('hidden');
+                competitorBusinessCardField.classList.remove('hidden');
+            }
+        }
+
+        function toggleRentalOptions() {
+            const purchaseOption = document.getElementById('purchaseOption').value;
+            const rentalOptions = document.getElementById('rentalOptions');
+            rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
+        }
+
+        function updateRentalPrices() {
+            const hardwareSelect = document.getElementById('hardware');
+            const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+            const rentalPeriodSelect = document.getElementById('rentalPeriod');
+            const price12 = selectedHardware.getAttribute('data-price-12');
+            const price36 = selectedHardware.getAttribute('data-price-36');
+            const price60 = selectedHardware.getAttribute('data-price-60');
+
+            rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
+            rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
+            rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
+        }
+
+        function updateHardwareCosts() {
+            const purchaseOption = document.getElementById('purchaseOption').value;
+            const hardwareSelect = document.getElementById('hardware');
+            const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+            
+            const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
+            let monthlyCost = 0;
+
+            if (purchaseOption === "mieten") {
+                const rentalPeriod = document.getElementById('rentalPeriod').value;
+                if (rentalPeriod === "12") {
+                    monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
+                } else if (rentalPeriod === "36") {
+                    monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
+                } else if (rentalPeriod === "60") {
+                    monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
+                }
+            } else {
+                monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
+            }
+
+            return { onceCost: priceOnce, monthlyCost };
+        }
+
+        // Funktion zur Sicherstellung, dass die Summe der Prozentsätze 100 ergibt
+        function validatePercentages() {
+            const girocard = parseFloat(document.getElementById('girocard').value) || 0;
+            const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+            const maestro = parseFloat(document.getElementById('maestro').value) || 0;
+            const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
+            
+            const totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+
+            if (totalPercentage !== 100) {
+                alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
+                return false;
+            }
+            return true;
+        }
+
+        function calculateCosts() {
+            if (!validatePercentages()) {
+                return;
+            }
+
+            const calculationType = document.getElementById('calculationType').value;
+            const purchaseOption = document.getElementById('purchaseOption').value;
+            const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
+            const transactions = parseFloat(document.getElementById('transactions').value) || 0;
+            
+            const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
+            const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+            const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
+            const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
+
+            // Hardwarekosten
+            const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
+
+            // Berechnung des Kartenumsatzes (Disagio-Gebühren)
+            const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
+            const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
+            const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
+            const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
+
+            const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);
+            const mastercardVisaFee = mastercardVisaRevenue * 0.0089;
+            const maestroFee = maestroRevenue * 0.0089;
+            const businessCardFee = businessCardRevenue * 0.0289;
+
+            // Gesamte Disagio-Gebühren
+            const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
+
+            // Transaktionsgebühren
+            const transactionFee = transactions * 0.06;
+
+            // SIM/Servicegebühr (nur beim Kauf der Hardware, fällt bei Miete weg)
+            let simServiceFee = 0;
+            const hardwareSelect = document.getElementById('hardware').value;
+            if (purchaseOption === "kaufen" && (hardwareSelect === "S1F2" || hardwareSelect === "V400C")) {
+                simServiceFee = 3.90;
+            }
+
+            // Monatliche Gesamtkosten
+            const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
+
+            // Anzeige der Ergebnisse
+            document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
+            document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+            document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr";
+            document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
+
+            // Einmalige Kosten nur bei Kauf anzeigen
+            document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
+        }
+
+        function generatePDF() {
+            const doc = new jspdf.jsPDF();
+
+            // Tabellenform für Ergebnisse
+            doc.setFontSize(18);
+            doc.setTextColor("#e67e22");
+            doc.text("DISH PAY Angebot", 10, 10);
+
+            // Tabelle erstellen
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.autoTable({
+                startY: 20,
+                head: [['Beschreibung', 'Betrag (€)']],
+                body: [
+                    ['Gebühren gesamt', document.getElementById('disagioFees').innerText.split(":")[1]],
+                    ['Monatliche Hardwarekosten', document.getElementById('monthlyCost').innerText.split(":")[1] || '-'],
+                    ['SIM/Servicegebühr', document.getElementById('simServiceFee').innerText.split(":")[1] || '-'],
+                    ['Monatliche Gesamtkosten', document.getElementById('totalCost').innerText.split(":")[1]],
+                    ['Einmalige Kosten (bei Kauf)', document.getElementById('oneTimeCost').innerText.split(":")[1] || '-']
+                ]
+            });
+
+            // Kundenorientierter Text
+            doc.setFontSize(16);
+            doc.setTextColor("#e67e22");
+            doc.text("Wir freuen uns, Ihnen dieses attraktive Angebot von DISH PAY", 10, doc.autoTable.previous.finalY + 10);
+            doc.text("präsentieren zu dürfen.", 10, doc.autoTable.previous.finalY + 20);
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text("Mit unserer Lösung ermöglichen wir Ihnen eine schnelle, sichere", 10, doc.autoTable.previous.finalY + 30);
+            doc.text("und effiziente Zahlungsabwicklung, die perfekt auf die Bedürfnisse", 10, doc.autoTable.previous.finalY + 40);
+            doc.text("Ihres Geschäfts zugeschnitten ist. Profitieren Sie von transparenter", 10, doc.autoTable.previous.finalY + 50);
+            doc.text("Preisgestaltung, unkomplizierter Nutzung und modernster Technologie.", 10, doc.autoTable.previous.finalY + 60);
+
+            doc.text("Sichern Sie sich jetzt Ihre maßgeschneiderte Lösung und starten Sie durch!", 10, doc.autoTable.previous.finalY + 80);
+
+            doc.text("Ihr DISH Team", 10, doc.autoTable.previous.finalY + 100);
+            doc.text("Zuverlässige Zahlungsabwicklung für erfolgreiche Geschäfte.", 10, doc.autoTable.previous.finalY + 110);
+
+            // Rechtlicher Hinweis
+            doc.setFontSize(10);
+            doc.text("Rechtlicher Hinweis:", 10, doc.autoTable.previous.finalY + 130);
+            doc.text("Dieses Angebot ist unverbindlich und dient ausschließlich zu", 10, doc.autoTable.previous.finalY + 140);
+            doc.text("Informationszwecken. Die angegebenen Preise und Konditionen", 10, doc.autoTable.previous.finalY + 150);
+            doc.text("können sich ändern. Für eine rechtsverbindliche Auskunft", 10, doc.autoTable.previous.finalY + 160);
+            doc.text("kontaktieren Sie uns bitte direkt.", 10, doc.autoTable.previous.finalY + 170);
+
+            // PDF speichern
+            doc.save("DISH_Angebot.pdf");
+        }
+    </script>
 </head>
 <body>
+
 <div class="container">
     <h1>DISH PAY Rechner</h1>
     <h3>Kostenberechnung</h3>
 
     <!-- Dropdown zur Auswahl der Berechnungsart -->
     <label for="calculationType">Berechnungsart: <span>*</span></label>
-    <select id="calculationType">
+    <select id="calculationType" onchange="toggleCalculationFields()">
         <option value="schnell">Schnelle Berechnung</option>
         <option value="ausführlich">Ausführliche Berechnung</option>
     </select>
@@ -48,7 +306,7 @@
 
     <!-- Hardware-Auswahl immer anzeigen -->
     <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
-    <select id="purchaseOption">
+    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
         <option value="mieten">Mieten</option>
         <option value="kaufen">Kaufen</option>
     </select>
@@ -56,7 +314,7 @@
     <!-- Hardware Dropdown -->
     <div id="hardwareOptions">
         <label for="hardware">Hardware auswählen: <span>*</span></label>
-        <select id="hardware">
+        <select id="hardware" onchange="updateRentalPrices()">
             <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
             <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
             <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
@@ -74,8 +332,8 @@
         </select>
     </div>
 
-    <!-- Wettbewerber Feld - bei ausführlicher Berechnung -->
-    <div id="competitorSection" class="competitor-section hidden">
+    <!-- Wettbewerber Feld - bei schneller Berechnung nur Girocard und Mastercard/VISA -->
+    <div class="competitor-section competitor-field">
         <h4>Wettbewerber Gebühren:</h4>
         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
         <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
@@ -95,8 +353,8 @@
     </div>
 
     <!-- Berechnungsbuttons -->
-    <button id="calculateButton">Berechnen</button>
-    <button id="generatePdfButton">PDF Angebot herunterladen</button>
+    <button onclick="calculateCosts()">Berechnen</button>
+    <button onclick="generatePDF()">PDF Angebot herunterladen</button>
 
     <!-- Ergebnisbereich -->
     <div id="result">
@@ -105,6 +363,7 @@
             <p id="oneTimeCost"></p>
             <p id="monthlyCost"></p>
             <p id="disagioFees"></p>
+            <p id="transactionFee"></p>
             <p id="simServiceFee"></p>
             <p id="totalCost"></p>
         </div>
@@ -124,5 +383,6 @@
     </div>
 
 </div>
+
 </body>
 </html>
