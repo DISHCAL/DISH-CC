@@ -16,27 +16,27 @@
     <h3>Kostenberechnung</h3>
 
     <!-- Dropdown zur Auswahl der Berechnungsart -->
-    <label for="calculationType">Berechnungsart:</label>
+    <label for="calculationType">Berechnungsart: <span>*</span></label>
     <select id="calculationType" onchange="toggleCalculationFields()">
         <option value="schnell">Schnelle Berechnung</option>
         <option value="ausführlich">Ausführliche Berechnung</option>
     </select>
 
     <!-- Felder für Umsatz und Transaktionen, die immer angezeigt werden -->
-    <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
+    <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
     <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
 
-    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
+    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
     <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
 
-    <label for="girocard">Girocard (%):</label>
+    <label for="girocard">Girocard (%): <span>*</span></label>
     <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
-    <label for="mastercardVisa">Mastercard / VISA (%):</label>
+    <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
     <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
 
     <!-- Hardware-Auswahl immer anzeigen -->
-    <label for="purchaseOption">Kauf oder Miete:</label>
+    <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
     <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
         <option value="mieten">Mieten</option>
         <option value="kaufen">Kaufen</option>
@@ -44,7 +44,7 @@
 
     <!-- Hardware Dropdown -->
     <div id="hardwareOptions">
-        <label for="hardware">Hardware auswählen:</label>
+        <label for="hardware">Hardware auswählen: <span>*</span></label>
         <select id="hardware" onchange="updateRentalPrices()">
             <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
             <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
@@ -55,7 +55,7 @@
 
     <!-- Mietoptionen für den Mietzeitraum -->
     <div id="rentalOptions">
-        <label for="rentalPeriod">Mietdauer:</label>
+        <label for="rentalPeriod">Mietdauer: <span>*</span></label>
         <select id="rentalPeriod">
             <option value="12">12 Monate</option>
             <option value="36">36 Monate</option>
@@ -96,7 +96,7 @@
         <div class="result-section">
             <p id="oneTimeCost"></p>
             <p id="monthlyCost"></p>
-            <p id="totalDisagioFees"></p>
+            <p id="disagioFees"></p>
             <p id="transactionFee"></p>
             <p id="simServiceFee"></p>
             <p id="totalCost"></p>
