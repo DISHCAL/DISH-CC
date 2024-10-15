@@ -128,4 +128,7 @@ function calculateCosts() {
         document.getElementById('competitorTotal').innerText = "";
         document.getElementById('competitorSavings').innerText = "";
     }
+
+    // Nach der Berechnung den PDF-Download-Button aktivieren
+    document.getElementById('pdfDownloadButton').disabled = false;
 }
