@@ -98,7 +98,7 @@ function calculateCosts() {
     const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
     const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
 
-    // Transaktionsgebühren DISH PAY
+    // Transaktionsgebühren DISH PAY (Disagio)
     const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);
     const mastercardVisaFee = mastercardVisaRevenue * 0.0089;
     const maestroFee = maestroRevenue * 0.0089;
@@ -131,18 +131,23 @@ function calculateCosts() {
         document.getElementById('oneTimeCost').innerText = "";  // Keine einmaligen Kaufkosten bei Miete
     }
 
+    // Disagio-Gebühren
     document.getElementById('totalDisagioFees').innerText = `Disagio-Gebühren pro Monat: ${totalDisagioFees.toFixed(2)} €`;
+
+    // Transaktionsgebühren
     document.getElementById('transactionFee').innerText = `Transaktionsgebühren (0,06 € pro Transaktion): ${transactionFee.toFixed(2)} €`;
 
+    // SIM/Servicegebühr
     if (simServiceFee > 0) {
         document.getElementById('simServiceFee').innerText = `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €`;
     } else {
         document.getElementById('simServiceFee').innerText = ""; // Leer lassen, wenn keine Gebühr anfällt
     }
 
+    // Monatliche Gesamtkosten
     document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten DISH PAY: ${totalMonthlyCost.toFixed(2)} €`;
 
-    // Wenn ausführliche Berechnung, berechne Wettbewerberkosten
+    // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
     if (calculationType === 'ausführlich') {
         const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
         const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
@@ -154,9 +159,12 @@ function calculateCosts() {
         const competitorMastercardVisaCost = mastercardVisaRevenue * competitorMastercardVisaFee;
         const competitorBusinessCardCost = businessCardRevenue * competitorBusinessCardFee;
 
-        const competitorTotalFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost + transactionFee + hardwareMonthlyCost + simServiceFee;
+        const competitorTotalDisagioFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost;
+
+        const competitorTotalFees = competitorTotalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
 
         document.getElementById('competitorTotal').innerText = `Wettbewerberkosten pro Monat: ${competitorTotalFees.toFixed(2)} €`;
+
         const competitorSavings = competitorTotalFees - totalMonthlyCost;
         document.getElementById('competitorSavings').innerText = `Monatliche Ersparnis mit DISH PAY: ${competitorSavings.toFixed(2)} €`;
     } else {
@@ -201,6 +209,7 @@ ${document.getElementById('totalDisagioFees').innerText}
 ${document.getElementById('transactionFee').innerText}
 ${simServiceFeeText}
 ${document.getElementById('totalCost').innerText}
+${document.getElementById('competitorTotal').innerText}
 ${document.getElementById('competitorSavings').innerText || 'N/A'}
 `;
 
