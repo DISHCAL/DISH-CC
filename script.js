@@ -15,6 +15,19 @@ function toggleCalculationFields() {
     }
 }
 
+function updateRentalPrices() {
+    const hardwareSelect = document.getElementById('hardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    const rentalPeriodSelect = document.getElementById('rentalPeriod');
+    const price12 = selectedHardware.getAttribute('data-price-12');
+    const price36 = selectedHardware.getAttribute('data-price-36');
+    const price60 = selectedHardware.getAttribute('data-price-60');
+
+    rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
+    rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
+    rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
+}
+
 function calculateCosts() {
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
     const transactions = parseFloat(document.getElementById('transactions').value) || 0;
@@ -30,5 +43,5 @@ function calculateCosts() {
         return;
     }
 
-    // Rest der Berechnungslogik ...
+    // Berechnungslogik hier ...
 }
