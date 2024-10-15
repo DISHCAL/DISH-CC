@@ -120,17 +120,23 @@ function calculateCosts() {
 
     // Anzeige der Ergebnisse
     if (calculationType === 'schnell') {
-        // Bei schneller Berechnung: Gebühren zusammenfassen und als eine Zahl anzeigen
-        document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
-        document.getElementById('disagioFees').innerText = "";
-        document.getElementById('transactionFee').innerText = "";
+        // Bei schneller Berechnung: Gebühren und Hardware getrennt anzeigen
+        document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
         document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+        document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
+
+        // Einmalige Kosten nur bei Kauf anzeigen
+        document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
     } else {
         // Bei ausführlicher Berechnung: Einzelne Kostenarten anzeigen
         document.getElementById('disagioFees').innerText = `Gebühren (Disagio): ${totalDisagioFees.toFixed(2)} €`;
         document.getElementById('transactionFee').innerText = `Transaktionsgebühren: ${transactionFee.toFixed(2)} €`;
         document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+        document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €` : "";
         document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
+
+        // Einmalige Kosten nur bei Kauf anzeigen
+        document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
     }
 
     // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
