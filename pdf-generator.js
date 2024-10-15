@@ -2,7 +2,7 @@ function generatePDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Titel
+    // Titel der PDF-Datei
     doc.setFontSize(18);
     doc.setTextColor("#e67e22");
     doc.text("DISH PAY Angebot", 10, 10);
@@ -10,12 +10,12 @@ function generatePDF() {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
 
-    // Die Informationen aus den Ergebnisfeldern abrufen
-    const totalCostText = document.getElementById('totalCost').innerText.split(":")[1] || "-";
-    const monthlyCostText = document.getElementById('monthlyCost').innerText.split(":")[1] || "-";
-    const simServiceFeeText = document.getElementById('simServiceFee').innerText.split(":")[1] || "-";
-    const oneTimeCostText = document.getElementById('oneTimeCost').innerText.split(":")[1] || "-";
-    const totalDisagioFeeText = document.getElementById('disagioFees').innerText.split(":")[1] || "-";
+    // Abrufen der Informationen aus den Ergebnisfeldern
+    const totalCostText = document.getElementById('totalCost') ? document.getElementById('totalCost').innerText.split(":")[1] || "-" : "-";
+    const monthlyCostText = document.getElementById('monthlyCost') ? document.getElementById('monthlyCost').innerText.split(":")[1] || "-" : "-";
+    const simServiceFeeText = document.getElementById('simServiceFee') ? document.getElementById('simServiceFee').innerText.split(":")[1] || "-" : "-";
+    const oneTimeCostText = document.getElementById('oneTimeCost') ? document.getElementById('oneTimeCost').innerText.split(":")[1] || "-" : "-";
+    const totalDisagioFeeText = document.getElementById('disagioFees') ? document.getElementById('disagioFees').innerText.split(":")[1] || "-" : "-";
 
     // Erstellen einer Tabelle für die Kostenübersicht
     doc.autoTable({
