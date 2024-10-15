@@ -74,23 +74,27 @@
     </style>
 
     <script defer>
+        // Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
         function toggleCalculationFields() {
             const calculationType = document.getElementById('calculationType').value;
             const detailedFields = document.getElementById('detailedFields');
             const businessCardField = document.getElementById('businessCardField');
             const maestroField = document.getElementById('maestroField');
-            const competitorFields = document.querySelectorAll('.competitor-field');
+            const competitorMaestroField = document.getElementById('competitorMaestroField');
+            const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
 
+            // Bei schneller Berechnung nur Girocard und Mastercard/VISA anzeigen
             if (calculationType === 'schnell') {
-                detailedFields.style.display = 'none';
                 businessCardField.classList.add('hidden');
                 maestroField.classList.add('hidden');
-                competitorFields.forEach(field => field.classList.add('hidden'));
+                competitorMaestroField.classList.add('hidden');
+                competitorBusinessCardField.classList.add('hidden');
             } else {
-                detailedFields.style.display = 'block';
+                // Bei ausführlicher Berechnung alle Felder anzeigen
                 businessCardField.classList.remove('hidden');
                 maestroField.classList.remove('hidden');
-                competitorFields.forEach(field => field.classList.remove('hidden'));
+                competitorMaestroField.classList.remove('hidden');
+                competitorBusinessCardField.classList.remove('hidden');
             }
         }
 
@@ -206,7 +210,6 @@
 
             // Einmalige Kosten nur bei Kauf anzeigen
             document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
-
         }
 
         function generatePDF() {
@@ -335,14 +338,18 @@
         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
         <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
 
-        <label for="competitorMaestroFee" class="hidden">Maestro / VPAY Gebühr (%):</label>
-        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0" class="hidden">
+        <div id="competitorMaestroField" class="hidden">
+            <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
+            <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
+        </div>
 
         <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
         <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
 
-        <label for="competitorBusinessCardFee" class="hidden">Business Card Gebühr (%):</label>
-        <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0" class="hidden">
+        <div id="competitorBusinessCardField" class="hidden">
+            <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
+            <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+        </div>
     </div>
 
     <!-- Berechnungsbuttons -->
