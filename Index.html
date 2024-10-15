@@ -100,10 +100,10 @@
             // Transaktionsgebühren
             const transactionFee = transactions * 0.06;
 
-            // SIM/Servicegebühr (nur bei bestimmten Terminals)
+            // SIM/Servicegebühr (nur beim Kauf der Hardware, fällt bei Miete weg)
             let simServiceFee = 0;
             const hardwareSelect = document.getElementById('hardware').value;
-            if (hardwareSelect === "S1F2" || hardwareSelect === "V400C") {
+            if (purchaseOption === "kaufen" && (hardwareSelect === "S1F2" || hardwareSelect === "V400C")) {
                 simServiceFee = 3.90;
             }
 
@@ -114,8 +114,8 @@
             if (calculationType === 'schnell') {
                 // Bei schneller Berechnung: Gebühren und Hardware getrennt anzeigen
                 document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
-                document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €`;
-                document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €` : "";
+                document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+                document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr bei Miete";
                 document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
                 // Einmalige Kosten nur bei Kauf anzeigen
@@ -125,7 +125,7 @@
                 document.getElementById('disagioFees').innerText = `Gebühren (Disagio): ${totalDisagioFees.toFixed(2)} €`;
                 document.getElementById('transactionFee').innerText = `Transaktionsgebühren: ${transactionFee.toFixed(2)} €`;
                 document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
-                document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €` : "";
+                document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr bei Miete";
                 document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
                 // Einmalige Kosten nur bei Kauf anzeigen
