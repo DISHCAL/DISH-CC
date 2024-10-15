@@ -3,15 +3,21 @@ function toggleCalculationFields() {
     const businessCardField = document.getElementById('businessCardField');
     const maestroField = document.getElementById('maestroField');
     const competitorSection = document.getElementById('competitorSection');
+    const competitorMaestroField = document.getElementById('competitorMaestroField');
+    const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
 
     if (calculationType === 'schnell') {
         businessCardField.classList.add('hidden');
         maestroField.classList.add('hidden');
         competitorSection.classList.add('hidden');
+        competitorMaestroField.classList.add('hidden');
+        competitorBusinessCardField.classList.add('hidden');
     } else {
         businessCardField.classList.remove('hidden');
         maestroField.classList.remove('hidden');
         competitorSection.classList.remove('hidden');
+        competitorMaestroField.classList.remove('hidden');
+        competitorBusinessCardField.classList.remove('hidden');
     }
 }
 
