@@ -1,142 +1,91 @@
-/* Allgemeine Styles für den Body */
+/* Grundlegendes Design */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
 }
 
-/* Container-Styling für das Formular */
-.container {
-    max-width: 600px;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Überschriften */
 h1, h3 {
-    text-align: center;
-    color: #ff6f00;
+    color: #e67e22;
 }
 
-/* Info-Bereich für Gebühren */
-.info-section {
-    background-color: #f1f1f1;
-    padding: 10px;
+.container {
+    width: 80%;
+    margin: auto;
+}
+
+.result-section {
     margin-top: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.85em; /* Verkleinert den Text */
-}
-
-.info-section h4 {
-    color: #333;
-    margin: 0 0 10px;
-}
-
-.info-section ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.info-section ul li {
-    margin-bottom: 5px;
-}
-
-/* Label-Styling */
-label {
-    display: block;
-    margin: 15px 0 5px;
-    font-weight: bold;
-    color: #333;
-}
-
-/* Styling für alle Input-Felder und Dropdowns */
-input, select, button {
-    width: 100%;
     padding: 10px;
-    margin-bottom: 15px; /* Anpassung für bessere Abstände */
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
 }
 
-/* Styling für den Button */
+.info-section {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #e67e22;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+.competitor-section {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    clear: both;
+}
+
+.competitor-section h4 {
+    color: #e67e22;
+}
+
+.hidden {
+    display: none;
+}
+
 button {
-    background-color: #ff6f00;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #e67e22;
     color: white;
     border: none;
     cursor: pointer;
     font-size: 16px;
-    margin-bottom: 10px;
 }
 
-/* Hover-Effekt für den Button */
 button:hover {
-    background-color: #e65c00;
+    background-color: #d35400;
+} 
+
+label {
+    display: block;
+    margin-top: 10px;
 }
 
-/* Ergebnisbereich-Styling */
-#result {
-    text-align: center;
-    margin-top: 20px;
-}
-
-#result .result-section {
-    display: inline-block;
-    text-align: left;
-    padding: 20px;
-    border: 2px solid #ff6f00;
-    border-radius: 8px;
-    background-color: #fff8e1;
-}
-
-#result p {
-    font-size: 18px;
-    color: #333;
-    margin: 10px 0;
-}
-
-/* Hervorhebung der Ergebnisse */
-#result p#oneTimeCost,
-#result p#monthlyCost,
-#result p#totalCost {
-    font-weight: bold;
-}
-
-/* Styling für ausgeblendete Sektionen (Wettbewerber) */
-#competitorSection {
-    display: none;
-}
-
-/* Überschrift in der Wettbewerber-Sektion */
-#competitorSection h4 {
-    margin-top: 20px;
-    color: #ff6f00;
-}
-
-/* Responsive Design: Layoutanpassung für kleinere Bildschirme */
-@media (max-width: 768px) {
-    .container {
-        width: 90%;
-    }
-    
-    input, select, button {
-        font-size: 14px;
-    }
-}
-
-/* Wettbewerber-Bereich */
-h4 {
-    color: #ff6f00;
+input[type="number"], select {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-top: 5px;
     margin-bottom: 10px;
-}
-
-/* Verstecken von zusätzlichen Feldern bei schneller Berechnung */
-#detailedFields {
-    display: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
