@@ -4,10 +4,10 @@ function toggleCalculationFields() {
     const detailedFields = document.getElementById('detailedFields');
 
     if (calculationType === 'schnell') {
-        // Schnelle Berechnung: Zusätzliche Felder ausblenden
+        // Zusätzliche Felder ausblenden bei schneller Berechnung
         detailedFields.style.display = 'none';
-    } else if (calculationType === 'ausführlich') {
-        // Ausführliche Berechnung: Zusätzliche Felder einblenden
+    } else {
+        // Zusätzliche Felder einblenden bei ausführlicher Berechnung
         detailedFields.style.display = 'block';
     }
 }
@@ -16,7 +16,7 @@ function toggleCalculationFields() {
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
-
+    
     // Mietoptionen nur anzeigen, wenn "Mieten" ausgewählt ist
     rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
 }
@@ -42,9 +42,8 @@ function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-    const hardwareValue = hardwareSelect.value;
-
-    // Einmalige Kosten und monatliche Kosten aus den Datenattributen des ausgewählten Hardware-Elements
+    
+    // Hardwarekosten
     const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
     let monthlyCost = 0;
 
@@ -57,11 +56,11 @@ function updateHardwareCosts() {
         } else if (rentalPeriod === "60") {
             monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
         }
-    } else if (purchaseOption === "kaufen") {
+    } else {
         monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
     }
 
-    return { onceCost: priceOnce, monthlyCost, hardwareValue };
+    return { onceCost: priceOnce, monthlyCost };
 }
 
 // Hauptfunktion zur Berechnung der Kosten
@@ -82,7 +81,7 @@ function calculateCosts() {
         businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
     }
 
-    // Validierung, dass die Summe der Prozentsätze 100% ergibt
+    // Validierung der Kartenprozentsätze
     const totalPercentage = girocardFeePercentage + mastercardVisaFeePercentage + maestroFeePercentage + businessCardFeePercentage;
     if (totalPercentage !== 100) {
         alert("Die Summe der Kartenprozentsätze muss 100% ergeben.");
@@ -90,60 +89,49 @@ function calculateCosts() {
     }
 
     // Hardwarekosten
-    const { onceCost, monthlyCost: hardwareMonthlyCost, hardwareValue } = updateHardwareCosts();
+    const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
-    // Anteile des Umsatzes für die einzelnen Kartenarten
+    // Berechnung des Kartenumsatzes (Disagio-Gebühren)
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
     const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
     const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
     const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
 
-    // Transaktionsgebühren DISH PAY (Disagio)
     const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);
     const mastercardVisaFee = mastercardVisaRevenue * 0.0089;
     const maestroFee = maestroRevenue * 0.0089;
     const businessCardFee = businessCardRevenue * 0.0289;
 
-    // Gesamtsumme der Disagio-Gebühren
+    // Gesamte Disagio-Gebühren
     const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
 
-    // Transaktionspreis von 0,06 € pro Transaktion
+    // Transaktionsgebühren
     const transactionFee = transactions * 0.06;
 
-    // SIM/Servicegebühr von 3,90 € nur für S1F2 und V400C Terminals
+    // SIM/Servicegebühr (nur bei bestimmten Terminals)
     let simServiceFee = 0;
-    if (hardwareValue === "S1F2" || hardwareValue === "V400C") {
+    const hardwareSelect = document.getElementById('hardware').value;
+    if (hardwareSelect === "S1F2" || hardwareSelect === "V400C") {
         simServiceFee = 3.90;
     }
 
-    // Berechnung der monatlichen Gesamtkosten (Disagio + Transaktionsgebühren + Hardwarekosten + SIM/Servicegebühr)
+    // Monatliche Gesamtkosten
     const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
 
-    // Einmalige Gesamtkosten DISH PAY
-    const totalOneTimeCost = purchaseOption === "kaufen" ? onceCost : 0;
-
-    // Ergebnisse anzeigen
-    if (purchaseOption === "kaufen") {
-        document.getElementById('oneTimeCost').innerText = `Einmalige Kosten (Kauf): ${totalOneTimeCost.toFixed(2)} €`;
-        document.getElementById('monthlyCost').innerText = "";  // Keine monatlichen Mietkosten bei Kauf
+    // Anzeige der Ergebnisse
+    if (calculationType === 'schnell') {
+        // Bei schneller Berechnung: Gebühren zusammenfassen und als eine Zahl anzeigen
+        document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
+        document.getElementById('disagioFees').innerText = "";
+        document.getElementById('transactionFee').innerText = "";
+        document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
     } else {
-        document.getElementById('monthlyCost').innerText = `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €`;
-        document.getElementById('oneTimeCost').innerText = "";  // Keine einmaligen Kaufkosten bei Miete
+        // Bei ausführlicher Berechnung: Einzelne Kostenarten anzeigen
+        document.getElementById('disagioFees').innerText = `Gebühren (Disagio): ${totalDisagioFees.toFixed(2)} €`;
+        document.getElementById('transactionFee').innerText = `Transaktionsgebühren: ${transactionFee.toFixed(2)} €`;
+        document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
+        document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
     }
-
-    // Aufteilung der Gebühren
-    document.getElementById('disagioFees').innerText = `Gebühren (Disagio): ${totalDisagioFees.toFixed(2)} €`;
-    document.getElementById('transactionFee').innerText = `Transaktionsgebühren: ${transactionFee.toFixed(2)} €`;
-
-    // SIM/Servicegebühr
-    if (simServiceFee > 0) {
-        document.getElementById('simServiceFee').innerText = `SIM/Servicegebühr: ${simServiceFee.toFixed(2)} €`;
-    } else {
-        document.getElementById('simServiceFee').innerText = ""; // Leer lassen, wenn keine Gebühr anfällt
-    }
-
-    // Monatliche Gesamtkosten
-    document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
 
     // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
     if (calculationType === 'ausführlich') {
@@ -157,14 +145,10 @@ function calculateCosts() {
         const competitorMastercardVisaCost = mastercardVisaRevenue * competitorMastercardVisaFee;
         const competitorBusinessCardCost = businessCardRevenue * competitorBusinessCardFee;
 
-        const competitorTotalDisagioFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost;
-
-        const competitorTotalFees = competitorTotalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
+        const competitorTotalFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost + transactionFee + hardwareMonthlyCost + simServiceFee;
 
         document.getElementById('competitorTotal').innerText = `Wettbewerberkosten pro Monat: ${competitorTotalFees.toFixed(2)} €`;
-
-        const competitorSavings = competitorTotalFees - totalMonthlyCost;
-        document.getElementById('competitorSavings').innerText = `Monatliche Ersparnis mit DISH PAY: ${competitorSavings.toFixed(2)} €`;
+        document.getElementById('competitorSavings').innerText = `Monatliche Ersparnis mit DISH PAY: ${(competitorTotalFees - totalMonthlyCost).toFixed(2)} €`;
     } else {
         document.getElementById('competitorTotal').innerText = "";
         document.getElementById('competitorSavings').innerText = "";
@@ -184,10 +168,7 @@ function downloadPDF() {
     doc.setFontSize(12);
     doc.setTextColor(...orangeColor);
 
-    // SIM/Servicegebühr Text abrufen
-    const simServiceFeeText = document.getElementById('simServiceFee').innerText;
-
-    // Kundentext
+    // Kundentext für PDF
     const text = `
 Guten Tag,
 
@@ -197,15 +178,11 @@ Unten sind die detaillierten Kosten aufgelistet.
 Gute Geschäfte wünscht Ihnen
 Ihr DISH Team
 
-Wichtige rechtliche Hinweise:
-Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken.
-
 Ergebnisse:
 ${document.getElementById('oneTimeCost').innerText}
 ${document.getElementById('monthlyCost').innerText}
 ${document.getElementById('disagioFees').innerText}
 ${document.getElementById('transactionFee').innerText}
-${simServiceFeeText}
 ${document.getElementById('totalCost').innerText}
 ${document.getElementById('competitorTotal').innerText}
 ${document.getElementById('competitorSavings').innerText || 'N/A'}
