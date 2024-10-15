@@ -88,4 +88,11 @@ input[type="number"], select {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Verbesserte Zugänglichkeit */
+input:focus, select:focus, button:focus {
+    outline: 2px solid #e67e22;
+    outline-offset: 2px;
 }
