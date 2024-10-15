@@ -74,7 +74,6 @@
     </style>
 
     <script defer>
-        // Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
         function toggleCalculationFields() {
             const calculationType = document.getElementById('calculationType').value;
             const businessCardField = document.getElementById('businessCardField');
@@ -83,20 +82,18 @@
             const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
             const competitorSection = document.getElementById('competitorSection');
 
-            // Bei schneller Berechnung nur Girocard und Mastercard/VISA anzeigen
             if (calculationType === 'schnell') {
                 businessCardField.classList.add('hidden');
                 maestroField.classList.add('hidden');
                 competitorMaestroField.classList.add('hidden');
                 competitorBusinessCardField.classList.add('hidden');
-                competitorSection.classList.add('hidden');  // Wettbewerber ausblenden
+                competitorSection.classList.add('hidden');
             } else {
-                // Bei ausführlicher Berechnung alle Felder anzeigen
                 businessCardField.classList.remove('hidden');
                 maestroField.classList.remove('hidden');
                 competitorMaestroField.classList.remove('hidden');
                 competitorBusinessCardField.classList.remove('hidden');
-                competitorSection.classList.remove('hidden');  // Wettbewerber anzeigen
+                competitorSection.classList.remove('hidden');
             }
         }
 
@@ -246,15 +243,22 @@
             // Tabelle erstellen
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
+
+            const totalCostText = document.getElementById('totalCost').innerText.split(":")[1] || "-";
+            const monthlyCostText = document.getElementById('monthlyCost').innerText.split(":")[1] || "-";
+            const simServiceFeeText = document.getElementById('simServiceFee').innerText.split(":")[1] || "-";
+            const oneTimeCostText = document.getElementById('oneTimeCost').innerText.split(":")[1] || "-";
+            const totalDisagioFeeText = document.getElementById('disagioFees').innerText.split(":")[1] || "-";
+
             doc.autoTable({
                 startY: 20,
                 head: [['Beschreibung', 'Betrag (€)']],
                 body: [
-                    ['Gebühren gesamt', document.getElementById('disagioFees').innerText.split(":")[1]],
-                    ['Monatliche Hardwarekosten', document.getElementById('monthlyCost').innerText.split(":")[1] || '-'],
-                    ['SIM/Servicegebühr', document.getElementById('simServiceFee').innerText.split(":")[1] || '-'],
-                    ['Monatliche Gesamtkosten', document.getElementById('totalCost').innerText.split(":")[1]],
-                    ['Einmalige Kosten (bei Kauf)', document.getElementById('oneTimeCost').innerText.split(":")[1] || '-']
+                    ['Gebühren gesamt', totalDisagioFeeText.trim()],
+                    ['Monatliche Hardwarekosten', monthlyCostText.trim()],
+                    ['SIM/Servicegebühr', simServiceFeeText.trim()],
+                    ['Monatliche Gesamtkosten', totalCostText.trim()],
+                    ['Einmalige Kosten (bei Kauf)', oneTimeCostText.trim()]
                 ]
             });
 
