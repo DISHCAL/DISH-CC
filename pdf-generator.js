@@ -13,17 +13,38 @@ function generatePDF() {
     const monthlyCostText = document.getElementById('monthlyCost').innerText.split(":")[1] || "-";
     const simServiceFeeText = document.getElementById('simServiceFee').innerText.split(":")[1] || "-";
     const oneTimeCostText = document.getElementById('oneTimeCost').innerText.split(":")[1] || "-";
+    const totalDisagioFeeText = document.getElementById('disagioFees').innerText.split(":")[1] || "-";
 
     doc.autoTable({
         startY: 20,
         head: [['Beschreibung', 'Betrag (€)']],
         body: [
-            ['Gebühren gesamt', totalCostText.trim()],
+            ['Gebühren gesamt', totalDisagioFeeText.trim()],
             ['Monatliche Hardwarekosten', monthlyCostText.trim()],
             ['SIM/Servicegebühr', simServiceFeeText.trim()],
+            ['Monatliche Gesamtkosten', totalCostText.trim()],
             ['Einmalige Kosten (bei Kauf)', oneTimeCostText.trim()]
         ]
     });
+
+    doc.setFontSize(16);
+    doc.setTextColor("#e67e22");
+    doc.text("Wir freuen uns, Ihnen dieses attraktive Angebot von DISH PAY", 10, doc.autoTable.previous.finalY + 10);
+    doc.text("präsentieren zu dürfen.", 10, doc.autoTable.previous.finalY + 20);
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Mit unserer Lösung ermöglichen wir Ihnen eine schnelle, sichere", 10, doc.autoTable.previous.finalY + 30);
+    doc.text("und effiziente Zahlungsabwicklung, die perfekt auf die Bedürfnisse", 10, doc.autoTable.previous.finalY + 40);
+    doc.text("Ihres Geschäfts zugeschnitten ist.", 10, doc.autoTable.previous.finalY + 50);
+
+    doc.text("Sichern Sie sich jetzt Ihre maßgeschneiderte Lösung und starten Sie durch!", 10, doc.autoTable.previous.finalY + 70);
+
+    doc.text("Ihr DISH Team", 10, doc.autoTable.previous.finalY + 90);
+
+    doc.setFontSize(10);
+    doc.text("Rechtlicher Hinweis:", 10, doc.autoTable.previous.finalY + 110);
+    doc.text("Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken.", 10, doc.autoTable.previous.finalY + 120);
 
     doc.save("DISH_Angebot.pdf");
 }
