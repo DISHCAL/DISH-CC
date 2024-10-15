@@ -16,7 +16,7 @@
 
     <!-- Dropdown zur Auswahl der Berechnungsart -->
     <label for="calculationType">Berechnungsart: <span>*</span></label>
-    <select id="calculationType" onchange="toggleCalculationFields()">
+    <select id="calculationType">
         <option value="schnell">Schnelle Berechnung</option>
         <option value="ausführlich">Ausführliche Berechnung</option>
     </select>
@@ -48,7 +48,7 @@
 
     <!-- Hardware-Auswahl immer anzeigen -->
     <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
-    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+    <select id="purchaseOption">
         <option value="mieten">Mieten</option>
         <option value="kaufen">Kaufen</option>
     </select>
@@ -56,7 +56,7 @@
     <!-- Hardware Dropdown -->
     <div id="hardwareOptions">
         <label for="hardware">Hardware auswählen: <span>*</span></label>
-        <select id="hardware" onchange="updateRentalPrices()">
+        <select id="hardware">
             <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
             <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
             <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
@@ -65,7 +65,7 @@
     </div>
 
     <!-- Mietoptionen für den Mietzeitraum -->
-    <div id="rentalOptions" style="display: none;">
+    <div id="rentalOptions">
         <label for="rentalPeriod">Mietdauer: <span>*</span></label>
         <select id="rentalPeriod">
             <option value="12">12 Monate</option>
@@ -74,7 +74,7 @@
         </select>
     </div>
 
-    <!-- Wettbewerber Feld - nur bei ausführlicher Berechnung -->
+    <!-- Wettbewerber Feld - bei ausführlicher Berechnung -->
     <div id="competitorSection" class="competitor-section hidden">
         <h4>Wettbewerber Gebühren:</h4>
         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
@@ -95,8 +95,8 @@
     </div>
 
     <!-- Berechnungsbuttons -->
-    <button onclick="calculateCosts()">Berechnen</button>
-    <button onclick="generatePDF()">PDF Angebot herunterladen</button>
+    <button id="calculateButton">Berechnen</button>
+    <button id="generatePdfButton">PDF Angebot herunterladen</button>
 
     <!-- Ergebnisbereich -->
     <div id="result">
@@ -105,11 +105,8 @@
             <p id="oneTimeCost"></p>
             <p id="monthlyCost"></p>
             <p id="disagioFees"></p>
-            <p id="transactionFee"></p>
             <p id="simServiceFee"></p>
             <p id="totalCost"></p>
-            <p id="competitorTotal"></p>
-            <p id="competitorSavings"></p>
         </div>
     </div>
 
