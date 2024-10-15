@@ -12,31 +12,6 @@ function toggleCalculationFields() {
     }
 }
 
-// Funktion zur Umschaltung der Mietoptionen basierend auf der Auswahl von Kauf oder Miete
-function toggleRentalOptions() {
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const rentalOptions = document.getElementById('rentalOptions');
-
-    // Mietoptionen nur anzeigen, wenn "Mieten" ausgewählt ist
-    rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
-}
-
-// Funktion zur Aktualisierung der Mietpreise
-function updateRentalPrices() {
-    const hardwareSelect = document.getElementById('hardware');
-    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-
-    const rentalPeriodSelect = document.getElementById('rentalPeriod');
-
-    const price12 = selectedHardware.getAttribute('data-price-12');
-    const price36 = selectedHardware.getAttribute('data-price-36');
-    const price60 = selectedHardware.getAttribute('data-price-60');
-
-    rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
-    rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
-    rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
-}
-
 // Funktion zur Berechnung der Hardwarekosten
 function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
@@ -136,6 +111,25 @@ function calculateCosts() {
     }
 
     document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten DISH PAY: ${totalMonthlyCost.toFixed(2)} €`;
+
+    // Wenn ausführliche Berechnung, berechne Wettbewerberkosten
+    if (calculationType === 'ausführlich') {
+        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
+        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
+        const competitorMastercardVisaFee = parseFloat(document.getElementById('competitorMastercardVisaFee').value) / 100 || 0;
+        const competitorBusinessCardFee = parseFloat(document.getElementById('competitorBusinessCardFee').value) / 100 || 0;
+
+        const competitorGirocardCost = girocardRevenue * competitorGirocardFee;
+        const competitorMaestroCost = maestroRevenue * competitorMaestroFee;
+        const competitorMastercardVisaCost = mastercardVisaRevenue * competitorMastercardVisaFee;
+        const competitorBusinessCardCost = businessCardRevenue * competitorBusinessCardFee;
+
+        const competitorTotalFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost;
+
+        document.getElementById('competitorTotal').innerText = `Wettbewerberkosten pro Monat: ${competitorTotalFees.toFixed(2)} €`;
+        const competitorSavings = competitorTotalFees - totalMonthlyCost;
+        document.getElementById('competitorSavings').innerText = `Monatliche Ersparnis mit DISH PAY: ${competitorSavings.toFixed(2)} €`;
+    }
 }
 
 // PDF-Generierung mit jsPDF
@@ -173,6 +167,7 @@ ${document.getElementById('monthlyCost').innerText}
 ${document.getElementById('totalRevenue').innerText}
 ${simServiceFeeText}
 ${document.getElementById('totalCost').innerText}
+${document.getElementById('competitorSavings').innerText || 'N/A'}
 `;
 
     // Text in die PDF einfügen
@@ -188,4 +183,3 @@ window.onload = function() {
     toggleRentalOptions();
     toggleCalculationFields();
 };
-
