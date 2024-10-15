@@ -6,248 +6,126 @@
     <title>DISH PAY Rechner</title>
     <!-- Einbindung von jsPDF für die PDF-Funktion -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Grundlegendes Design */
-        body {
-            font-family: Arial, sans-serif;
-        }
+</head>
+<body>
+<div class="container">
+    <h1>DISH PAY Rechner</h1>
+    <h3>Kostenberechnung</h3>
 
-        h1, h3 {
-            color: #e67e22;
-        }
+    <!-- Dropdown zur Auswahl der Berechnungsart -->
+    <label for="calculationType">Berechnungsart: <span>*</span></label>
+    <select id="calculationType" onchange="toggleCalculationFields()">
+        <option value="schnell">Schnelle Berechnung</option>
+        <option value="ausführlich">Ausführliche Berechnung</option>
+    </select>
 
-        .container {
-            width: 80%;
-            margin: auto;
-        }
+    <!-- Felder für Umsatz und Transaktionen, die immer angezeigt werden -->
+    <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
+    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
 
-        .result-section {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-        }
+    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
+    <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
 
-        .info-section {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f2f2f2;
-            border: 1px solid #ddd;
-        }
+    <!-- Prozentsatz Eingaben -->
+    <label for="girocard">Girocard (%): <span>*</span></label>
+    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
-        .highlight {
-            font-weight: bold;
-            color: #e67e22;
-        }
+    <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
+    <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    <!-- Maestro und Business Card Felder nur bei ausführlicher Berechnung -->
+    <div id="maestroField" class="hidden">
+        <label for="maestro">Maestro / VPAY (%):</label>
+        <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
+    </div>
 
-        table, th, td {
-            border: 1px solid black;
-        }
+    <div id="businessCardField" class="hidden">
+        <label for="businessCard">Business Card (%):</label>
+        <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
+    </div>
 
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
+    <!-- Hardware-Auswahl immer anzeigen -->
+    <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
+    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+        <option value="mieten">Mieten</option>
+        <option value="kaufen">Kaufen</option>
+    </select>
 
-        .competitor-section {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            clear: both;
-        }
+    <!-- Hardware Dropdown -->
+    <div id="hardwareOptions">
+        <label for="hardware">Hardware auswählen: <span>*</span></label>
+        <select id="hardware" onchange="updateRentalPrices()">
+            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+        </select>
+    </div>
 
-        .competitor-section h4 {
-            color: #e67e22;
-        }
+    <!-- Mietoptionen für den Mietzeitraum -->
+    <div id="rentalOptions" style="display: none;">
+        <label for="rentalPeriod">Mietdauer: <span>*</span></label>
+        <select id="rentalPeriod">
+            <option value="12">12 Monate</option>
+            <option value="36">36 Monate</option>
+            <option value="60">60 Monate</option>
+        </select>
+    </div>
 
-        .hidden {
-            display: none;
-        }
+    <!-- Wettbewerber Feld - nur bei ausführlicher Berechnung -->
+    <div id="competitorSection" class="competitor-section hidden">
+        <h4>Wettbewerber Gebühren:</h4>
+        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
+        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
 
-        button {
-            margin-top: 10px;
-            padding: 10px 15px;
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
+        <div id="competitorMaestroField" class="hidden">
+            <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
+            <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
+        </div>
 
-        button:hover {
-            background-color: #d35400;
-        } 
+        <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
+        <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
 
-        label {
-            display: block;
-            margin-top: 10px;
-        }
+        <div id="competitorBusinessCardField" class="hidden">
+            <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
+            <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+        </div>
+    </div>
 
-        input[type="number"], select {
-            width: calc(100% - 20px);
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-    </style>
+    <!-- Berechnungsbuttons -->
+    <button onclick="calculateCosts()">Berechnen</button>
+    <button onclick="generatePDF()">PDF Angebot herunterladen</button>
 
-    <script defer>
-        window.addEventListener("DOMContentLoaded", () => {
-            // Event listeners für dynamische Updates
-            document.getElementById('calculationType').addEventListener('change', toggleCalculationFields);
-            document.getElementById('purchaseOption').addEventListener('change', () => {
-                toggleRentalOptions();
-                updateRentalPrices();
-            });
-            document.getElementById('hardware').addEventListener('change', updateRentalPrices);
-        });
+    <!-- Ergebnisbereich -->
+    <div id="result">
+        <h3>Ergebnisse:</h3>
+        <div class="result-section">
+            <p id="oneTimeCost"></p>
+            <p id="monthlyCost"></p>
+            <p id="disagioFees"></p>
+            <p id="transactionFee"></p>
+            <p id="simServiceFee"></p>
+            <p id="totalCost"></p>
+            <p id="competitorTotal"></p>
+            <p id="competitorSavings"></p>
+        </div>
+    </div>
 
-        // Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
-        function toggleCalculationFields() {
-            const calculationType = document.getElementById('calculationType').value;
-            const businessCardField = document.getElementById('businessCardField');
-            const maestroField = document.getElementById('maestroField');
-            const competitorMaestroField = document.getElementById('competitorMaestroField');
-            const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
-            const competitorSection = document.getElementById('competitorSection');
+    <!-- Informationsfeld zu Gebühren -->
+    <div class="info-section">
+        <h4>Hinweis zu den Gebühren:</h4>
+        <ul>
+            <li><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
+            <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
+            <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
+            <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
+            <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
+            <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+        </ul>
+    </div>
 
-            // Bei schneller Berechnung nur Girocard und Mastercard/VISA anzeigen
-            if (calculationType === 'schnell') {
-                businessCardField.classList.add('hidden');
-                maestroField.classList.add('hidden');
-                competitorMaestroField.classList.add('hidden');
-                competitorBusinessCardField.classList.add('hidden');
-                competitorSection.classList.add('hidden');  // Wettbewerber ausblenden
-            } else {
-                // Bei ausführlicher Berechnung alle Felder anzeigen
-                businessCardField.classList.remove('hidden');
-                maestroField.classList.remove('hidden');
-                competitorMaestroField.classList.remove('hidden');
-                competitorBusinessCardField.classList.remove('hidden');
-                competitorSection.classList.remove('hidden');  // Wettbewerber anzeigen
-            }
-        }
-
-        // Funktion zum Umschalten der Mietoptionen
-        function toggleRentalOptions() {
-            const purchaseOption = document.getElementById('purchaseOption').value;
-            const rentalOptions = document.getElementById('rentalOptions');
-            rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
-        }
-
-        // Funktion zum Aktualisieren der Mietpreise basierend auf der Hardware-Auswahl
-        function updateRentalPrices() {
-            const hardwareSelect = document.getElementById('hardware');
-            const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-            const rentalPeriodSelect = document.getElementById('rentalPeriod');
-            const price12 = selectedHardware.getAttribute('data-price-12');
-            const price36 = selectedHardware.getAttribute('data-price-36');
-            const price60 = selectedHardware.getAttribute('data-price-60');
-
-            rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
-            rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
-            rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
-        }
-
-        // Funktion zur Sicherstellung, dass die Summe der Prozentsätze 100 ergibt
-        function validatePercentages() {
-            const girocard = parseFloat(document.getElementById('girocard').value) || 0;
-            const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-            const maestro = parseFloat(document.getElementById('maestro').value) || 0;
-            const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
-            
-            const totalPercentage = girocard + mastercardVisa + maestro + businessCard;
-
-            if (totalPercentage !== 100) {
-                alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
-                return false;
-            }
-            return true;
-        }
-
-        function updateHardwareCosts() {
-            const purchaseOption = document.getElementById('purchaseOption').value;
-            const hardwareSelect = document.getElementById('hardware');
-            const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-            
-            const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
-            let monthlyCost = 0;
-
-            if (purchaseOption === "mieten") {
-                const rentalPeriod = document.getElementById('rentalPeriod').value;
-                if (rentalPeriod === "12") {
-                    monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
-                } else if (rentalPeriod === "36") {
-                    monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
-                } else if (rentalPeriod === "60") {
-                    monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
-                }
-            } else {
-                monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
-            }
-
-            return { onceCost: priceOnce, monthlyCost };
-        }
-
-        function calculateCosts() {
-            if (!validatePercentages()) {
-                return;
-            }
-
-            const calculationType = document.getElementById('calculationType').value;
-            const purchaseOption = document.getElementById('purchaseOption').value;
-            const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-            const transactions = parseFloat(document.getElementById('transactions').value) || 0;
-            
-            const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
-            const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-            const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
-            const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
-
-            // Hardwarekosten
-            const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
-
-            // Berechnung des Kartenumsatzes (Disagio-Gebühren)
-            const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
-            const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
-            const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
-            const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
-
-            const girocardFee = girocardRevenue * (monthlyVolume > 10000 ? 0.0029 : 0.0039);
-            const mastercardVisaFee = mastercardVisaRevenue * 0.0089;
-            const maestroFee = maestroRevenue * 0.0089;
-            const businessCardFee = businessCardRevenue * 0.0289;
-
-            // Gesamte Disagio-Gebühren
-            const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
-
-            // Transaktionsgebühren
-            const transactionFee = transactions * 0.06;
-
-            // SIM/Servicegebühr (nur beim Kauf der Hardware, fällt bei Miete weg)
-            let simServiceFee = 0;
-            const hardwareSelect = document.getElementById('hardware').value;
-            if (purchaseOption === "kaufen" && (hardwareSelect === "S1F2" || hardwareSelect === "V400C")) {
-                simServiceFee = 3.90;
-            }
-
-            // Monatliche Gesamtkosten
-            const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
-
-            // Anzeige der Ergebnisse
-            document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
-            document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
-            document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr";
-            document.getElementById('totalCost').innerText = `Monatliche Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €`;
-
-            document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` :
+</div>
+</body>
+</html>
