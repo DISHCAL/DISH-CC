@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Event listeners for dynamic updates
+    // Event Listener für dynamische Updates
     document.getElementById('calculationType').addEventListener('change', toggleCalculationFields);
     document.getElementById('purchaseOption').addEventListener('change', () => {
         toggleRentalOptions();
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('generatePdfButton').addEventListener('click', generatePDF);
 });
 
-// Toggle fields for calculation type (quick/detailed)
+// Umschalten der Berechnungsfelder (schnell/ausführlich)
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
     const businessCardField = document.getElementById('businessCardField');
@@ -28,14 +28,14 @@ function toggleCalculationFields() {
     }
 }
 
-// Toggle rental options
+// Umschalten der Mietoptionen
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
     rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
 }
 
-// Update rental prices based on selected hardware
+// Mietpreise basierend auf der ausgewählten Hardware aktualisieren
 function updateRentalPrices() {
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
@@ -49,7 +49,7 @@ function updateRentalPrices() {
     rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
-// Validate that percentage inputs sum up to 100%
+// Sicherstellen, dass die Summe der Prozentsätze 100 ergibt
 function validatePercentages() {
     const girocard = parseFloat(document.getElementById('girocard').value) || 0;
     const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
@@ -65,7 +65,7 @@ function validatePercentages() {
     return true;
 }
 
-// Calculate costs
+// Kosten berechnen
 function calculateCosts() {
     if (!validatePercentages()) {
         return;
@@ -81,10 +81,10 @@ function calculateCosts() {
     const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
     const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
 
-    // Hardware costs
+    // Hardwarekosten berechnen
     const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
-    // Calculate card transaction fees
+    // Kartentransaktionsgebühren berechnen
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
     const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
     const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
@@ -95,23 +95,23 @@ function calculateCosts() {
     const maestroFee = maestroRevenue * 0.0089;
     const businessCardFee = businessCardRevenue * 0.0289;
 
-    // Total fees
+    // Gesamte Disagio-Gebühren
     const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
 
-    // Transaction fees
+    // Transaktionsgebühren
     const transactionFee = transactions * 0.06;
 
-    // SIM/Service fee (only for purchase)
+    // SIM/Servicegebühr (nur bei Kauf)
     let simServiceFee = 0;
     const hardwareSelect = document.getElementById('hardware').value;
     if (purchaseOption === "kaufen" && (hardwareSelect === "S1F2" || hardwareSelect === "V400C")) {
         simServiceFee = 3.90;
     }
 
-    // Total monthly cost
+    // Gesamtkosten pro Monat
     const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
 
-    // Display results
+    // Ergebnisse anzeigen
     document.getElementById('disagioFees').innerText = `Gebühren gesamt: ${(totalDisagioFees + transactionFee).toFixed(2)} €`;
     document.getElementById('monthlyCost').innerText = purchaseOption === "mieten" ? `Monatliche Hardwarekosten (Miete): ${hardwareMonthlyCost.toFixed(2)} €` : "";
     document.getElementById('simServiceFee').innerText = simServiceFee > 0 ? `SIM/Servicegebühr (nur bei Kauf): ${simServiceFee.toFixed(2)} €` : "Keine SIM/Servicegebühr";
@@ -119,16 +119,41 @@ function calculateCosts() {
     document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
 }
 
-// Generate PDF
+// Hardwarekosten aktualisieren
+function updateHardwareCosts() {
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    const hardwareSelect = document.getElementById('hardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    
+    const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
+    let monthlyCost = 0;
+
+    if (purchaseOption === "mieten") {
+        const rentalPeriod = document.getElementById('rentalPeriod').value;
+        if (rentalPeriod === "12") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
+        } else if (rentalPeriod === "36") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
+        } else if (rentalPeriod === "60") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
+        }
+    } else {
+        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
+    }
+
+    return { onceCost: priceOnce, monthlyCost };
+}
+
+// PDF generieren
 function generatePDF() {
     const doc = new jspdf.jsPDF();
 
-    // Set title
+    // Titel setzen
     doc.setFontSize(18);
     doc.setTextColor("#e67e22");
     doc.text("DISH PAY Angebot", 10, 10);
 
-    // Add table
+    // Tabelle hinzufügen
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text(`Gebühren gesamt: ${document.getElementById('disagioFees').innerText.split(": ")[1]}`, 10, 30);
@@ -137,6 +162,7 @@ function generatePDF() {
     doc.text(`Monatliche Gesamtkosten: ${document.getElementById('totalCost').innerText.split(": ")[1]}`, 10, 60);
     doc.text(`Einmalige Kosten (bei Kauf): ${document.getElementById('oneTimeCost').innerText.split(": ")[1] || '-'}`, 10, 70);
 
-    // Save the PDF
+    // PDF speichern
     doc.save("DISH_Angebot.pdf");
 }
+
