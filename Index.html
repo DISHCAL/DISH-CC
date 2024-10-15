@@ -77,11 +77,11 @@
         // Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich)
         function toggleCalculationFields() {
             const calculationType = document.getElementById('calculationType').value;
-            const detailedFields = document.getElementById('detailedFields');
             const businessCardField = document.getElementById('businessCardField');
             const maestroField = document.getElementById('maestroField');
             const competitorMaestroField = document.getElementById('competitorMaestroField');
             const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
+            const competitorSection = document.getElementById('competitorSection');
 
             // Bei schneller Berechnung nur Girocard und Mastercard/VISA anzeigen
             if (calculationType === 'schnell') {
@@ -89,12 +89,14 @@
                 maestroField.classList.add('hidden');
                 competitorMaestroField.classList.add('hidden');
                 competitorBusinessCardField.classList.add('hidden');
+                competitorSection.classList.add('hidden');  // Wettbewerber ausblenden
             } else {
                 // Bei ausführlicher Berechnung alle Felder anzeigen
                 businessCardField.classList.remove('hidden');
                 maestroField.classList.remove('hidden');
                 competitorMaestroField.classList.remove('hidden');
                 competitorBusinessCardField.classList.remove('hidden');
+                competitorSection.classList.remove('hidden');  // Wettbewerber anzeigen
             }
         }
 
@@ -210,6 +212,27 @@
 
             // Einmalige Kosten nur bei Kauf anzeigen
             document.getElementById('oneTimeCost').innerText = purchaseOption === "kaufen" ? `Einmalige Kosten (Kauf): ${onceCost.toFixed(2)} €` : "";
+
+            // Wettbewerberberechnung (nur bei ausführlicher Berechnung)
+            if (calculationType === 'ausführlich') {
+                const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
+                const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
+                const competitorMastercardVisaFee = parseFloat(document.getElementById('competitorMastercardVisaFee').value) / 100 || 0;
+                const competitorBusinessCardFee = parseFloat(document.getElementById('competitorBusinessCardFee').value) / 100 || 0;
+
+                const competitorGirocardCost = girocardRevenue * competitorGirocardFee;
+                const competitorMaestroCost = maestroRevenue * competitorMaestroFee;
+                const competitorMastercardVisaCost = mastercardVisaRevenue * competitorMastercardVisaFee;
+                const competitorBusinessCardCost = businessCardRevenue * competitorBusinessCardFee;
+
+                const competitorTotalFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost + transactionFee + hardwareMonthlyCost + simServiceFee;
+
+                document.getElementById('competitorTotal').innerText = `Wettbewerberkosten pro Monat: ${competitorTotalFees.toFixed(2)} €`;
+                document.getElementById('competitorSavings').innerText = `Monatliche Ersparnis mit DISH PAY: ${(competitorTotalFees - totalMonthlyCost).toFixed(2)} €`;
+            } else {
+                document.getElementById('competitorTotal').innerText = "";
+                document.getElementById('competitorSavings').innerText = "";
+            }
         }
 
         function generatePDF() {
@@ -332,8 +355,8 @@
         </select>
     </div>
 
-    <!-- Wettbewerber Feld - bei schneller Berechnung nur Girocard und Mastercard/VISA -->
-    <div class="competitor-section competitor-field">
+    <!-- Wettbewerber Feld - bei ausführlicher Berechnung -->
+    <div id="competitorSection" class="competitor-section hidden">
         <h4>Wettbewerber Gebühren:</h4>
         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
         <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
@@ -366,6 +389,8 @@
             <p id="transactionFee"></p>
             <p id="simServiceFee"></p>
             <p id="totalCost"></p>
+            <p id="competitorTotal"></p>
+            <p id="competitorSavings"></p>
         </div>
     </div>
 
