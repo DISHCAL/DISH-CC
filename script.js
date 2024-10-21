@@ -132,3 +132,13 @@ function calculateCosts() {
     // Nach der Berechnung den PDF-Download-Button aktivieren
     document.getElementById('pdfDownloadButton').disabled = false;
 }
+
+// Vorhandene Skript-Logik...
+// Capture the customer name from the input field
+document.addEventListener('DOMContentLoaded', function() {
+    const customerNameInput = document.getElementById('customerName');
+    customerNameInput.addEventListener('change', function() {
+        sessionStorage.setItem('customerName', customerNameInput.value);
+    });
+});
+
