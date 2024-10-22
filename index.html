@@ -14,15 +14,15 @@
         <h3>Kostenberechnung</h3>
 
         <!-- Kombinierte Anrede und Kundennamen-Eingabe -->
-        <div class="name-anrede-section">
-            <label for="gender">Anrede: <span>*</span></label>
-            <select id="gender" required>
-                <option value="Herr">Herr</option>
-                <option value="Frau">Frau</option>
-            </select>
-
-            <label for="customerName">Name des Kunden: <span>*</span></label>
-            <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+        <div class="name-section">
+            <label for="customerInfo">Kundeninformationen: <span>*</span></label>
+            <div class="customer-input">
+                <select id="gender" required>
+                    <option value="Herr">Herr</option>
+                    <option value="Frau">Frau</option>
+                </select>
+                <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+            </div>
         </div>
 
         <!-- Dropdown zur Auswahl der Berechnungsart -->
@@ -60,11 +60,11 @@
         <!-- Wettbewerber Felder für die ausführliche Berechnung -->
         <div id="competitorSection" class="hidden">
             <h3>Wettbewerber Informationen</h3>
-            <div id="competitorMaestroField" class="hidden">
+            <div id="competitorMaestroField">
                 <label for="competitorMaestro">Wettbewerber Maestro / VPAY (%):</label>
                 <input type="number" id="competitorMaestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
             </div>
-            <div id="competitorBusinessCardField" class="hidden">
+            <div id="competitorBusinessCardField">
                 <label for="competitorBusinessCard">Wettbewerber Business Card (%):</label>
                 <input type="number" id="competitorBusinessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
             </div>
