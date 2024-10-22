@@ -29,11 +29,13 @@ function generatePDF() {
 
     doc.setFontSize(22);
     doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
     doc.text("DISH PAY Angebot", margin, 40);
 
     // Kundenansprache
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'normal');
     doc.text(`Sehr geehrte${salutation === 'Frau' ? ' Frau' : 'r Herr'} ${customerName},`, margin, 100);
     const offerText = `Vielen Dank für Ihr Interesse an DISH PAY.\nAnbei erhalten Sie unser unverbindliches Angebot basierend auf Ihren Eingaben.\nUnten finden Sie eine detaillierte Übersicht der Kosten.`;
     doc.text(offerText, margin, 120);
@@ -71,10 +73,12 @@ function generatePDF() {
             fillColor: [255, 255, 255],
             textColor: [0, 0, 0],
             fontSize: 12,
+            font: 'helvetica',
         },
         headStyles: {
             fillColor: [230, 126, 34], // Angepasster Orangeton
             textColor: [255, 255, 255],
+            fontStyle: 'bold',
         },
         alternateRowStyles: {
             fillColor: [245, 245, 245],
@@ -104,6 +108,12 @@ function generatePDF() {
     // Streifen am unteren Rand
     doc.setFillColor(230, 126, 34); // Angepasster Orangeton
     doc.rect(0, doc.internal.pageSize.getHeight() - 50, pageWidth, 50, 'F');
+
+    // Erstellungsdatum hinzufügen
+    const currentDate = new Date().toLocaleDateString('de-DE');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.text(`Erstellt am: ${currentDate}`, margin, doc.internal.pageSize.getHeight() - 20);
 
     // PDF-Datei generieren und herunterladen
     doc.save(`${customerName}_DISH_PAY_Angebot.pdf`);
