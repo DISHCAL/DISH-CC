@@ -2,7 +2,7 @@ function generatePDF() {
     const { jsPDF } = window.jspdf;
 
     // Kundeninformationen
-    const gender = document.getElementById('gender').value;
+    const salutation = document.getElementById('salutation').value;
     const customerName = document.getElementById('customerName').value;
 
     // Überprüfen, ob der Kundenname eingegeben wurde
@@ -25,7 +25,7 @@ function generatePDF() {
     const usableWidth = pageWidth - margin * 2;
 
     // Briefkopf gestalten
-    doc.setFillColor(230, 126, 34); // Orange
+    doc.setFillColor(231, 76, 60); // Angepasster Orangeton
     doc.rect(0, 0, pageWidth, 60, 'F');
 
     doc.setFontSize(22);
@@ -35,7 +35,7 @@ function generatePDF() {
     // Kundenansprache
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.text(`Sehr geehrte${gender === 'Frau' ? ' Frau' : 'r Herr'} ${customerName},`, margin, 100);
+    doc.text(`Sehr geehrte${salutation === 'Frau' ? ' Frau' : 'r Herr'} ${customerName},`, margin, 100);
     const offerText = `Vielen Dank für Ihr Interesse an DISH PAY.\nAnbei erhalten Sie unser unverbindliches Angebot basierend auf Ihren Eingaben.\nUnten finden Sie eine detaillierte Übersicht der Kosten.`;
     doc.text(offerText, margin, 120);
 
@@ -46,12 +46,13 @@ function generatePDF() {
     const resultArea = document.getElementById('resultArea').innerHTML;
     const parser = new DOMParser();
     const docParsed = parser.parseFromString(resultArea, 'text/html');
-    const resultItems = docParsed.querySelectorAll('.result-item');
+    const rows = docParsed.querySelectorAll('.result-table tr');
 
     // Tabelle füllen
-    resultItems.forEach(item => {
-        const key = item.querySelector('strong').innerText.replace(':', '');
-        const value = item.innerText.replace(item.querySelector('strong').innerText, '').trim();
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const key = cells[0].innerText;
+        const value = cells[1].innerText;
         tableContent.push([key, value]);
     });
 
@@ -67,11 +68,11 @@ function generatePDF() {
             fontSize: 12,
         },
         headStyles: {
-            fillColor: [230, 126, 34], // Orange
+            fillColor: [231, 76, 60], // Angepasster Orangeton
             textColor: [255, 255, 255],
         },
         alternateRowStyles: {
-            fillColor: [253, 242, 233],
+            fillColor: [245, 245, 245],
         },
         margin: { left: margin, right: margin },
         tableWidth: usableWidth,
@@ -96,7 +97,7 @@ function generatePDF() {
     doc.text(legalText, margin, finalY + 140, { maxWidth: usableWidth });
 
     // Streifen am unteren Rand
-    doc.setFillColor(230, 126, 34); // Orange
+    doc.setFillColor(231, 76, 60); // Angepasster Orangeton
     doc.rect(0, doc.internal.pageSize.getHeight() - 50, pageWidth, 50, 'F');
 
     // PDF-Datei generieren und herunterladen
