@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Assistenten initialisieren
     initializeTour();
+
+    // Event Listener für Mietdauer-Änderung hinzufügen
+    document.getElementById('rentalDuration').addEventListener('change', updateHardwareOptions);
 });
 
 // Funktion zum Umschalten der Berechnungsfelder
@@ -20,19 +23,13 @@ function toggleCalculationFields() {
     const businessCardField = document.getElementById('businessCardField');
 
     if (calculationType === 'ausführlich') {
-        competitorSection.classList.add('show');
         competitorSection.classList.remove('hidden');
-        vpayField.classList.add('show');
         vpayField.classList.remove('hidden');
-        businessCardField.classList.add('show');
         businessCardField.classList.remove('hidden');
     } else {
         competitorSection.classList.add('hidden');
-        competitorSection.classList.remove('show');
         vpayField.classList.add('hidden');
-        vpayField.classList.remove('show');
         businessCardField.classList.add('hidden');
-        businessCardField.classList.remove('show');
 
         // Felder für vpay und businessCard zurücksetzen
         document.getElementById('vpay').value = 0;
@@ -46,11 +43,9 @@ function toggleRentalOptions() {
     const rentalDurationSection = document.getElementById('rentalDurationSection');
 
     if (purchaseOption === 'mieten') {
-        rentalDurationSection.classList.add('show');
         rentalDurationSection.classList.remove('hidden');
     } else {
         rentalDurationSection.classList.add('hidden');
-        rentalDurationSection.classList.remove('show');
     }
 
     // Hardware-Dropdown aktualisieren
@@ -107,9 +102,6 @@ function updateHardwareOptions() {
     }
 }
 
-// Event Listener für Mietdauer-Änderung
-document.getElementById('rentalDuration').addEventListener('change', updateHardwareOptions);
-
 // Funktion zur Validierung der Eingaben
 function validateInputs() {
     let isValid = true;
@@ -141,6 +133,7 @@ function validateInputs() {
             isValid = false;
         } else {
             field.classList.remove('error');
+            const errorField = document.getElementById(fieldId + 'Error');
             if (errorField) errorField.textContent = '';
         }
     });
@@ -173,8 +166,8 @@ function calculateCosts() {
     // Fortschrittsanzeige einblenden
     document.getElementById('loadingOverlay').classList.remove('hidden');
 
+    // Berechnungen durchführen
     setTimeout(() => {
-        // Berechnungen durchführen
         const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
         const transactions = parseInt(document.getElementById('transactions').value) || 0;
 
@@ -465,6 +458,4 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
 
     // Animation anzeigen
     receiptContainer.classList.remove('hidden');
-
-    // Beleg bleibt sichtbar
 }
