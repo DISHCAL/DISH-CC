@@ -1,3 +1,4 @@
+/* Grundlegendes Design */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -23,6 +24,16 @@ label {
     font-weight: bold;
     display: block;
     margin-bottom: 8px;
+}
+
+.customer-input {
+    display: flex;
+    gap: 10px;
+}
+
+.customer-input select,
+.customer-input input[type="text"] {
+    width: calc(50% - 5px);
 }
 
 input[type="number"], select {
@@ -134,6 +145,10 @@ button:disabled {
 @media (max-width: 768px) {
     .container {
         padding: 15px;
+    }
+
+    .customer-input {
+        flex-direction: column;
     }
 
     input[type="number"], select {
