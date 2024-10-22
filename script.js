@@ -1,79 +1,54 @@
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
     const competitorSection = document.getElementById('competitorSection');
-    const maestroField = document.getElementById('maestroField');
+    const vpayField = document.getElementById('vpayField');
     const businessCardField = document.getElementById('businessCardField');
 
     if (calculationType === 'ausführlich') {
         competitorSection.classList.remove('hidden');
-        maestroField.classList.remove('hidden');
+        vpayField.classList.remove('hidden');
         businessCardField.classList.remove('hidden');
     } else {
         competitorSection.classList.add('hidden');
-        maestroField.classList.add('hidden');
+        vpayField.classList.add('hidden');
         businessCardField.classList.add('hidden');
     }
 }
 
 function calculateCosts() {
-    const transactions = parseFloat(document.getElementById('transactions').value) || 0;
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
     const girocardPercentage = parseFloat(document.getElementById('girocard').value) || 0;
     const mastercardVisaPercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+    const vpayPercentage = parseFloat(document.getElementById('vpay').value) || 0;
+    const businessCardPercentage = parseFloat(document.getElementById('businessCard').value) || 0;
 
-    const girocardCost = (monthlyVolume * (girocardPercentage / 100)) * 0.0039; // Girocard-Gebühr
-    const mastercardVisaCost = (monthlyVolume * (mastercardVisaPercentage / 100)) * 0.0089; // Mastercard/VISA-Gebühr
+    const girocardCost = (monthlyVolume * (girocardPercentage / 100)) * 0.0039;
+    const mastercardVisaCost = (monthlyVolume * (mastercardVisaPercentage / 100)) * 0.0089;
+    const vpayCost = (monthlyVolume * (vpayPercentage / 100)) * 0.0089;
+    const businessCardCost = (monthlyVolume * (businessCardPercentage / 100)) * 0.029;
 
-    let maestroCost = 0;
-    let businessCardCost = 0;
-    let competitorMaestroCost = 0;
-    let competitorBusinessCardCost = 0;
+    const totalDishPayCost = girocardCost + mastercardVisaCost + vpayCost + businessCardCost;
 
-    const calculationType = document.getElementById('calculationType').value;
-    if (calculationType === 'ausführlich') {
-        const maestroPercentage = parseFloat(document.getElementById('maestro').value) || 0;
-        const businessCardPercentage = parseFloat(document.getElementById('businessCard').value) || 0;
+    // Wettbewerber Gebühren
+    const competitorGirocard = parseFloat(document.getElementById('competitorGirocard').value) || 0;
+    const competitorMaestro = parseFloat(document.getElementById('competitorMaestro').value) || 0;
+    const competitorMastercardVisa = parseFloat(document.getElementById('competitorMastercardVisa').value) || 0;
+    const competitorBusinessCard = parseFloat(document.getElementById('competitorBusinessCard').value) || 0;
 
-        maestroCost = (monthlyVolume * (maestroPercentage / 100)) * 0.0089; // Maestro-Gebühr
-        businessCardCost = (monthlyVolume * (businessCardPercentage / 100)) * 0.015; // Business Card-Gebühr
+    const competitorGirocardCost = (monthlyVolume * (competitorGirocard / 100)) * 0.0039;
+    const competitorMaestroCost = (monthlyVolume * (competitorMaestro / 100)) * 0.0089;
+    const competitorMastercardVisaCost = (monthlyVolume * (competitorMastercardVisa / 100)) * 0.0089;
+    const competitorBusinessCardCost = (monthlyVolume * (competitorBusinessCard / 100)) * 0.029;
 
-        // Wettbewerber Kosten
-        const competitorMaestroPercentage = parseFloat(document.getElementById('competitorMaestro').value) || 0;
-        const competitorBusinessCardPercentage = parseFloat(document.getElementById('competitorBusinessCard').value) || 0;
+    const totalCompetitorCost = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost;
 
-        competitorMaestroCost = (monthlyVolume * (competitorMaestroPercentage / 100)) * 0.0089;
-        competitorBusinessCardCost = (monthlyVolume * (competitorBusinessCardPercentage / 100)) * 0.015;
-    }
-
-    const totalCost = girocardCost + mastercardVisaCost + maestroCost + businessCardCost;
-    const competitorTotalCost = competitorMaestroCost + competitorBusinessCardCost;
-
-    // Miet-/Kaufoptionen und SIM-Kosten
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    let simFee = 0;
-
-    if (purchaseOption === 'kaufen') {
-        simFee = 3.90; // SIM-Kosten von 3,90 € nur bei Kauf
-    }
-
-    let resultHtml = `
-        <strong>Monatliche Hardwarekosten (${purchaseOption === 'mieten' ? 'Miete' : 'Kauf'}):</strong> 44,90 €<br>
-        <strong>SIM-Kosten:</strong> ${simFee === 0 ? 'Keine SIM/Servicegebühr' : `${simFee} €`}<br>
-        <strong>Gebühren gesamt:</strong> ${(girocardCost + mastercardVisaCost).toFixed(2)} €<br>
-        <strong>Monatliche Gesamtkosten:</strong> ${(totalCost + simFee).toFixed(2)} €<br>
+    const resultHtml = `
+        <strong>Monatliche Hardwarekosten:</strong> 44,90 €<br>
+        <strong>Gebühren gesamt:</strong> ${totalDishPayCost.toFixed(2)} €<br>
+        <strong>Wettbewerberkosten:</strong> ${totalCompetitorCost.toFixed(2)} €<br>
+        <strong>Monatliche Ersparnis mit DISH PAY:</strong> ${(totalCompetitorCost - totalDishPayCost).toFixed(2)} €<br>
     `;
 
-    if (calculationType === 'ausführlich') {
-        const savings = competitorTotalCost - totalCost;
-
-        resultHtml += `
-            <strong>Wettbewerberkosten pro Monat:</strong> ${competitorTotalCost.toFixed(2)} €<br>
-            <strong>Monatliche Ersparnis mit DISH PAY:</strong> ${savings.toFixed(2)} €<br>
-        `;
-    }
-
     document.getElementById('resultArea').innerHTML = resultHtml;
-
-    // Aktivieren des PDF-Buttons
     document.getElementById('downloadPdfButton').disabled = false;
 }
