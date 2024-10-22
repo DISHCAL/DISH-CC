@@ -18,7 +18,8 @@ function generatePDF() {
 
     // Allgemeiner Text für das Angebot
     let offerText = `
-    vielen Dank für Ihr Interesse an DISH PAY. Anbei erhalten Sie unser unverbindliches Angebot basierend auf Ihren Eingaben.
+    vielen Dank für Ihr Interesse an DISH PAY. 
+    Anbei erhalten Sie unser unverbindliches Angebot basierend auf Ihren Eingaben.
     Unten finden Sie eine detaillierte Übersicht der Kosten.
     `;
 
@@ -27,7 +28,7 @@ function generatePDF() {
     doc.setFontSize(18);
     doc.text("DISH PAY Angebot", 10, 10);
 
-    // Kundenansprache einfügen
+    // Kopfzeile einfügen
     doc.setFontSize(12);
     doc.text(customerAddress, 10, 20);
     doc.text(offerText, 10, 30);
@@ -103,7 +104,8 @@ function generatePDF() {
 
     // Rechtlicher Hinweis hinzufügen
     const legalText = `
-    Dieses Angebot ist freibleibend und unverbindlich. Es dient lediglich als Information und stellt kein rechtlich bindendes Angebot dar. 
+    Dieses Angebot ist freibleibend und unverbindlich. 
+    Es dient lediglich als Information und stellt kein rechtlich bindendes Angebot dar. 
     Die angegebenen Gebühren und Kosten können je nach tatsächlichem Transaktionsvolumen variieren. 
     Bei Rückfragen stehen wir Ihnen gerne zur Verfügung.
     `;
