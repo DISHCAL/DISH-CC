@@ -33,6 +33,10 @@ function toggleCalculationFields() {
         vpayField.classList.remove('show');
         businessCardField.classList.add('hidden');
         businessCardField.classList.remove('show');
+
+        // Felder für vpay und businessCard zurücksetzen
+        document.getElementById('vpay').value = 0;
+        document.getElementById('businessCard').value = 0;
     }
 }
 
@@ -57,6 +61,7 @@ function toggleRentalOptions() {
 function updateHardwareOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
+    const rentalDuration = document.getElementById('rentalDuration').value;
 
     // Aktuelle Auswahl speichern
     const currentSelection = hardwareSelect.value;
@@ -71,18 +76,39 @@ function updateHardwareOptions() {
             <option value="Moto G14">Moto G14 Terminal - Kauf: 119,00 €</option>
         `;
     } else {
+        // Mietpreise entsprechend der Mietdauer anzeigen
+        let s1f2Price = 0;
+        let v400cPrice = 0;
+        let tap2payPrice = 7.90; // Nur 12M verfügbar
+
+        if (rentalDuration === '12M') {
+            s1f2Price = 44.90;
+            v400cPrice = 39.90;
+        } else if (rentalDuration === '36M') {
+            s1f2Price = 18.90;
+            v400cPrice = 16.90;
+        } else if (rentalDuration === '60M') {
+            s1f2Price = 14.90;
+            v400cPrice = 12.90;
+        }
+
         hardwareSelect.innerHTML = `
-            <option value="S1F2">S1F2 Terminal - Miete</option>
-            <option value="V400C">V400C Terminal - Miete</option>
-            <option value="Tap2Pay">Tap2Pay Lizenz - Miete</option>
+            <option value="S1F2">S1F2 Terminal - Miete: ${s1f2Price.toFixed(2)} €/Monat</option>
+            <option value="V400C">V400C Terminal - Miete: ${v400cPrice.toFixed(2)} €/Monat</option>
+            <option value="Tap2Pay">Tap2Pay Lizenz - Miete: ${tap2payPrice.toFixed(2)} €/Monat</option>
         `;
     }
 
     // Wenn die vorherige Auswahl noch vorhanden ist, diese wieder auswählen
     if (hardwareSelect.querySelector(`option[value="${currentSelection}"]`)) {
         hardwareSelect.value = currentSelection;
+    } else {
+        hardwareSelect.selectedIndex = 0;
     }
 }
+
+// Event Listener für Mietdauer-Änderung
+document.getElementById('rentalDuration').addEventListener('change', updateHardwareOptions);
 
 // Funktion zur Validierung der Eingaben
 function validateInputs() {
@@ -115,7 +141,6 @@ function validateInputs() {
             isValid = false;
         } else {
             field.classList.remove('error');
-            const errorField = document.getElementById(fieldId + 'Error');
             if (errorField) errorField.textContent = '';
         }
     });
@@ -187,7 +212,7 @@ function calculateCosts() {
 
         // Durchschnittliche Gebühr in Prozent berechnen
         const totalSales = girocardVolume + mastercardVisaVolume + vpayVolume + businessCardVolume;
-        const totalDishPayFeesPercentage = ((totalDishPayFees / totalSales) * 100).toFixed(2);
+        const totalDishPayFeesPercentage = totalSales > 0 ? ((totalDishPayFees / totalSales) * 100).toFixed(2) : 0;
 
         // Hardwarekosten
         const purchaseOption = document.getElementById('purchaseOption').value;
@@ -304,7 +329,7 @@ function calculateCosts() {
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         document.getElementById('downloadPdfButton').disabled = false;
-    }, 300); // Geringere Verzögerung für schnellere Berechnung
+    }, 500); // Geringe Verzögerung für schnellere Berechnung
 }
 
 // Diagramm erstellen
@@ -442,5 +467,4 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     receiptContainer.classList.remove('hidden');
 
     // Beleg bleibt sichtbar
-    // Optional: Sie können den Beleg nach einer gewissen Zeit ausblenden
 }
