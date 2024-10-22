@@ -3,11 +3,11 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f2f4f7;
+    background-color: #f9f9f9;
 }
 
 h1, h3 {
-    color: #2c3e50;
+    color: #d35400;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -37,7 +37,7 @@ label {
     font-weight: bold;
     display: block;
     margin-bottom: 5px;
-    color: #34495e;
+    color: #d35400;
 }
 
 .input-group {
@@ -73,7 +73,7 @@ input::placeholder {
 }
 
 button {
-    background-color: #3498db;
+    background-color: #e67e22;
     color: white;
     padding: 12px 25px;
     border: none;
@@ -85,15 +85,15 @@ button {
 }
 
 button:hover {
-    background-color: #2980b9;
+    background-color: #d35400;
 }
 
 .result-section {
     margin-top: 30px;
     padding: 20px;
-    background-color: #ecf0f1;
+    background-color: #fdf2e9;
     border-radius: 10px;
-    border: 1px solid #bdc3c7;
+    border: 1px solid #e67e22;
     position: relative;
     overflow: hidden;
 }
@@ -110,7 +110,7 @@ button:hover {
 }
 
 .competitor-section {
-    background-color: #eaf2f8;
+    background-color: #fdebd0;
     padding: 15px;
     border-radius: 5px;
     margin-bottom: 20px;
@@ -136,12 +136,12 @@ button:hover {
 /* Tooltip-Stile */
 .fa-info-circle {
     margin-left: 5px;
-    color: #2980b9;
+    color: #d35400;
     cursor: pointer;
 }
 
 .fa-info-circle:hover {
-    color: #1abc9c;
+    color: #e67e22;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
