@@ -190,6 +190,10 @@ select:focus {
     justify-content: center;
 }
 
+.loading-overlay.hidden {
+    display: none;
+}
+
 .spinner {
     border: 5px solid #f3f3f3;
     border-top: 5px solid #e67e22;
