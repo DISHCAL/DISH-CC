@@ -29,17 +29,13 @@ label {
 .customer-input {
     display: flex;
     gap: 10px;
+    align-items: center;
 }
 
 .customer-input select,
-.customer-input input[type="text"] {
-    width: calc(50% - 5px);
-}
-
-input[type="number"], select {
-    width: 100%;
+.customer-input input {
+    width: calc(50% - 10px);
     padding: 10px;
-    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
