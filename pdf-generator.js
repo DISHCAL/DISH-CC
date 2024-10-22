@@ -12,7 +12,6 @@ function generatePDF() {
     }
 
     const calculationType = document.getElementById('calculationType').value;
-    const purchaseOption = document.getElementById('purchaseOption').value;
 
     const doc = new jsPDF({
         format: 'a4',
@@ -25,7 +24,7 @@ function generatePDF() {
     const usableWidth = pageWidth - margin * 2;
 
     // Briefkopf gestalten
-    doc.setFillColor(231, 76, 60); // Angepasster Orangeton
+    doc.setFillColor(230, 126, 34); // Angepasster Orangeton
     doc.rect(0, 0, pageWidth, 60, 'F');
 
     doc.setFontSize(22);
@@ -51,9 +50,15 @@ function generatePDF() {
     // Tabelle füllen
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        const key = cells[0].innerText;
-        const value = cells[1].innerText;
-        tableContent.push([key, value]);
+        if (cells.length > 1) {
+            const key = cells[0].innerText;
+            const value = cells[1].innerText;
+            tableContent.push([key, value]);
+        } else {
+            // Zeile für Abschnittstitel (z.B. "DISH PAY Kosten")
+            const title = cells[0].innerText;
+            tableContent.push([{ content: title, colSpan: 2, styles: { halign: 'center', fillColor: [245, 245, 245] } }]);
+        }
     });
 
     // Tabelle im PDF einfügen
@@ -68,7 +73,7 @@ function generatePDF() {
             fontSize: 12,
         },
         headStyles: {
-            fillColor: [231, 76, 60], // Angepasster Orangeton
+            fillColor: [230, 126, 34], // Angepasster Orangeton
             textColor: [255, 255, 255],
         },
         alternateRowStyles: {
@@ -97,7 +102,7 @@ function generatePDF() {
     doc.text(legalText, margin, finalY + 140, { maxWidth: usableWidth });
 
     // Streifen am unteren Rand
-    doc.setFillColor(231, 76, 60); // Angepasster Orangeton
+    doc.setFillColor(230, 126, 34); // Angepasster Orangeton
     doc.rect(0, doc.internal.pageSize.getHeight() - 50, pageWidth, 50, 'F');
 
     // PDF-Datei generieren und herunterladen
