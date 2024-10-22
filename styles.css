@@ -58,6 +58,7 @@ button:hover {
     border: 1px solid #ddd;
 }
 
+/* Info-Abschnitt */
 .info-section {
     margin-top: 20px;
     padding: 15px;
@@ -93,16 +94,28 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    text-align: left;
 }
 
+/* Tabelle im PDF-Stil mit den identischen Farbtönen */
 table, th, td {
     border: 1px solid #ddd;
 }
 
-th, td {
+th {
+    background-color: #ff8c00; /* Dunkelorange für den Tabellenkopf */
+    color: white;
     padding: 12px;
-    text-align: left;
-    background-color: white;
+}
+
+td {
+    background-color: #fff7e6; /* Hellorange für die Zellen */
+    padding: 12px;
+}
+
+/* Abwechselnde Zeilenfarben für bessere Lesbarkeit */
+tr:nth-child(even) td {
+    background-color: #ffe5cc; /* Noch helleres Orange für abwechselnde Zeilen */
 }
 
 .hidden {
@@ -135,4 +148,3 @@ button:disabled {
         font-size: 14px;
     }
 }
-
