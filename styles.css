@@ -228,3 +228,70 @@ select:focus {
         margin-top: 5px;
     }
 }
+
+/* Styles für die Bon-Animation */
+.receipt-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    position: relative;
+    height: 300px;
+}
+
+#printer {
+    width: 200px;
+    height: 100px;
+    background: #333;
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+#paper {
+    width: 180px;
+    background: #fff;
+    position: absolute;
+    top: 0;
+    left: 10px;
+    animation: printReceipt 5s forwards;
+    transform: translateY(-100%);
+}
+
+@keyframes printReceipt {
+    to {
+        transform: translateY(0%);
+    }
+}
+
+#receiptContent {
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: #333;
+}
+
+#receiptContent h4 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#receiptContent .item {
+    display: flex;
+    justify-content: space-between;
+}
+
+#receiptContent .total {
+    border-top: 1px dashed #333;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+#receiptContent .highlight {
+    color: #c0392b; /* Hervorhebung der Gebühren */
+}
+
+.receipt-container.hidden {
+    display: none;
+}
