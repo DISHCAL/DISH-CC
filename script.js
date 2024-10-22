@@ -5,14 +5,14 @@ const translations = {
         salutationLabel: "Anrede und Name:",
         languageLabel: "Sprache auswählen:",
         calculationTypeLabel: "Berechnungsart:",
-        // ... weitere Übersetzungen
+        // Weitere Übersetzungen hinzufügen...
     },
     en: {
         title: "DISH PAY Calculator",
         salutationLabel: "Salutation and Name:",
         languageLabel: "Select Language:",
         calculationTypeLabel: "Calculation Type:",
-        // ... weitere Übersetzungen
+        // Weitere Übersetzungen hinzufügen...
     }
 };
 
@@ -30,7 +30,7 @@ function applyTranslations(lang) {
     document.querySelector('label[for="salutation"]').innerText = translations[lang].salutationLabel;
     document.querySelector('label[for="languageSelect"]').innerText = translations[lang].languageLabel;
     document.querySelector('label[for="calculationType"]').innerText = translations[lang].calculationTypeLabel;
-    // ... weitere Elemente aktualisieren
+    // Weitere Elemente aktualisieren...
 }
 
 // Beim Laden der Seite Sprache setzen
@@ -220,13 +220,16 @@ function calculateCosts() {
         const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
         const transactions = parseInt(document.getElementById('transactions').value) || 0;
 
-        // Weitere Berechnungen wie zuvor...
+        // Hier die tatsächlichen Berechnungen durchführen und die Variablen totalMonthlyCost und totalCompetitorCost berechnen
 
-        // Beispielwerte für die Demonstration
+        // Beispielwerte für die Demonstration (diese sollten durch die tatsächlichen Berechnungen ersetzt werden)
         const totalMonthlyCost = 500; // Ersetzen durch die tatsächliche Berechnung
         const totalCompetitorCost = 600; // Ersetzen durch die tatsächliche Berechnung
 
         // Ergebnisbereich aktualisieren
+        // resultHtml sollte entsprechend der Berechnungen erstellt werden
+        let resultHtml = '<p>Ergebnis der Berechnung</p>';
+
         document.getElementById('resultArea').innerHTML = resultHtml;
 
         // Diagramm erstellen
