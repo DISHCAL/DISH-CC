@@ -4,110 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISH PAY Rechner</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>DISH PAY Rechner</h1>
-        <h3>Kostenberechnung</h3>
 
-        <!-- Kombinierte Anrede und Kundennamen-Eingabe -->
-        <div class="name-section">
-            <label for="customerInfo">Kundeninformationen: <span>*</span></label>
-            <div class="customer-input modern-input">
-                <div class="select-wrapper">
-                    <select id="gender" required>
-                        <option value="Herr">Herr</option>
-                        <option value="Frau">Frau</option>
-                    </select>
-                </div>
-                <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
-            </div>
+        <div class="customer-input">
+            <label for="gender">Anrede:</label>
+            <select id="gender">
+                <option value="Herr">Herr</option>
+                <option value="Frau">Frau</option>
+            </select>
+
+            <label for="customerName">Kundenname:</label>
+            <input type="text" id="customerName" placeholder="Vor- und Nachname">
         </div>
 
-        <!-- Dropdown zur Auswahl der Berechnungsart -->
-        <label for="calculationType">Berechnungsart: <span>*</span></label>
+        <label for="calculationType">Berechnungsart:</label>
         <select id="calculationType" onchange="toggleCalculationFields()">
             <option value="schnell">Schnelle Berechnung</option>
             <option value="ausführlich">Ausführliche Berechnung</option>
         </select>
 
-        <!-- Feld für Kartenumsatz -->
-        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
-        <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
+        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
+        <input type="number" id="monthlyVolume" placeholder="z.B. 20000">
 
-        <!-- Felder für die Berechnungen -->
-        <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
-        <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
+        <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
+        <input type="number" id="transactions" placeholder="z.B. 400">
 
-        <label for="girocard">Girocard (%): <span>*</span></label>
-        <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
+        <label for="girocard">Girocard (%):</label>
+        <input type="number" id="girocard" placeholder="z.B. 0.70">
 
-        <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
-        <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
+        <label for="mastercardVisa">Mastercard / VISA (%):</label>
+        <input type="number" id="mastercardVisa" placeholder="z.B. 0.30">
 
-        <!-- Maestro und Business Card Felder nur bei ausführlicher Berechnung -->
-        <div id="maestroField" class="hidden">
-            <label for="maestro">Maestro / VPAY (%):</label>
-            <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
+        <!-- Zusätzliche Felder für ausführliche Berechnung -->
+        <div id="vpayField" class="hidden">
+            <label for="vpay">VPAY Gebühr (%):</label>
+            <input type="number" id="vpay" placeholder="z.B. 0.89">
         </div>
 
         <div id="businessCardField" class="hidden">
-            <label for="businessCard">Business Card (%):</label>
-            <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
+            <label for="businessCard">Business Card Gebühr (%):</label>
+            <input type="number" id="businessCard" placeholder="z.B. 3.0">
         </div>
 
-        <!-- Wettbewerber Felder für die ausführliche Berechnung -->
-        <div id="competitorSection" class="hidden">
-            <h3>Wettbewerber Informationen</h3>
-            <div id="competitorMaestroField">
-                <label for="competitorMaestro">Wettbewerber Maestro / VPAY (%):</label>
-                <input type="number" id="competitorMaestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
-            </div>
-            <div id="competitorBusinessCardField">
-                <label for="competitorBusinessCard">Wettbewerber Business Card (%):</label>
-                <input type="number" id="competitorBusinessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
-            </div>
+        <!-- Wettbewerber -->
+        <div id="competitorSection" class="competitor-section hidden">
+            <h3>Wettbewerber Gebühren:</h3>
+            <label for="competitorGirocard">Girocard Gebühr (%):</label>
+            <input type="number" id="competitorGirocard" placeholder="z.B. 0.9">
+
+            <label for="competitorMaestro">Maestro / VPAY Gebühr (%):</label>
+            <input type="number" id="competitorMaestro" placeholder="z.B. 0.9">
+
+            <label for="competitorMastercardVisa">Mastercard / VISA Gebühr (%):</label>
+            <input type="number" id="competitorMastercardVisa" placeholder="z.B. 1.9">
+
+            <label for="competitorBusinessCard">Business Card Gebühr (%):</label>
+            <input type="number" id="competitorBusinessCard" placeholder="z.B. 3.0">
         </div>
 
-        <!-- Kauf oder Miete -->
-        <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
-        <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+        <label for="purchaseOption">Kauf oder Miete:</label>
+        <select id="purchaseOption">
             <option value="mieten">Mieten</option>
             <option value="kaufen">Kaufen</option>
         </select>
 
-        <!-- Hardware Dropdown -->
-        <div id="hardwareOptions">
-            <label for="hardware">Hardware auswählen: <span>*</span></label>
-            <select id="hardware" onchange="updateRentalPrices()">
-                <option value="S1F2" data-price-once="499.00" data-price-purchase-monthly="3.90" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-                <option value="V400C" data-price-once="399.00" data-price-purchase-monthly="3.90" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-                <option value="Moto G14 mit Lizenz" data-price-once="119.00" data-price-purchase-monthly="7.90">Moto G14 Terminal</option>
-                <option value="Tap2Pay Lizenz" data-price-purchase-monthly="7.90" data-price-12="7.90">Tap2Pay Lizenz</option>
-            </select>
-        </div>
-
-        <label for="rentalPeriod">Mietdauer: </label>
-        <select id="rentalPeriod">
-            <option value="12">12 Monate</option>
-            <option value="36">36 Monate</option>
-            <option value="60">60 Monate</option>
+        <label for="hardware">Hardware auswählen:</label>
+        <select id="hardware">
+            <option value="S1F2">S1F2 Terminal</option>
+            <option value="V400C">V400C Terminal</option>
+            <option value="Moto G14">Moto G14 Terminal</option>
+            <option value="Tap2Pay">Tap2Pay Lizenz</option>
         </select>
 
-        <button type="button" onclick="calculateCosts()">Berechnen</button>
-        <button type="button" id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
+        <button onclick="calculateCosts()">Berechnen</button>
+        <button id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
 
-        <!-- Bereich für die Ergebnisse -->
-        <h2>Ergebnisse:</h2>
-        <div id="resultArea"></div>
-    </div>
+        <div id="resultArea" class="result-section"></div>
 
-    <!-- Hinweis zu den Gebühren -->
-    <div id="feeDisclaimer">
-        <h3>Hinweis zu den Gebühren:</h3>
+        <h4>Hinweis zu den Gebühren:</h4>
         <p>Transaktionspreis: 0,06 € pro Transaktion</p>
         <p>Girocard-Gebühr bis 10.000 € monatlich: 0,39%</p>
         <p>Girocard-Gebühr über 10.000 € monatlich: 0,29%</p>
