@@ -9,6 +9,7 @@ const translations = {
         downloadPdfButton: "PDF Angebot herunterladen",
         sendEmailButton: "Angebot per E-Mail versenden",
         startTourButton: "Assistent starten",
+        resetButton: "Zurücksetzen",
         // Weitere Übersetzungen...
     },
     en: {
@@ -20,6 +21,7 @@ const translations = {
         downloadPdfButton: "Download PDF Offer",
         sendEmailButton: "Send Offer via Email",
         startTourButton: "Start Assistant",
+        resetButton: "Reset",
         // Weitere Übersetzungen...
     }
 };
@@ -42,6 +44,7 @@ function applyTranslations(lang) {
     document.querySelector('button[onclick="generatePDF()"]').innerText = translations[lang].downloadPdfButton;
     document.querySelector('button[onclick="sendEmail()"]').innerText = translations[lang].sendEmailButton;
     document.querySelector('button[onclick="startTour()"]').innerText = translations[lang].startTourButton;
+    document.querySelector('button[onclick="resetData()"]').innerText = translations[lang].resetButton;
     // Weitere Elemente aktualisieren...
 }
 
@@ -530,4 +533,37 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     setTimeout(() => {
         receiptContainer.classList.add('hidden');
     }, 8000); // Beleg bleibt 8 Sekunden sichtbar
+}
+
+// Funktion zum Zurücksetzen der Daten
+function resetData() {
+    // Eingabefelder leeren
+    const fields = ['customerName', 'monthlyVolume', 'transactions', 'girocard', 'mastercardVisa', 'vpay', 'businessCard'];
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field.type === 'number' || field.type === 'text') {
+            field.value = '';
+        } else if (field.tagName === 'SELECT') {
+            field.selectedIndex = 0;
+        }
+    });
+
+    // Lokalen Speicher leeren
+    localStorage.clear();
+
+    // Ergebnisbereich leeren
+    document.getElementById('resultArea').innerHTML = '';
+
+    // Diagramm zurücksetzen
+    if (window.costChartInstance) {
+        window.costChartInstance.destroy();
+    }
+
+    // Bon-Animation ausblenden
+    document.getElementById('receiptContainer').classList.add('hidden');
+
+    // Download-Button deaktivieren
+    document.getElementById('downloadPdfButton').disabled = true;
+
+    alert('Alle Daten wurden zurückgesetzt.');
 }
