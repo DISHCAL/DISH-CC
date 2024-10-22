@@ -3,11 +3,11 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
+    background-color: #f5f5f5;
 }
 
 h1, h3 {
-    color: #d35400;
+    color: #c0392b;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -17,27 +17,26 @@ h1, h3 {
     margin: 30px auto;
     padding: 20px 30px;
     background-color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
 }
 
 /* Flex-Layout für Kundeninformationen */
-.flex-row {
+.name-group {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
 }
 
-.flex-item {
+.name-group select,
+.name-group input {
     flex: 1;
-    min-width: 200px;
 }
 
 label {
     font-weight: bold;
     display: block;
     margin-bottom: 5px;
-    color: #d35400;
+    color: #c0392b;
 }
 
 .input-group {
@@ -62,18 +61,18 @@ label {
 input[type="number"], input[type="text"], select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #bdc3c7;
+    border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 16px;
 }
 
 input::placeholder {
-    color: #95a5a6;
+    color: #aaa;
 }
 
 button {
-    background-color: #e67e22;
+    background-color: #e74c3c;
     color: white;
     padding: 12px 25px;
     border: none;
@@ -85,28 +84,31 @@ button {
 }
 
 button:hover {
-    background-color: #d35400;
+    background-color: #c0392b;
 }
 
 .result-section {
     margin-top: 30px;
     padding: 20px;
-    background-color: #fdf2e9;
+    background-color: #fffaf0;
     border-radius: 10px;
-    border: 1px solid #e67e22;
+    border: 1px solid #f39c12;
     position: relative;
-    overflow: hidden;
 }
 
-.result-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -50%;
+.result-table {
     width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    transform: skewX(-25deg);
+    border-collapse: collapse;
+}
+
+.result-table td {
+    padding: 10px;
+    border-bottom: 1px solid #f1c40f;
+}
+
+.result-table .total-cost {
+    font-weight: bold;
+    border-top: 2px solid #f39c12;
 }
 
 .competitor-section {
@@ -136,12 +138,12 @@ button:hover {
 /* Tooltip-Stile */
 .fa-info-circle {
     margin-left: 5px;
-    color: #d35400;
+    color: #c0392b;
     cursor: pointer;
 }
 
 .fa-info-circle:hover {
-    color: #e67e22;
+    color: #e74c3c;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -152,7 +154,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 /* Medienanfragen für mobile Geräte */
 @media (max-width: 768px) {
-    .flex-row {
+    .name-group {
         flex-direction: column;
     }
 
