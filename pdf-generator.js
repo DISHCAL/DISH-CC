@@ -22,7 +22,7 @@ function generatePDF() {
     Unten finden Sie eine detaillierte Übersicht der Kosten.
     `;
 
-    // Überschrift des Dokuments
+    // Erstellen des PDF-Dokuments
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("DISH PAY Angebot", 10, 10);
