@@ -1,68 +1,5 @@
-// Übersetzungen
-const translations = {
-    de: {
-        title: "DISH PAY Rechner",
-        salutationLabel: "Anrede und Name:",
-        languageLabel: "Sprache auswählen:",
-        calculationTypeLabel: "Berechnungsart:",
-        calculateButton: "Berechnen",
-        downloadPdfButton: "PDF Angebot herunterladen",
-        sendEmailButton: "Angebot per E-Mail versenden",
-        startTourButton: "Assistent starten",
-        resetButton: "Zurücksetzen",
-        // Weitere Übersetzungen...
-    },
-    en: {
-        title: "DISH PAY Calculator",
-        salutationLabel: "Salutation and Name:",
-        languageLabel: "Select Language:",
-        calculationTypeLabel: "Calculation Type:",
-        calculateButton: "Calculate",
-        downloadPdfButton: "Download PDF Offer",
-        sendEmailButton: "Send Offer via Email",
-        startTourButton: "Start Assistant",
-        resetButton: "Reset",
-        // Weitere Übersetzungen...
-    }
-};
-
-// Funktion zum Ändern der Sprache
-function changeLanguage() {
-    const selectedLang = document.getElementById('languageSelect').value;
-    localStorage.setItem('selectedLanguage', selectedLang);
-    applyTranslations(selectedLang);
-}
-
-// Funktion zum Anwenden der Übersetzungen
-function applyTranslations(lang) {
-    document.title = translations[lang].title;
-    document.querySelector('h1').innerText = translations[lang].title;
-    document.querySelector('label[for="salutation"]').innerText = translations[lang].salutationLabel;
-    document.querySelector('label[for="languageSelect"]').innerText = translations[lang].languageLabel;
-    document.querySelector('label[for="calculationType"]').innerText = translations[lang].calculationTypeLabel;
-    document.querySelector('button[onclick="calculateCosts()"]').innerText = translations[lang].calculateButton;
-    document.querySelector('button[onclick="generatePDF()"]').innerText = translations[lang].downloadPdfButton;
-    document.querySelector('button[onclick="sendEmail()"]').innerText = translations[lang].sendEmailButton;
-    document.querySelector('button[onclick="startTour()"]').innerText = translations[lang].startTourButton;
-    document.querySelector('button[onclick="resetData()"]').innerText = translations[lang].resetButton;
-    // Weitere Elemente aktualisieren...
-}
-
-// Beim Laden der Seite Sprache setzen
+// Beim Laden der Seite
 document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('selectedLanguage') || 'de';
-    document.getElementById('languageSelect').value = savedLang;
-    applyTranslations(savedLang);
-
-    // Eingaben laden
-    loadSavedInputs();
-
-    // Event Listener für Eingabefelder
-    const inputFields = document.querySelectorAll('input, select');
-    inputFields.forEach(field => {
-        field.addEventListener('change', saveInputs);
-    });
-
     // Tooltips initialisieren
     tippy('[data-tippy-content]', {
         placement: 'right',
@@ -74,31 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Assistenten initialisieren
     initializeTour();
 });
-
-// Funktion zum Laden gespeicherter Eingaben
-function loadSavedInputs() {
-    const fields = ['salutation', 'customerName', 'monthlyVolume', 'transactions', 'girocard', 'mastercardVisa', 'vpay', 'businessCard', 'calculationType', 'purchaseOption', 'rentalDuration', 'hardware'];
-    fields.forEach(fieldId => {
-        const savedValue = localStorage.getItem(fieldId);
-        if (savedValue !== null) {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.value = savedValue;
-            }
-        }
-    });
-}
-
-// Funktion zum Speichern der Eingaben
-function saveInputs() {
-    const fields = ['salutation', 'customerName', 'monthlyVolume', 'transactions', 'girocard', 'mastercardVisa', 'vpay', 'businessCard', 'calculationType', 'purchaseOption', 'rentalDuration', 'hardware'];
-    fields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            localStorage.setItem(fieldId, field.value);
-        }
-    });
-}
 
 // Funktion zum Umschalten der Berechnungsfelder
 function toggleCalculationFields() {
@@ -160,9 +72,9 @@ function updateHardwareOptions() {
         `;
     } else {
         hardwareSelect.innerHTML = `
-            <option value="S1F2">S1F2 Terminal - Miete ab: 14,90 €/Monat</option>
-            <option value="V400C">V400C Terminal - Miete ab: 12,90 €/Monat</option>
-            <option value="Tap2Pay">Tap2Pay Lizenz - Miete: 7,90 €/Monat</option>
+            <option value="S1F2">S1F2 Terminal - Miete</option>
+            <option value="V400C">V400C Terminal - Miete</option>
+            <option value="Tap2Pay">Tap2Pay Lizenz - Miete</option>
         `;
     }
 
@@ -392,7 +304,7 @@ function calculateCosts() {
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         document.getElementById('downloadPdfButton').disabled = false;
-    }, 500);
+    }, 300); // Geringere Verzögerung für schnellere Berechnung
 }
 
 // Diagramm erstellen
@@ -529,41 +441,6 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     // Animation anzeigen
     receiptContainer.classList.remove('hidden');
 
-    // Nach Ende der Animation den Beleg für einen Moment stehen lassen
-    setTimeout(() => {
-        receiptContainer.classList.add('hidden');
-    }, 10000); // Beleg bleibt 10 Sekunden sichtbar
-}
-
-// Funktion zum Zurücksetzen der Daten
-function resetData() {
-    // Eingabefelder leeren
-    const fields = ['customerName', 'monthlyVolume', 'transactions', 'girocard', 'mastercardVisa', 'vpay', 'businessCard'];
-    fields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field.type === 'number' || field.type === 'text') {
-            field.value = '';
-        } else if (field.tagName === 'SELECT') {
-            field.selectedIndex = 0;
-        }
-    });
-
-    // Lokalen Speicher leeren
-    localStorage.clear();
-
-    // Ergebnisbereich leeren
-    document.getElementById('resultArea').innerHTML = '';
-
-    // Diagramm zurücksetzen
-    if (window.costChartInstance) {
-        window.costChartInstance.destroy();
-    }
-
-    // Bon-Animation ausblenden
-    document.getElementById('receiptContainer').classList.add('hidden');
-
-    // Download-Button deaktivieren
-    document.getElementById('downloadPdfButton').disabled = true;
-
-    alert('Alle Daten wurden zurückgesetzt.');
+    // Beleg bleibt sichtbar
+    // Optional: Sie können den Beleg nach einer gewissen Zeit ausblenden
 }
