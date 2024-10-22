@@ -195,10 +195,13 @@ function validateInputs() {
         const value = parseFloat(field.value);
         if (isNaN(value) || value < 0) {
             field.classList.add('error');
-            alert('Bitte geben Sie gültige positive Zahlen ein.');
+            const errorField = document.getElementById(fieldId + 'Error');
+            if (errorField) errorField.textContent = 'Bitte geben Sie eine gültige positive Zahl ein.';
             isValid = false;
         } else {
             field.classList.remove('error');
+            const errorField = document.getElementById(fieldId + 'Error');
+            if (errorField) errorField.textContent = '';
         }
     });
 
@@ -266,6 +269,10 @@ function calculateCosts() {
 
         // Gesamtkosten DISH PAY Gebühren
         const totalDishPayFees = girocardCost + mastercardVisaCost + vpayCost + businessCardCost + transactionCost;
+
+        // Durchschnittliche Gebühr in Prozent berechnen
+        const totalSales = girocardVolume + mastercardVisaVolume + vpayVolume + businessCardVolume;
+        const totalDishPayFeesPercentage = ((totalDishPayFees / totalSales) * 100).toFixed(2);
 
         // Hardwarekosten
         const purchaseOption = document.getElementById('purchaseOption').value;
@@ -375,6 +382,9 @@ function calculateCosts() {
         // Diagramm erstellen
         renderChart(totalMonthlyCost, totalCompetitorCost);
 
+        // Bon-Animation anzeigen
+        showReceiptAnimation(totalMonthlyCost, totalDishPayFeesPercentage);
+
         // Fortschrittsanzeige ausblenden
         document.getElementById('loadingOverlay').classList.add('hidden');
 
@@ -467,10 +477,6 @@ function initializeTour() {
     });
 
     // Weitere Schritte hinzufügen...
-
-    // Assistenten starten, wenn der Button geklickt wird
-    // Dieser Event Listener stellt sicher, dass der Assistent startet
-    document.querySelector('button[onclick="startTour()"]').addEventListener('click', startTour);
 }
 
 // Assistenten starten
@@ -478,4 +484,50 @@ function startTour() {
     if (window.tour) {
         window.tour.start();
     }
+}
+
+// Funktion zur Anzeige der Bon-Animation
+function showReceiptAnimation(totalAmount, feesPercentage) {
+    const receiptContent = document.getElementById('receiptContent');
+    const receiptContainer = document.getElementById('receiptContainer');
+
+    // Beispielhafte Artikel auf dem Beleg
+    const items = [
+        { name: '2x Hauptgericht', price: 38.00 },
+        { name: '1x Flasche Wein', price: 25.00 },
+        { name: '2x Dessert', price: 12.00 },
+    ];
+
+    // Gesamtsumme der Artikel berechnen
+    let subtotal = 0;
+    items.forEach(item => {
+        subtotal += item.price;
+    });
+
+    // Gebühren
+    const feeAmount = (subtotal * (feesPercentage / 100)).toFixed(2);
+
+    // Gesamtbetrag
+    const grandTotal = (parseFloat(subtotal) + parseFloat(feeAmount)).toFixed(2);
+
+    // Beleginhalt erstellen
+    let receiptHtml = '<h4>Restaurant zur Guten Laune</h4>';
+    items.forEach(item => {
+        receiptHtml += `<div class="item"><span>${item.name}</span><span>${item.price.toFixed(2)} €</span></div>`;
+    });
+    receiptHtml += `<div class="item total"><span>Zwischensumme</span><span>${subtotal.toFixed(2)} €</span></div>`;
+    receiptHtml += `<div class="item highlight"><span>Gebühren (${feesPercentage}%)</span><span>${feeAmount} €</span></div>`;
+    receiptHtml += `<div class="item total"><span>Gesamtsumme</span><span>${grandTotal} €</span></div>`;
+    receiptHtml += `<div class="item"><span>Zahlung mit Karte</span><span>${grandTotal} €</span></div>`;
+    receiptHtml += `<p style="text-align:center; margin-top:10px;">Vielen Dank für Ihren Besuch!</p>`;
+
+    receiptContent.innerHTML = receiptHtml;
+
+    // Animation anzeigen
+    receiptContainer.classList.remove('hidden');
+
+    // Nach Ende der Animation den Beleg ausblenden (optional)
+    setTimeout(() => {
+        receiptContainer.classList.add('hidden');
+    }, 8000); // Beleg bleibt 8 Sekunden sichtbar
 }
