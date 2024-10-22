@@ -86,14 +86,31 @@ function calculateCosts() {
 
     // Hardwarekosten
     const purchaseOption = document.getElementById('purchaseOption').value;
+    const hardwareSelection = document.getElementById('hardware').value;
     let hardwareCost = 0;
     let simServiceFee = 0;
 
+    // Hardwarepreise entsprechend der Auswahl
+    switch (hardwareSelection) {
+        case 'S1F2':
+            hardwareCost = (purchaseOption === 'kaufen') ? 399.00 : 44.90;
+            break;
+        case 'V400C':
+            hardwareCost = (purchaseOption === 'kaufen') ? 499.00 : 54.90;
+            break;
+        case 'Moto G14':
+            hardwareCost = (purchaseOption === 'kaufen') ? 299.00 : 34.90;
+            break;
+        case 'Tap2Pay':
+            hardwareCost = (purchaseOption === 'kaufen') ? 199.00 : 24.90;
+            break;
+        default:
+            hardwareCost = 0;
+    }
+
     if (purchaseOption === 'kaufen') {
-        hardwareCost = 399.00; // Beispielhafter Kaufpreis
         simServiceFee = 3.90; // SIM/Service-Gebühr beim Kauf
     } else {
-        hardwareCost = 44.90; // Monatliche Mietkosten
         simServiceFee = 0;    // Keine SIM/Service-Gebühr beim Mieten
     }
 
@@ -123,50 +140,27 @@ function calculateCosts() {
     const savings = totalCompetitorCost - totalDishPayFees;
 
     // Ergebnisdarstellung
-    let resultHtml = '';
+    let resultHtml = '<table class="result-table">';
 
     if (purchaseOption === 'kaufen') {
-        resultHtml += `<div class="result-item"><strong>Hardwarekosten (einmalig Kauf):</strong> ${hardwareCost.toFixed(2)} €</div>`;
-        resultHtml += `<div class="result-item"><strong>SIM/Service-Gebühr (monatlich):</strong> ${simServiceFee.toFixed(2)} €</div>`;
+        resultHtml += `<tr><td>Hardwarekosten (einmalig Kauf)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee.toFixed(2)} €</td></tr>`;
     } else {
-        resultHtml += `<div class="result-item"><strong>Hardwarekosten (monatlich Miete):</strong> ${hardwareCost.toFixed(2)} €</div>`;
+        resultHtml += `<tr><td>Hardwarekosten (monatlich Miete)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
     }
 
-    resultHtml += `<div class="result-item"><strong>Gesamte Gebühren (DISH PAY):</strong> ${totalDishPayFees.toFixed(2)} €</div>`;
+    resultHtml += `<tr><td>Gesamte Gebühren (DISH PAY)</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
 
     if (calculationType === 'ausführlich') {
-        resultHtml += `
-            <div class="result-item"><strong>Wettbewerberkosten:</strong> ${totalCompetitorCost.toFixed(2)} €</div>
-            <div class="result-item"><strong>Monatliche Ersparnis mit DISH PAY:</strong> ${savings.toFixed(2)} €</div>
-        `;
+        resultHtml += `<tr><td>Wettbewerberkosten</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr><td>Ersparnis mit DISH PAY</td><td>${savings.toFixed(2)} €</td></tr>`;
     }
 
-    resultHtml += `<div class="result-item total-cost"><strong>Gesamte monatliche Kosten:</strong> ${totalMonthlyCost.toFixed(2)} €</div>`;
+    resultHtml += `<tr class="total-cost"><td>Gesamte monatliche Kosten</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
+    resultHtml += '</table>';
 
-    // Animation der Ergebnisse
-    animateResult(resultHtml);
+    // Ergebnisbereich aktualisieren
+    document.getElementById('resultArea').innerHTML = resultHtml;
 
     document.getElementById('downloadPdfButton').disabled = false;
-}
-
-function animateResult(htmlContent) {
-    const resultArea = document.getElementById('resultArea');
-    resultArea.innerHTML = ''; // Vorherigen Inhalt löschen
-
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
-
-    const resultItems = tempDiv.querySelectorAll('.result-item');
-    let index = 0;
-
-    function showNextItem() {
-        if (index < resultItems.length) {
-            const item = resultItems[index];
-            resultArea.appendChild(item);
-            index++;
-            setTimeout(showNextItem, 300); // Zeitverzögerung zwischen den Items
-        }
-    }
-
-    showNextItem();
 }
