@@ -13,6 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listener für Mietdauer-Änderung hinzufügen
     document.getElementById('rentalDuration').addEventListener('change', updateHardwareOptions);
+    document.getElementById('purchaseOption').addEventListener('change', () => {
+        toggleRentalOptions();
+        updateHardwareOptions();
+    });
+
+    // Event Listener für Buttons hinzufügen
+    document.getElementById('calculateButton').addEventListener('click', calculateCosts);
+    document.getElementById('downloadPdfButton').addEventListener('click', generatePDF);
+    document.getElementById('sendEmailButton').addEventListener('click', sendEmail);
+    document.getElementById('startTourButton').addEventListener('click', startTour);
 });
 
 // Funktion zum Umschalten der Berechnungsfelder
@@ -321,7 +331,9 @@ function calculateCosts() {
         // Fortschrittsanzeige ausblenden
         document.getElementById('loadingOverlay').classList.add('hidden');
 
+        // PDF- und E-Mail-Buttons aktivieren
         document.getElementById('downloadPdfButton').disabled = false;
+        document.getElementById('sendEmailButton').disabled = false;
     }, 500); // Geringe Verzögerung für schnellere Berechnung
 }
 
@@ -355,9 +367,17 @@ function renderChart(dishPayCost, competitorCost) {
 // Funktion zum Versenden des Angebots per E-Mail
 function sendEmail() {
     const customerName = document.getElementById('customerName').value;
+    const salutation = document.getElementById('salutation').value;
+
+    // E-Mail-Inhalt vorbereiten
     const subject = encodeURIComponent('Ihr DISH PAY Angebot');
-    const body = encodeURIComponent('Sehr geehrte/r ' + customerName + ',\n\nanbei erhalten Sie Ihr DISH PAY Angebot.\n\nMit freundlichen Grüßen,\nIhr Team');
+    const body = encodeURIComponent(`Sehr geehrte${salutation === 'Frau' ? ' Frau' : 'r Herr'} ${customerName},\n\nanbei erhalten Sie Ihr DISH PAY Angebot.\n\nBitte finden Sie das angehängte PDF-Angebot.\n\nMit freundlichen Grüßen,\nIhr Team`);
+
+    // Mailto-Link erstellen
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
+
+    // Hinweis: Das automatische Anhängen von Dateien an E-Mails ist aus Sicherheitsgründen in Browsern nicht möglich.
+    // Der Benutzer muss das PDF manuell anhängen.
 }
 
 // Interaktiver Assistent initialisieren
