@@ -5,7 +5,7 @@ function generatePDF() {
     // Kundeninformationen
     const gender = document.getElementById('gender').value;
     const customerName = document.getElementById('customerName').value;
-    
+
     // Überprüfen, ob der Kundenname eingegeben wurde
     if (!customerName.trim()) {
         alert("Bitte geben Sie den Kundennamen ein, bevor Sie das PDF herunterladen.");
@@ -17,7 +17,7 @@ function generatePDF() {
     // Kundenansprache
     let customerAddress = `Sehr geehrte${gender === 'Frau' ? ' Frau' : 'r Herr'} ${customerName},`;
     let offerText = `
-    Vielen Dank für Ihr Interesse an DISH PAY. 
+    Vielen Dank für Ihr Interesse an DISH PAY.
     Anbei erhalten Sie unser unverbindliches Angebot basierend auf Ihren Eingaben.
     Unten finden Sie eine detaillierte Übersicht der Kosten.
     `;
@@ -93,7 +93,6 @@ function generatePDF() {
     const legalText = `
     Dieses Angebot ist freibleibend und unverbindlich. 
     Es dient lediglich als Information und stellt kein rechtlich bindendes Angebot dar. 
-    
     Die angegebenen Gebühren und Kosten können je nach tatsächlichem Transaktionsvolumen variieren. 
     Bei Rückfragen stehen wir Ihnen gerne zur Verfügung.
     `;
