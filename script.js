@@ -15,6 +15,17 @@ function toggleCalculationFields() {
     }
 }
 
+function toggleRentalOptions() {
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    const rentalDurationSection = document.getElementById('rentalDurationSection');
+
+    if (purchaseOption === 'mieten') {
+        rentalDurationSection.classList.remove('hidden');
+    } else {
+        rentalDurationSection.classList.add('hidden');
+    }
+}
+
 function calculateCosts() {
     // Überprüfen, ob Pflichtfelder ausgefüllt sind
     const requiredFields = ['customerName', 'monthlyVolume', 'transactions', 'girocard', 'mastercardVisa'];
@@ -86,36 +97,66 @@ function calculateCosts() {
 
     // Hardwarekosten
     const purchaseOption = document.getElementById('purchaseOption').value;
+    const rentalDuration = document.getElementById('rentalDuration').value;
     const hardwareSelection = document.getElementById('hardware').value;
+
     let hardwareCost = 0;
-    let simServiceFee = 0;
+    let simServiceFee = '-';
+    let oneTimeCost = '-';
 
     // Hardwarepreise entsprechend der Auswahl
-    switch (hardwareSelection) {
-        case 'S1F2':
-            hardwareCost = (purchaseOption === 'kaufen') ? 399.00 : 44.90;
-            break;
-        case 'V400C':
-            hardwareCost = (purchaseOption === 'kaufen') ? 499.00 : 54.90;
-            break;
-        case 'Moto G14':
-            hardwareCost = (purchaseOption === 'kaufen') ? 299.00 : 34.90;
-            break;
-        case 'Tap2Pay':
-            hardwareCost = (purchaseOption === 'kaufen') ? 199.00 : 24.90;
-            break;
-        default:
-            hardwareCost = 0;
-    }
-
     if (purchaseOption === 'kaufen') {
-        simServiceFee = 3.90; // SIM/Service-Gebühr beim Kauf
-    } else {
-        simServiceFee = 0;    // Keine SIM/Service-Gebühr beim Mieten
+        switch (hardwareSelection) {
+            case 'S1F2':
+                hardwareCost = 0; // Keine monatlichen Kosten beim Kauf
+                oneTimeCost = 499.00;
+                simServiceFee = 3.90;
+                break;
+            case 'V400C':
+                hardwareCost = 0;
+                oneTimeCost = 399.00;
+                simServiceFee = 3.90;
+                break;
+            case 'Moto G14':
+                hardwareCost = 0;
+                oneTimeCost = 119.00;
+                simServiceFee = 7.90;
+                break;
+            case 'Tap2Pay':
+                hardwareCost = 0;
+                oneTimeCost = 0; // Kauf nicht verfügbar
+                simServiceFee = 0;
+                break;
+            default:
+                hardwareCost = 0;
+        }
+    } else if (purchaseOption === 'mieten') {
+        switch (hardwareSelection) {
+            case 'S1F2':
+                if (rentalDuration === '12M') hardwareCost = 44.90;
+                else if (rentalDuration === '36M') hardwareCost = 18.90;
+                else if (rentalDuration === '60M') hardwareCost = 14.90;
+                break;
+            case 'V400C':
+                if (rentalDuration === '12M') hardwareCost = 39.90;
+                else if (rentalDuration === '36M') hardwareCost = 16.90;
+                else if (rentalDuration === '60M') hardwareCost = 12.90;
+                break;
+            case 'Moto G14':
+                hardwareCost = 0; // Miete nicht verfügbar
+                break;
+            case 'Tap2Pay':
+                hardwareCost = 7.90; // Nur 12M verfügbar
+                break;
+            default:
+                hardwareCost = 0;
+        }
+        simServiceFee = '-'; // Bei Miete keine SIM/Service-Gebühr
+        oneTimeCost = '-'; // Keine einmaligen Kosten bei Miete
     }
 
     // Gesamtkosten DISH PAY
-    const totalMonthlyCost = (purchaseOption === 'kaufen') ? totalDishPayFees + simServiceFee : hardwareCost + totalDishPayFees;
+    const totalMonthlyCost = hardwareCost + (simServiceFee !== '-' ? simServiceFee : 0) + totalDishPayFees;
 
     // Wettbewerber Gebühren (falls Felder ausgefüllt)
     let totalCompetitorCost = 0;
@@ -142,21 +183,22 @@ function calculateCosts() {
     // Ergebnisdarstellung
     let resultHtml = '<table class="result-table">';
 
-    if (purchaseOption === 'kaufen') {
-        resultHtml += `<tr><td>Hardwarekosten (einmalig Kauf)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
-        resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee.toFixed(2)} €</td></tr>`;
-    } else {
-        resultHtml += `<tr><td>Hardwarekosten (monatlich Miete)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
-    }
+    // DISH PAY Kosten
+    resultHtml += '<tr><td colspan="2"><strong>DISH PAY Kosten</strong></td></tr>';
 
-    resultHtml += `<tr><td>Gesamte Gebühren (DISH PAY)</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
-
-    if (calculationType === 'ausführlich') {
-        resultHtml += `<tr><td>Wettbewerberkosten</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
-        resultHtml += `<tr><td>Ersparnis mit DISH PAY</td><td>${savings.toFixed(2)} €</td></tr>`;
-    }
-
+    resultHtml += `<tr><td>Hardwarekosten (monatlich)</td><td>${hardwareCost ? hardwareCost.toFixed(2) + ' €' : '-'}</td></tr>`;
+    resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee !== '-' ? simServiceFee.toFixed(2) + ' €' : '-'}</td></tr>`;
+    resultHtml += `<tr><td>Gebühren</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
+    resultHtml += `<tr><td>Einmalige Kosten</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
     resultHtml += `<tr class="total-cost"><td>Gesamte monatliche Kosten</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
+
+    // Trennung zwischen DISH PAY und Wettbewerber
+    if (calculationType === 'ausführlich') {
+        resultHtml += '<tr><td colspan="2"><strong>Wettbewerber Kosten</strong></td></tr>';
+        resultHtml += `<tr><td>Wettbewerber Gebühren</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr class="highlight"><td>Ersparnis mit DISH PAY</td><td>${savings.toFixed(2)} €</td></tr>`;
+    }
+
     resultHtml += '</table>';
 
     // Ergebnisbereich aktualisieren
