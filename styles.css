@@ -62,17 +62,19 @@ button:hover {
     display: none;
 }
 
+.error {
+    border-color: red;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 15px;
     }
-
     input[type="number"], select, input[type="text"] {
         width: 100%;
         padding: 8px;
         font-size: 14px;
     }
-
     button {
         padding: 8px 15px;
         font-size: 14px;
