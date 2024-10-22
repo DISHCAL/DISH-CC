@@ -102,18 +102,28 @@
 
         <!-- Kauf oder Miete -->
         <label for="purchaseOption">Kauf oder Miete:</label>
-        <select id="purchaseOption">
-            <option value="mieten">Mieten</option>
-            <option value="kaufen">Kaufen</option>
+        <select id="purchaseOption" onchange="toggleRentalOptions()">
+            <option value="kaufen">Kauf</option>
+            <option value="mieten">Miete</option>
         </select>
+
+        <!-- Mietdauer (wird angezeigt, wenn 'Mieten' ausgewählt ist) -->
+        <div id="rentalDurationSection" class="hidden">
+            <label for="rentalDuration">Mietdauer:</label>
+            <select id="rentalDuration">
+                <option value="12M">12 Monate</option>
+                <option value="36M">36 Monate</option>
+                <option value="60M">60 Monate</option>
+            </select>
+        </div>
 
         <!-- Hardware -->
         <label for="hardware">Hardware auswählen:</label>
         <select id="hardware">
-            <option value="S1F2">S1F2 Terminal - 399,00 €</option>
-            <option value="V400C">V400C Terminal - 499,00 €</option>
-            <option value="Moto G14">Moto G14 Terminal - 299,00 €</option>
-            <option value="Tap2Pay">Tap2Pay Lizenz - 199,00 €</option>
+            <option value="S1F2">S1F2 Terminal</option>
+            <option value="V400C">V400C Terminal</option>
+            <option value="Moto G14">Moto G14 mit Lizenz</option>
+            <option value="Tap2Pay">Tap2Pay Lizenz</option>
         </select>
 
         <!-- Berechnen und PDF-Buttons -->
