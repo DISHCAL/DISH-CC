@@ -1,3 +1,20 @@
+function toggleCalculationFields() {
+    const calculationType = document.getElementById('calculationType').value;
+    const competitorSection = document.getElementById('competitorSection');
+    const maestroField = document.getElementById('maestroField');
+    const businessCardField = document.getElementById('businessCardField');
+
+    if (calculationType === 'ausführlich') {
+        competitorSection.classList.remove('hidden');
+        maestroField.classList.remove('hidden');
+        businessCardField.classList.remove('hidden');
+    } else {
+        competitorSection.classList.add('hidden');
+        maestroField.classList.add('hidden');
+        businessCardField.classList.add('hidden');
+    }
+}
+
 function calculateCosts() {
     const transactions = parseFloat(document.getElementById('transactions').value) || 0;
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
@@ -21,11 +38,11 @@ function calculateCosts() {
         businessCardCost = (monthlyVolume * (businessCardPercentage / 100)) * 0.015; // Business Card-Gebühr
 
         // Wettbewerber Kosten
-        const competitorGirocardPercentage = parseFloat(document.getElementById('competitorMaestro').value) || 0;
-        const competitorMastercardVisaPercentage = parseFloat(document.getElementById('competitorBusinessCard').value) || 0;
+        const competitorMaestroPercentage = parseFloat(document.getElementById('competitorMaestro').value) || 0;
+        const competitorBusinessCardPercentage = parseFloat(document.getElementById('competitorBusinessCard').value) || 0;
 
-        competitorMaestroCost = (monthlyVolume * (competitorGirocardPercentage / 100)) * 0.0089;
-        competitorBusinessCardCost = (monthlyVolume * (competitorMastercardVisaPercentage / 100)) * 0.015;
+        competitorMaestroCost = (monthlyVolume * (competitorMaestroPercentage / 100)) * 0.0089;
+        competitorBusinessCardCost = (monthlyVolume * (competitorBusinessCardPercentage / 100)) * 0.015;
     }
 
     const totalCost = girocardCost + mastercardVisaCost + maestroCost + businessCardCost;
