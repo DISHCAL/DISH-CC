@@ -320,7 +320,7 @@ function calculateCosts() {
         }
 
         // Gesamtkosten DISH PAY
-        const totalMonthlyCost = hardwareCost + (simServiceFee !== '-' ? simServiceFee : 0) + totalDishPayFees;
+        const totalMonthlyCost = hardwareCost + (simServiceFee !== '-' ? parseFloat(simServiceFee) : 0) + totalDishPayFees;
 
         // Wettbewerber Gebühren (falls Felder ausgefüllt)
         let totalCompetitorCost = 0;
@@ -352,7 +352,7 @@ function calculateCosts() {
 
         if (purchaseOption === 'kaufen') {
             resultHtml += `<tr><td>Hardwarekosten (einmalig Kauf)</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
-            resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee !== '-' ? simServiceFee.toFixed(2) + ' €' : '-'}</td></tr>`;
+            resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
         } else {
             resultHtml += `<tr><td>Hardwarekosten (monatlich Miete)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
         }
@@ -388,16 +388,17 @@ function renderChart(dishPayCost, competitorCost) {
     if (window.costChartInstance) {
         window.costChartInstance.destroy();
     }
+    const data = {
+        labels: ['DISH PAY', 'Wettbewerber'],
+        datasets: [{
+            label: 'Monatliche Kosten (€)',
+            data: [dishPayCost.toFixed(2), competitorCost.toFixed(2)],
+            backgroundColor: ['#e67e22', '#3498db'],
+        }],
+    };
     window.costChartInstance = new Chart(ctx, {
         type: 'bar',
-        data: {
-            labels: ['DISH PAY', 'Wettbewerber'],
-            datasets: [{
-                label: 'Monatliche Kosten (€)',
-                data: [dishPayCost.toFixed(2), competitorCost.toFixed(2)],
-                backgroundColor: ['#e67e22', '#3498db'],
-            }],
-        },
+        data: data,
         options: {
             scales: {
                 y: {
@@ -465,31 +466,11 @@ function initializeTour() {
         ]
     });
 
-    tour.addStep({
-        id: 'step-3',
-        text: 'Wählen Sie die Berechnungsart: Schnell oder Ausführlich.',
-        attachTo: {
-            element: '#calculationType',
-            on: 'bottom',
-        },
-        buttons: [
-            {
-                text: 'Zurück',
-                action: tour.back,
-            },
-            {
-                text: 'Weiter',
-                action: tour.next,
-            }
-        ]
-    });
-
     // Weitere Schritte hinzufügen...
 
     // Assistenten starten, wenn der Button geklickt wird
-    document.querySelector('button[onclick="startTour()"]').addEventListener('click', () => {
-        tour.start();
-    });
+    // Dieser Event Listener stellt sicher, dass der Assistent startet
+    document.querySelector('button[onclick="startTour()"]').addEventListener('click', startTour);
 }
 
 // Assistenten starten
