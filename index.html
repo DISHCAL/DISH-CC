@@ -10,6 +10,7 @@
     <div class="container">
         <h1>DISH PAY Rechner</h1>
 
+        <!-- Kundeninformationen -->
         <div class="customer-input">
             <label for="gender">Anrede:</label>
             <select id="gender">
@@ -21,12 +22,14 @@
             <input type="text" id="customerName" placeholder="Vor- und Nachname">
         </div>
 
+        <!-- Berechnungsart -->
         <label for="calculationType">Berechnungsart:</label>
         <select id="calculationType" onchange="toggleCalculationFields()">
             <option value="schnell">Schnelle Berechnung</option>
             <option value="ausführlich">Ausführliche Berechnung</option>
         </select>
 
+        <!-- Eingabefelder für Berechnung -->
         <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
         <input type="number" id="monthlyVolume" placeholder="z.B. 20000">
 
@@ -41,7 +44,7 @@
 
         <!-- Zusätzliche Felder für ausführliche Berechnung -->
         <div id="vpayField" class="hidden">
-            <label for="vpay">VPAY Gebühr (%):</label>
+            <label for="vpay">Maestro / VPAY Gebühr (%):</label>
             <input type="number" id="vpay" placeholder="z.B. 0.89">
         </div>
 
@@ -66,12 +69,14 @@
             <input type="number" id="competitorBusinessCard" placeholder="z.B. 3.0">
         </div>
 
+        <!-- Kauf oder Miete -->
         <label for="purchaseOption">Kauf oder Miete:</label>
         <select id="purchaseOption">
             <option value="mieten">Mieten</option>
             <option value="kaufen">Kaufen</option>
         </select>
 
+        <!-- Hardware -->
         <label for="hardware">Hardware auswählen:</label>
         <select id="hardware">
             <option value="S1F2">S1F2 Terminal</option>
@@ -80,11 +85,14 @@
             <option value="Tap2Pay">Tap2Pay Lizenz</option>
         </select>
 
+        <!-- Berechnen und PDF-Buttons -->
         <button onclick="calculateCosts()">Berechnen</button>
         <button id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
 
+        <!-- Ergebnisbereich -->
         <div id="resultArea" class="result-section"></div>
 
+        <!-- Gebührenhinweis -->
         <h4>Hinweis zu den Gebühren:</h4>
         <p>Transaktionspreis: 0,06 € pro Transaktion</p>
         <p>Girocard-Gebühr bis 10.000 € monatlich: 0,39%</p>
