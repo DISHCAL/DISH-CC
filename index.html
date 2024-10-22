@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISH PAY Rechner</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Verlinkung der CSS-Datei -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -18,8 +19,8 @@
                 <option value="Frau">Frau</option>
             </select>
 
-            <label for="customerName">Kundenname:</label>
-            <input type="text" id="customerName" placeholder="Vor- und Nachname">
+            <label for="customerName">Kundenname:<span style="color:red;">*</span></label>
+            <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
         </div>
 
         <!-- Berechnungsart -->
@@ -30,27 +31,27 @@
         </select>
 
         <!-- Eingabefelder für Berechnung -->
-        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):</label>
-        <input type="number" id="monthlyVolume" placeholder="z.B. 20000">
+        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span style="color:red;">*</span></label>
+        <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
 
-        <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:</label>
-        <input type="number" id="transactions" placeholder="z.B. 400">
+        <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:<span style="color:red;">*</span></label>
+        <input type="number" id="transactions" placeholder="z.B. 400" required>
 
-        <label for="girocard">Girocard (%):</label>
-        <input type="number" id="girocard" placeholder="z.B. 0.70">
+        <label for="girocard">Girocard (%):<span style="color:red;">*</span></label>
+        <input type="number" id="girocard" placeholder="z.B. 70" required>
 
-        <label for="mastercardVisa">Mastercard / VISA (%):</label>
-        <input type="number" id="mastercardVisa" placeholder="z.B. 0.30">
+        <label for="mastercardVisa">Mastercard / VISA (%):<span style="color:red;">*</span></label>
+        <input type="number" id="mastercardVisa" placeholder="z.B. 30" required>
 
         <!-- Zusätzliche Felder für ausführliche Berechnung -->
         <div id="vpayField" class="hidden">
             <label for="vpay">Maestro / VPAY Gebühr (%):</label>
-            <input type="number" id="vpay" placeholder="z.B. 0.89">
+            <input type="number" id="vpay" placeholder="z.B. 10">
         </div>
 
         <div id="businessCardField" class="hidden">
             <label for="businessCard">Business Card Gebühr (%):</label>
-            <input type="number" id="businessCard" placeholder="z.B. 3.0">
+            <input type="number" id="businessCard" placeholder="z.B. 5">
         </div>
 
         <!-- Wettbewerber -->
@@ -102,6 +103,12 @@
         <p>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%</p>
     </div>
 
+    <!-- JavaScript-Dateien einbinden -->
+    <!-- Einbindung von jsPDF und jsPDF-AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Eigene Skripte -->
     <script src="script.js"></script>
     <script src="pdf-generator.js"></script>
 </body>
