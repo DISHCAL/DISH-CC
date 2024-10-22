@@ -12,6 +12,7 @@ function generatePDF() {
     }
 
     const calculationType = document.getElementById('calculationType').value;
+    const purchaseOption = document.getElementById('purchaseOption').value;
 
     const doc = new jsPDF({
         format: 'a4',
@@ -24,11 +25,11 @@ function generatePDF() {
     const usableWidth = pageWidth - margin * 2;
 
     // Briefkopf gestalten
-    doc.setFillColor(236, 240, 241); // Leichtes Grau
+    doc.setFillColor(230, 126, 34); // Orange
     doc.rect(0, 0, pageWidth, 60, 'F');
 
     doc.setFontSize(22);
-    doc.setTextColor(44, 62, 80);
+    doc.setTextColor(255, 255, 255);
     doc.text("DISH PAY Angebot", margin, 40);
 
     // Kundenansprache
@@ -66,11 +67,11 @@ function generatePDF() {
             fontSize: 12,
         },
         headStyles: {
-            fillColor: [41, 128, 185],
+            fillColor: [230, 126, 34], // Orange
             textColor: [255, 255, 255],
         },
         alternateRowStyles: {
-            fillColor: [236, 240, 241],
+            fillColor: [253, 242, 233],
         },
         margin: { left: margin, right: margin },
         tableWidth: usableWidth,
@@ -95,7 +96,7 @@ function generatePDF() {
     doc.text(legalText, margin, finalY + 140, { maxWidth: usableWidth });
 
     // Streifen am unteren Rand
-    doc.setFillColor(41, 128, 185); // Blau
+    doc.setFillColor(230, 126, 34); // Orange
     doc.rect(0, doc.internal.pageSize.getHeight() - 50, pageWidth, 50, 'F');
 
     // PDF-Datei generieren und herunterladen
