@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISH PAY Rechner</title>
-    <!-- Einbindung externer CSS-Datei -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Einbindung von jsPDF und autoTable für die PDF-Funktion -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -15,6 +13,18 @@
         <h1>DISH PAY Rechner</h1>
         <h3>Kostenberechnung</h3>
 
+        <!-- Kombinierte Anrede und Kundennamen-Eingabe -->
+        <div class="name-anrede-section">
+            <label for="gender">Anrede: <span>*</span></label>
+            <select id="gender" required>
+                <option value="Herr">Herr</option>
+                <option value="Frau">Frau</option>
+            </select>
+
+            <label for="customerName">Name des Kunden: <span>*</span></label>
+            <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+        </div>
+
         <!-- Dropdown zur Auswahl der Berechnungsart -->
         <label for="calculationType">Berechnungsart: <span>*</span></label>
         <select id="calculationType" onchange="toggleCalculationFields()">
@@ -22,14 +32,14 @@
             <option value="ausführlich">Ausführliche Berechnung</option>
         </select>
 
-        <!-- Felder für Umsatz und Transaktionen -->
+        <!-- Feld für Kartenumsatz -->
         <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
         <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
 
+        <!-- Felder für die Berechnungen -->
         <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
         <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
 
-        <!-- Prozentsatz Eingaben -->
         <label for="girocard">Girocard (%): <span>*</span></label>
         <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
 
@@ -47,7 +57,20 @@
             <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
         </div>
 
-        <!-- Hardware-Auswahl -->
+        <!-- Wettbewerber Felder für die ausführliche Berechnung -->
+        <div id="competitorSection" class="hidden">
+            <h3>Wettbewerber Informationen</h3>
+            <div id="competitorMaestroField" class="hidden">
+                <label for="competitorMaestro">Wettbewerber Maestro / VPAY (%):</label>
+                <input type="number" id="competitorMaestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
+            </div>
+            <div id="competitorBusinessCardField" class="hidden">
+                <label for="competitorBusinessCard">Wettbewerber Business Card (%):</label>
+                <input type="number" id="competitorBusinessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
+            </div>
+        </div>
+
+        <!-- Kauf oder Miete -->
         <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
         <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
             <option value="mieten">Mieten</option>
@@ -58,79 +81,40 @@
         <div id="hardwareOptions">
             <label for="hardware">Hardware auswählen: <span>*</span></label>
             <select id="hardware" onchange="updateRentalPrices()">
-                <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-                <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-                <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
-                <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+                <option value="S1F2" data-price-once="499.00" data-price-purchase-monthly="3.90" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+                <option value="V400C" data-price-once="399.00" data-price-purchase-monthly="3.90" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+                <option value="Moto G14 mit Lizenz" data-price-once="119.00" data-price-purchase-monthly="7.90">Moto G14 Terminal</option>
+                <option value="Tap2Pay Lizenz" data-price-purchase-monthly="7.90" data-price-12="7.90">Tap2Pay Lizenz</option>
             </select>
         </div>
 
-        <!-- Mietoptionen für den Mietzeitraum -->
-        <div id="rentalOptions">
-            <label for="rentalPeriod">Mietdauer: <span>*</span></label>
-            <select id="rentalPeriod">
-                <option value="12">12 Monate</option>
-                <option value="36">36 Monate</option>
-                <option value="60">60 Monate</option>
-            </select>
-        </div>
+        <label for="rentalPeriod">Mietdauer: </label>
+        <select id="rentalPeriod">
+            <option value="12">12 Monate</option>
+            <option value="36">36 Monate</option>
+            <option value="60">60 Monate</option>
+        </select>
 
-        <!-- Wettbewerber Feld nur bei ausführlicher Berechnung -->
-        <div id="competitorSection" class="competitor-section hidden">
-            <h4>Wettbewerber Gebühren:</h4>
-            <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-            <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+        <button type="button" onclick="calculateCosts()">Berechnen</button>
+        <button type="button" id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
 
-            <!-- Maestro und Business Card nur bei ausführlicher Berechnung -->
-            <div id="competitorMaestroField" class="hidden">
-                <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
-                <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
-            </div>
-
-            <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
-            <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
-
-            <div id="competitorBusinessCardField" class="hidden">
-                <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
-                <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
-            </div>
-        </div>
-
-        <!-- Berechnungsbuttons -->
-        <button onclick="calculateCosts()">Berechnen</button>
-        <button id="pdfDownloadButton" onclick="generatePDF()" disabled>PDF Angebot herunterladen</button> <!-- Standardmäßig deaktiviert -->
-
-        <!-- Ergebnisbereich -->
-        <div id="result">
-            <h3>Ergebnisse:</h3>
-            <div class="result-section">
-                <p id="oneTimeCost"></p>
-                <p id="monthlyCost"></p>
-                <p id="disagioFees"></p>
-                <p id="transactionFee"></p>
-                <p id="simServiceFee"></p>
-                <p id="totalCost"></p>
-                <p id="competitorTotal"></p>
-                <p id="competitorSavings"></p>
-            </div>
-        </div>
-
-        <!-- Informationsfeld zu Gebühren -->
-        <div class="info-section">
-            <h4>Hinweis zu den Gebühren:</h4>
-            <ul>
-                <li><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
-                <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
-                <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
-                <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
-                <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
-                <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
-            </ul>
-        </div>
+        <!-- Bereich für die Ergebnisse -->
+        <h2>Ergebnisse:</h2>
+        <div id="resultArea"></div>
     </div>
 
-    <!-- Einbindung externer JavaScript-Dateien -->
-    <script src="script.js" defer></script>
-    <script src="pdf-generator.js" defer></script>
+    <!-- Hinweis zu den Gebühren -->
+    <div id="feeDisclaimer">
+        <h3>Hinweis zu den Gebühren:</h3>
+        <p>Transaktionspreis: 0,06 € pro Transaktion</p>
+        <p>Girocard-Gebühr bis 10.000 € monatlich: 0,39%</p>
+        <p>Girocard-Gebühr über 10.000 € monatlich: 0,29%</p>
+        <p>Disagio Maestro / VPAY: 0,89%</p>
+        <p>Disagio Mastercard/VISA Privatkunden: 0,89%</p>
+        <p>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%</p>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="pdf-generator.js"></script>
 </body>
 </html>
