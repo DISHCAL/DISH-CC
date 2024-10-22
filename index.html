@@ -6,6 +6,8 @@
     <title>DISH PAY Rechner</title>
     <!-- Verlinkung der CSS-Datei -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Einbindung von Font Awesome für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -13,14 +15,19 @@
 
         <!-- Kundeninformationen -->
         <div class="customer-input">
-            <label for="gender">Anrede:</label>
-            <select id="gender">
-                <option value="Herr">Herr</option>
-                <option value="Frau">Frau</option>
-            </select>
-
-            <label for="customerName">Kundenname:<span style="color:red;">*</span></label>
-            <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+            <div class="flex-row">
+                <div class="flex-item">
+                    <label for="gender">Anrede:</label>
+                    <select id="gender">
+                        <option value="Herr">Herr</option>
+                        <option value="Frau">Frau</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <label for="customerName">Kundenname:<span class="required">*</span></label>
+                    <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+                </div>
+            </div>
         </div>
 
         <!-- Berechnungsart -->
@@ -31,43 +38,68 @@
         </select>
 
         <!-- Eingabefelder für Berechnung -->
-        <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span style="color:red;">*</span></label>
-        <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
-
-        <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:<span style="color:red;">*</span></label>
-        <input type="number" id="transactions" placeholder="z.B. 400" required>
-
-        <label for="girocard">Girocard (%):<span style="color:red;">*</span></label>
-        <input type="number" id="girocard" placeholder="z.B. 70" required>
-
-        <label for="mastercardVisa">Mastercard / VISA (%):<span style="color:red;">*</span></label>
-        <input type="number" id="mastercardVisa" placeholder="z.B. 30" required>
-
-        <!-- Zusätzliche Felder für ausführliche Berechnung -->
-        <div id="vpayField" class="hidden">
-            <label for="vpay">Maestro / VPAY Gebühr (%):</label>
-            <input type="number" id="vpay" placeholder="z.B. 10">
+        <div class="input-group">
+            <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span class="required">*</span>
+                <i class="fa fa-info-circle" title="Der erwartete Gesamtumsatz aller Kartenzahlungen pro Monat."></i>
+            </label>
+            <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
+            <small class="error-message" id="monthlyVolumeError"></small>
         </div>
 
-        <div id="businessCardField" class="hidden">
-            <label for="businessCard">Business Card Gebühr (%):</label>
-            <input type="number" id="businessCard" placeholder="z.B. 5">
+        <div class="input-group">
+            <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:<span class="required">*</span>
+                <i class="fa fa-info-circle" title="Die geschätzte Anzahl der Kartenzahlungen pro Monat."></i>
+            </label>
+            <input type="number" id="transactions" placeholder="z.B. 400" required>
+            <small class="error-message" id="transactionsError"></small>
+        </div>
+
+        <!-- Prozentangaben für Kartentypen -->
+        <div class="input-group">
+            <label>Kartenarten Anteil (Summe muss 100% ergeben):</label>
+            <div class="percentage-group">
+                <label for="girocard">Girocard (%):<span class="required">*</span>
+                    <i class="fa fa-info-circle" title="Der prozentuale Anteil der Girocard-Zahlungen am Gesamtumsatz."></i>
+                </label>
+                <input type="number" id="girocard" placeholder="z.B. 70" required>
+            </div>
+            <div class="percentage-group">
+                <label for="mastercardVisa">Mastercard / VISA (%):<span class="required">*</span>
+                    <i class="fa fa-info-circle" title="Der prozentuale Anteil der Mastercard/VISA-Zahlungen am Gesamtumsatz."></i>
+                </label>
+                <input type="number" id="mastercardVisa" placeholder="z.B. 30" required>
+            </div>
+            <!-- Zusätzliche Felder für ausführliche Berechnung -->
+            <div id="vpayField" class="hidden percentage-group">
+                <label for="vpay">Maestro / VPAY (%):</label>
+                <input type="number" id="vpay" placeholder="z.B. 0">
+            </div>
+            <div id="businessCardField" class="hidden percentage-group">
+                <label for="businessCard">Business Card (%):</label>
+                <input type="number" id="businessCard" placeholder="z.B. 0">
+            </div>
+            <small class="error-message" id="percentageError"></small>
         </div>
 
         <!-- Wettbewerber -->
         <div id="competitorSection" class="competitor-section hidden">
             <h3>Wettbewerber Gebühren:</h3>
-            <label for="competitorGirocard">Girocard Gebühr (%):</label>
-            <input type="number" id="competitorGirocard" placeholder="z.B. 0.9">
-
-            <label for="competitorMaestro">Maestro / VPAY Gebühr (%):</label>
-            <input type="number" id="competitorMaestro" placeholder="z.B. 0.9">
-
-            <label for="competitorMastercardVisa">Mastercard / VISA Gebühr (%):</label>
-            <input type="number" id="competitorMastercardVisa" placeholder="z.B. 1.9">
-
-            <label for="competitorBusinessCard">Business Card Gebühr (%):</label>
-            <input type="number" id="competitorBusinessCard" placeholder="z.B. 3.0">
+            <div class="input-group">
+                <label for="competitorGirocard">Girocard Gebühr (%):</label>
+                <input type="number" id="competitorGirocard" placeholder="z.B. 0.9">
+            </div>
+            <div class="input-group">
+                <label for="competitorMaestro">Maestro / VPAY Gebühr (%):</label>
+                <input type="number" id="competitorMaestro" placeholder="z.B. 0.9">
+            </div>
+            <div class="input-group">
+                <label for="competitorMastercardVisa">Mastercard / VISA Gebühr (%):</label>
+                <input type="number" id="competitorMastercardVisa" placeholder="z.B. 1.9">
+            </div>
+            <div class="input-group">
+                <label for="competitorBusinessCard">Business Card Gebühr (%):</label>
+                <input type="number" id="competitorBusinessCard" placeholder="z.B. 3.0">
+            </div>
         </div>
 
         <!-- Kauf oder Miete -->
