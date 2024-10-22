@@ -24,13 +24,6 @@
     <div class="container">
         <h1>DISH PAY Rechner</h1>
 
-        <!-- Sprachwahl -->
-        <label for="languageSelect">Sprache auswählen:</label>
-        <select id="languageSelect" onchange="changeLanguage()">
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-        </select>
-
         <!-- Kundeninformationen -->
         <div class="customer-input">
             <div class="input-group">
@@ -150,7 +143,6 @@
         <button id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
         <button onclick="sendEmail()">Angebot per E-Mail versenden</button>
         <button onclick="startTour()">Assistent starten</button>
-        <button onclick="resetData()">Zurücksetzen</button>
 
         <!-- Ergebnisbereich -->
         <div id="resultArea" class="result-section">
