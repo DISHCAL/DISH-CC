@@ -529,10 +529,10 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     // Animation anzeigen
     receiptContainer.classList.remove('hidden');
 
-    // Nach Ende der Animation den Beleg ausblenden (optional)
+    // Nach Ende der Animation den Beleg für einen Moment stehen lassen
     setTimeout(() => {
         receiptContainer.classList.add('hidden');
-    }, 8000); // Beleg bleibt 8 Sekunden sichtbar
+    }, 10000); // Beleg bleibt 10 Sekunden sichtbar
 }
 
 // Funktion zum Zurücksetzen der Daten
