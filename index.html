@@ -142,23 +142,22 @@
         <button id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
         <button onclick="sendEmail()">Angebot per E-Mail versenden</button>
         <button onclick="startTour()">Assistent starten</button>
+        <button onclick="resetData()">Zurücksetzen</button> <!-- Neuer Zurücksetzen-Button -->
 
         <!-- Ergebnisbereich -->
         <div id="resultArea" class="result-section"></div>
 
-        <!-- Diagramm-Bereich -->
-        <canvas id="costChart" width="400" height="200"></canvas>
-
         <!-- Bon-Animation -->
         <div id="receiptContainer" class="receipt-container hidden">
-            <div id="printer">
-                <div id="paper">
-                    <div id="receiptContent">
-                        <!-- Inhalt des Belegs wird dynamisch über JavaScript eingefügt -->
-                    </div>
+            <div id="paper">
+                <div id="receiptContent">
+                    <!-- Inhalt des Belegs wird dynamisch über JavaScript eingefügt -->
                 </div>
             </div>
         </div>
+
+        <!-- Diagramm-Bereich -->
+        <canvas id="costChart" width="400" height="200"></canvas>
 
         <!-- Gebührenhinweis -->
         <h4>Hinweis zu den Gebühren:</h4>
