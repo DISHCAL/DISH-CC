@@ -8,13 +8,17 @@
     <!-- Verlinkung der CSS-Datei -->
     <link rel="stylesheet" href="styles.css">
     <!-- Einbindung von Font Awesome für Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
+          rel="stylesheet">
     <!-- Tippy.js für Tooltips -->
-    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
+    <link rel="stylesheet"
+          href="https://unpkg.com/tippy.js@6/dist/tippy.css">
     <!-- Shepherd.js für den Assistenten -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/8.4.1/css/shepherd.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/8.4.1/css/shepherd.css">
 </head>
 <body>
     <div class="container">
@@ -52,7 +56,8 @@
         <!-- Eingabefelder für Berechnung -->
         <div class="input-group">
             <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span class="required">*</span>
-                <i class="fa fa-info-circle" data-tippy-content="Der erwartete Gesamtumsatz aller Kartenzahlungen pro Monat."></i>
+                <i class="fa fa-info-circle"
+                   data-tippy-content="Der erwartete Gesamtumsatz aller Kartenzahlungen pro Monat."></i>
             </label>
             <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
             <small class="error-message" id="monthlyVolumeError"></small>
@@ -60,7 +65,8 @@
 
         <div class="input-group">
             <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:<span class="required">*</span>
-                <i class="fa fa-info-circle" data-tippy-content="Die geschätzte Anzahl der Kartenzahlungen pro Monat."></i>
+                <i class="fa fa-info-circle"
+                   data-tippy-content="Die geschätzte Anzahl der Kartenzahlungen pro Monat."></i>
             </label>
             <input type="number" id="transactions" placeholder="z.B. 400" required>
             <small class="error-message" id="transactionsError"></small>
@@ -71,13 +77,15 @@
             <label>Kartenarten Anteil (Summe muss 100% ergeben):</label>
             <div class="percentage-group">
                 <label for="girocard">Girocard (%):<span class="required">*</span>
-                    <i class="fa fa-info-circle" data-tippy-content="Der prozentuale Anteil der Girocard-Zahlungen am Gesamtumsatz."></i>
+                    <i class="fa fa-info-circle"
+                       data-tippy-content="Der prozentuale Anteil der Girocard-Zahlungen am Gesamtumsatz."></i>
                 </label>
                 <input type="number" id="girocard" placeholder="z.B. 70" required>
             </div>
             <div class="percentage-group">
                 <label for="mastercardVisa">Mastercard / VISA (%):<span class="required">*</span>
-                    <i class="fa fa-info-circle" data-tippy-content="Der prozentuale Anteil der Mastercard/VISA-Zahlungen am Gesamtumsatz."></i>
+                    <i class="fa fa-info-circle"
+                       data-tippy-content="Der prozentuale Anteil der Mastercard/VISA-Zahlungen am Gesamtumsatz."></i>
                 </label>
                 <input type="number" id="mastercardVisa" placeholder="z.B. 30" required>
             </div>
@@ -142,16 +150,16 @@
         <button id="downloadPdfButton" disabled onclick="generatePDF()">PDF Angebot herunterladen</button>
         <button onclick="sendEmail()">Angebot per E-Mail versenden</button>
         <button onclick="startTour()">Assistent starten</button>
-        <button onclick="resetData()">Zurücksetzen</button> <!-- Neuer Zurücksetzen-Button -->
+        <button onclick="resetData()">Zurücksetzen</button>
 
         <!-- Ergebnisbereich -->
-        <div id="resultArea" class="result-section"></div>
-
-        <!-- Bon-Animation -->
-        <div id="receiptContainer" class="receipt-container hidden">
-            <div id="paper">
-                <div id="receiptContent">
-                    <!-- Inhalt des Belegs wird dynamisch über JavaScript eingefügt -->
+        <div id="resultArea" class="result-section">
+            <!-- Bon-Animation -->
+            <div id="receiptContainer" class="receipt-container hidden">
+                <div id="paper">
+                    <div id="receiptContent">
+                        <!-- Inhalt des Belegs wird dynamisch über JavaScript eingefügt -->
+                    </div>
                 </div>
             </div>
         </div>
