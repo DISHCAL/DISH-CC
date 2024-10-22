@@ -15,18 +15,16 @@
 
         <!-- Kundeninformationen -->
         <div class="customer-input">
-            <div class="flex-row">
-                <div class="flex-item">
-                    <label for="gender">Anrede:</label>
-                    <select id="gender">
+            <div class="input-group">
+                <label for="salutation">Anrede und Name:<span class="required">*</span></label>
+                <div class="name-group">
+                    <select id="salutation">
                         <option value="Herr">Herr</option>
                         <option value="Frau">Frau</option>
                     </select>
-                </div>
-                <div class="flex-item">
-                    <label for="customerName">Kundenname:<span class="required">*</span></label>
                     <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
                 </div>
+                <small class="error-message" id="customerNameError"></small>
             </div>
         </div>
 
@@ -112,10 +110,10 @@
         <!-- Hardware -->
         <label for="hardware">Hardware auswählen:</label>
         <select id="hardware">
-            <option value="S1F2">S1F2 Terminal</option>
-            <option value="V400C">V400C Terminal</option>
-            <option value="Moto G14">Moto G14 Terminal</option>
-            <option value="Tap2Pay">Tap2Pay Lizenz</option>
+            <option value="S1F2">S1F2 Terminal - 399,00 €</option>
+            <option value="V400C">V400C Terminal - 499,00 €</option>
+            <option value="Moto G14">Moto G14 Terminal - 299,00 €</option>
+            <option value="Tap2Pay">Tap2Pay Lizenz - 199,00 €</option>
         </select>
 
         <!-- Berechnen und PDF-Buttons -->
