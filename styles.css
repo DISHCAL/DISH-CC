@@ -27,7 +27,7 @@ label {
 }
 
 input[type="number"], input[type="text"], select {
-    width: calc(100% - 20px); /* Adjust width for padding */
+    width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
