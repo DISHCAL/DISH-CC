@@ -81,8 +81,24 @@ function calculateCosts() {
     // Transaktionskosten
     const transactionCost = transactions * 0.06;
 
+    // Gesamtkosten DISH PAY Gebühren
+    const totalDishPayFees = girocardCost + mastercardVisaCost + vpayCost + businessCardCost + transactionCost;
+
+    // Hardwarekosten
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    let hardwareCost = 0;
+    let simServiceFee = 0;
+
+    if (purchaseOption === 'kaufen') {
+        hardwareCost = 399.00; // Beispielhafter Kaufpreis
+        simServiceFee = 3.90; // SIM/Service-Gebühr beim Kauf
+    } else {
+        hardwareCost = 44.90; // Monatliche Mietkosten
+        simServiceFee = 0;    // Keine SIM/Service-Gebühr beim Mieten
+    }
+
     // Gesamtkosten DISH PAY
-    const totalDishPayCost = girocardCost + mastercardVisaCost + vpayCost + businessCardCost + transactionCost;
+    const totalMonthlyCost = (purchaseOption === 'kaufen') ? totalDishPayFees + simServiceFee : hardwareCost + totalDishPayFees;
 
     // Wettbewerber Gebühren (falls Felder ausgefüllt)
     let totalCompetitorCost = 0;
@@ -104,12 +120,19 @@ function calculateCosts() {
         totalCompetitorCost = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost + competitorTransactionCost;
     }
 
-    const savings = totalCompetitorCost - totalDishPayCost;
+    const savings = totalCompetitorCost - totalDishPayFees;
 
-    let resultHtml = `
-        <div class="result-item"><strong>Monatliche Hardwarekosten:</strong> 44,90 €</div>
-        <div class="result-item"><strong>Gebühren gesamt (DISH PAY):</strong> ${totalDishPayCost.toFixed(2)} €</div>
-    `;
+    // Ergebnisdarstellung
+    let resultHtml = '';
+
+    if (purchaseOption === 'kaufen') {
+        resultHtml += `<div class="result-item"><strong>Hardwarekosten (einmalig Kauf):</strong> ${hardwareCost.toFixed(2)} €</div>`;
+        resultHtml += `<div class="result-item"><strong>SIM/Service-Gebühr (monatlich):</strong> ${simServiceFee.toFixed(2)} €</div>`;
+    } else {
+        resultHtml += `<div class="result-item"><strong>Hardwarekosten (monatlich Miete):</strong> ${hardwareCost.toFixed(2)} €</div>`;
+    }
+
+    resultHtml += `<div class="result-item"><strong>Gesamte Gebühren (DISH PAY):</strong> ${totalDishPayFees.toFixed(2)} €</div>`;
 
     if (calculationType === 'ausführlich') {
         resultHtml += `
@@ -117,6 +140,8 @@ function calculateCosts() {
             <div class="result-item"><strong>Monatliche Ersparnis mit DISH PAY:</strong> ${savings.toFixed(2)} €</div>
         `;
     }
+
+    resultHtml += `<div class="result-item total-cost"><strong>Gesamte monatliche Kosten:</strong> ${totalMonthlyCost.toFixed(2)} €</div>`;
 
     // Animation der Ergebnisse
     animateResult(resultHtml);
@@ -139,7 +164,7 @@ function animateResult(htmlContent) {
             const item = resultItems[index];
             resultArea.appendChild(item);
             index++;
-            setTimeout(showNextItem, 500); // Zeitverzögerung zwischen den Items
+            setTimeout(showNextItem, 300); // Zeitverzögerung zwischen den Items
         }
     }
 
