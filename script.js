@@ -1,3 +1,4 @@
+// script.js
 
 // Funktion zum Generieren des PDFs
 function generatePDF(calculationData) {
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleRentalOptions();
         updateHardwareOptions();
     });
-    document.getElementById('calculateButton').addEventListener('click', calculateCosts);
+    document.getElementById('calculateButton').addEventListener('click', startCalculation);
     document.getElementById('downloadPdfButton').addEventListener('click', () => {
         const calculationData = getCalculationData();
         if (calculationData) {
@@ -124,7 +125,8 @@ function toggleRentalOptions() {
 function updateHardwareOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
-    const rentalDuration = document.getElementById('rentalDuration') ? document.getElementById('rentalDuration').value : '12M';
+    const rentalDurationElement = document.getElementById('rentalDuration');
+    const rentalDuration = rentalDurationElement ? rentalDurationElement.value : '12M';
 
     // Aktuelle Auswahl speichern
     const currentSelection = hardwareSelect.value;
@@ -384,8 +386,8 @@ function getCalculationData() {
 }
 
 // Hauptfunktion zur Berechnung der Kosten
-function calculateCosts() {
-    // Eingaben validieren
+function startCalculation() {
+    // Validierung der Eingaben
     if (!validateInputs()) {
         return;
     }
@@ -393,64 +395,95 @@ function calculateCosts() {
     // Fortschrittsanzeige einblenden
     document.getElementById('loadingOverlay').classList.remove('hidden');
 
-    // Berechnungen durchführen
-    setTimeout(() => {
-        const calculationData = getCalculationData();
-        if (!calculationData) {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-            return;
-        }
+    // Berechnungen asynchron durchführen
+    const calculationData = getCalculationData();
 
-        const {
-            purchaseOption,
-            simServiceFee,
-            oneTimeCost,
-            hardwareCost,
-            totalMonthlyCost,
-            totalDishPayFeesPercentage,
-            calculationType,
-            totalCompetitorCost,
-            savings
-        } = calculationData;
+    if (!calculationData) {
+        // Wenn keine Berechnungsdaten vorhanden sind, lade Overlay ausblenden und abbrechen
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        return;
+    }
 
-        // Ergebnisdarstellung
-        let resultHtml = '<table class="result-table">';
+    performCalculations(calculationData).then((resultData) => {
+        // Sobald die Berechnungen abgeschlossen sind, lade Overlay ausblenden
+        document.getElementById('loadingOverlay').classList.add('hidden');
 
-        // DISH PAY Kosten
-        resultHtml += '<tr><td colspan="2"><strong>DISH PAY Kosten</strong></td></tr>';
-
-        if (purchaseOption === 'kaufen') {
-            resultHtml += `<tr><td>Hardwarekosten (einmalig Kauf)</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
-            resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
-        } else {
-            resultHtml += `<tr><td>Hardwarekosten (monatlich Miete)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
-        }
-
-        resultHtml += `<tr><td>Gebühren</td><td>${calculationData.totalDishPayFees.toFixed(2)} €</td></tr>`;
-        resultHtml += `<tr class="total-cost"><td>Gesamte monatliche Kosten</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
-
-        // Trennung zwischen DISH PAY und Wettbewerber
-        if (calculationType === 'ausführlich') {
-            resultHtml += '<tr><td colspan="2"><strong>Wettbewerber Kosten</strong></td></tr>';
-            resultHtml += `<tr><td>Wettbewerber Gebühren</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
-            resultHtml += `<tr class="highlight"><td>Ersparnis mit DISH PAY</td><td>${savings.toFixed(2)} €</td></tr>`;
-        }
-
-        resultHtml += '</table>';
-
-        // Ergebnisbereich aktualisieren
-        document.getElementById('resultArea').innerHTML = resultHtml;
+        // Ergebnisdarstellung aktualisieren
+        displayResults(resultData);
 
         // Bon-Animation anzeigen
-        showReceiptAnimation(totalMonthlyCost, totalDishPayFeesPercentage);
-
-        // Fortschrittsanzeige ausblenden
-        document.getElementById('loadingOverlay').classList.add('hidden');
+        showReceiptAnimation(resultData.totalMonthlyCost, resultData.totalDishPayFeesPercentage);
 
         // PDF- und E-Mail-Buttons aktivieren
         document.getElementById('downloadPdfButton').disabled = false;
         document.getElementById('sendEmailButton').disabled = false;
-    }, 500); // Kurze Verzögerung für die Anzeige des Lade-Overlays
+    }).catch((error) => {
+        // Fehlerbehandlung
+        console.error("Fehler bei den Berechnungen:", error);
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert("Es ist ein Fehler bei der Berechnung aufgetreten. Bitte versuchen Sie es erneut.");
+    });
+}
+
+// Beispiel für eine Funktion, die asynchrone Berechnungen simuliert
+function performCalculations(calculationData) {
+    return new Promise((resolve, reject) => {
+        try {
+            // Simuliere eine Verzögerung für die Berechnungen, z.B. durch API-Aufruf oder komplexe Operationen
+            setTimeout(() => {
+                // In einem realen Szenario würden hier komplexe Berechnungen oder API-Aufrufe stehen
+                // Für dieses Beispiel nutzen wir die bereits berechneten Daten
+
+                resolve(calculationData);
+            }, 2000);  // Diese Zeit könnte je nach Komplexität der Berechnungen angepasst werden
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+// Funktion zur Anzeige der Ergebnisse
+function displayResults(data) {
+    const {
+        purchaseOption,
+        simServiceFee,
+        oneTimeCost,
+        hardwareCost,
+        totalMonthlyCost,
+        totalDishPayFees,
+        totalDishPayFeesPercentage,
+        calculationType,
+        totalCompetitorCost,
+        savings
+    } = data;
+
+    // Ergebnisdarstellung
+    let resultHtml = '<table class="result-table">';
+
+    // DISH PAY Kosten
+    resultHtml += '<tr><td colspan="2"><strong>DISH PAY Kosten</strong></td></tr>';
+
+    if (purchaseOption === 'kaufen') {
+        resultHtml += `<tr><td>Hardwarekosten (einmalig Kauf)</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
+        resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
+    } else {
+        resultHtml += `<tr><td>Hardwarekosten (monatlich Miete)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
+    }
+
+    resultHtml += `<tr><td>Gebühren</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
+    resultHtml += `<tr class="total-cost"><td>Gesamte monatliche Kosten</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
+
+    // Trennung zwischen DISH PAY und Wettbewerber
+    if (calculationType === 'ausführlich') {
+        resultHtml += '<tr><td colspan="2"><strong>Wettbewerber Kosten</strong></td></tr>';
+        resultHtml += `<tr><td>Wettbewerber Gebühren</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr class="highlight"><td>Ersparnis mit DISH PAY</td><td>${savings.toFixed(2)} €</td></tr>`;
+    }
+
+    resultHtml += '</table>';
+
+    // Ergebnisbereich aktualisieren
+    document.getElementById('resultArea').innerHTML = resultHtml;
 }
 
 // Funktion zum Versenden des Angebots per E-Mail
