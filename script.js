@@ -43,6 +43,13 @@ function toggleCalculationFields() {
         // Felder für vpay und businessCard zurücksetzen
         document.getElementById('vpay').value = 0;
         document.getElementById('businessCard').value = 0;
+
+        // Fehlernachrichten zurücksetzen
+        const errorFields = ['vpayError', 'businessCardError'];
+        errorFields.forEach(id => {
+            const errorField = document.getElementById(id);
+            if (errorField) errorField.textContent = '';
+        });
     }
 }
 
@@ -335,8 +342,7 @@ function calculateCosts() {
         // PDF- und E-Mail-Buttons aktivieren
         document.getElementById('downloadPdfButton').disabled = false;
         document.getElementById('sendEmailButton').disabled = false;
-    }, 500); // Geringe Verzögerung für schnellere Berechnung
-}
+    }
 
 // Funktion zum Versenden des Angebots per E-Mail
 function sendEmail() {
@@ -412,7 +418,62 @@ function initializeTour() {
         ]
     });
 
-    // Weitere Schritte hinzufügen...
+    tour.addStep({
+        id: 'step-3',
+        text: 'Geben Sie den geplanten Kartenumsatz und die Anzahl der Transaktionen ein.',
+        attachTo: {
+            element: '#monthlyVolume',
+            on: 'top',
+        },
+        buttons: [
+            {
+                text: 'Zurück',
+                action: tour.back,
+            },
+            {
+                text: 'Weiter',
+                action: tour.next,
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'step-4',
+        text: 'Geben Sie den prozentualen Anteil der verschiedenen Kartenarten ein.',
+        attachTo: {
+            element: '.percentage-group',
+            on: 'bottom',
+        },
+        buttons: [
+            {
+                text: 'Zurück',
+                action: tour.back,
+            },
+            {
+                text: 'Weiter',
+                action: tour.next,
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'step-5',
+        text: 'Wählen Sie, ob Sie kaufen oder mieten möchten und geben Sie die Mietdauer an.',
+        attachTo: {
+            element: '#purchaseOption',
+            on: 'bottom',
+        },
+        buttons: [
+            {
+                text: 'Zurück',
+                action: tour.back,
+            },
+            {
+                text: 'Fertig',
+                action: tour.complete,
+            }
+        ]
+    });
 }
 
 // Assistenten starten
@@ -429,33 +490,26 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
 
     // Beispielhafte Artikel auf dem Beleg
     const items = [
-        { name: '2x Hauptgericht', price: 38.00 },
-        { name: '1x Flasche Wein', price: 25.00 },
-        { name: '2x Dessert', price: 12.00 },
+        { name: 'Gebühren DISH PAY', price: totalAmount },
+        { name: 'Durchschnittliche Gebühr (%)', price: feesPercentage },
     ];
 
     // Gesamtsumme der Artikel berechnen
     let subtotal = 0;
     items.forEach(item => {
-        subtotal += item.price;
+        subtotal += parseFloat(item.price);
     });
 
-    // Gebühren
-    const feeAmount = (subtotal * (feesPercentage / 100)).toFixed(2);
-
-    // Gesamtbetrag
-    const grandTotal = (parseFloat(subtotal) + parseFloat(feeAmount)).toFixed(2);
+    // Gesamtbetrag (kann angepasst werden)
+    const grandTotal = subtotal.toFixed(2);
 
     // Beleginhalt erstellen
-    let receiptHtml = '<h4>Restaurant zur Guten Laune</h4>';
+    let receiptHtml = '<h4>DISH PAY Angebot</h4>';
     items.forEach(item => {
-        receiptHtml += `<div class="item"><span>${item.name}</span><span>${item.price.toFixed(2)} €</span></div>`;
+        receiptHtml += `<div class="item"><span>${item.name}</span><span>${item.price} ${item.name.includes('%') ? '%' : '€'}</span></div>`;
     });
-    receiptHtml += `<div class="item total"><span>Zwischensumme</span><span>${subtotal.toFixed(2)} €</span></div>`;
-    receiptHtml += `<div class="item highlight"><span>Gebühren (${feesPercentage}%)</span><span>${feeAmount} €</span></div>`;
     receiptHtml += `<div class="item total"><span>Gesamtsumme</span><span>${grandTotal} €</span></div>`;
-    receiptHtml += `<div class="item"><span>Zahlung mit Karte</span><span>${grandTotal} €</span></div>`;
-    receiptHtml += `<p style="text-align:center; margin-top:10px;">Vielen Dank für Ihren Besuch!</p>`;
+    receiptHtml += `<p style="text-align:center; margin-top:10px;">Vielen Dank für Ihre Anfrage!</p>`;
 
     receiptContent.innerHTML = receiptHtml;
 
