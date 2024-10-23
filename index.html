@@ -24,6 +24,15 @@
     <div class="container">
         <h1>DISH PAY Rechner</h1>
 
+        <!-- Sprach-Auswahl -->
+        <div class="language-selector">
+            <label for="language">Sprache:</label>
+            <select id="language" onchange="changeLanguage()">
+                <option value="de">Deutsch</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
         <!-- Kundeninformationen -->
         <div class="customer-input">
             <div class="input-group">
@@ -191,5 +200,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/8.4.1/js/shepherd.min.js"></script>
     <!-- Eigene Skripte -->
     <script src="script.js"></script>
+    <script src="pdf-generator.js"></script>
 </body>
 </html>
