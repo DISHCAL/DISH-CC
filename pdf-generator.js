@@ -1,3 +1,5 @@
+// pdf-generator.js
+
 function generatePDF() {
     const { jsPDF } = window.jspdf;
 
@@ -107,8 +109,6 @@ function generatePDF() {
 
     // Wettbewerber Gebühren (falls ausführlich)
     let totalCompetitorCost = 0;
-    const calculationType = document.getElementById('calculationType').value;
-
     if (calculationType === 'ausführlich') {
         const competitorGirocard = parseFloat(document.getElementById('competitorGirocard').value) || 0;
         const competitorMaestro = parseFloat(document.getElementById('competitorMaestro').value) || 0;
