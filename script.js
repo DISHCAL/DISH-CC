@@ -22,11 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('sendEmailButton').addEventListener('click', sendEmail);
     document.getElementById('startTourButton').addEventListener('click', startTour);
     document.getElementById('closeReceiptButton').addEventListener('click', closeReceipt);
-
-    // Beleg nach 10 Sekunden automatisch ausblenden
-    setTimeout(() => {
-        closeReceipt();
-    }, 10000);
 });
 
 // Funktion zum Umschalten der Berechnungsfelder
@@ -161,10 +156,15 @@ function validateInputs() {
 
     if (totalPercentage !== 100) {
         const percentageError = document.getElementById('percentageError');
-        percentageError.textContent = 'Die Summe der Prozentangaben muss 100% ergeben.';
+        if (percentageError) {
+            percentageError.textContent = 'Die Summe der Prozentangaben muss 100% ergeben.';
+        }
         isValid = false;
     } else {
-        document.getElementById('percentageError').textContent = '';
+        const percentageError = document.getElementById('percentageError');
+        if (percentageError) {
+            percentageError.textContent = '';
+        }
     }
 
     return isValid;
@@ -461,4 +461,9 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
 
     // Animation anzeigen
     receiptContainer.classList.remove('hidden');
+
+    // Beleg nach 10 Sekunden automatisch ausblenden
+    setTimeout(() => {
+        closeReceipt();
+    }, 10000);
 }
