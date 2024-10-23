@@ -105,38 +105,63 @@ function generatePDF() {
     // Gesamtkosten DISH PAY
     const totalMonthlyCost = hardwareCost + (simServiceFee !== '-' ? parseFloat(simServiceFee) : 0) + totalDishPayFees;
 
+    // Wettbewerber Gebühren (falls ausführlich)
+    let totalCompetitorCost = 0;
+    const calculationType = document.getElementById('calculationType').value;
+
+    if (calculationType === 'ausführlich') {
+        const competitorGirocard = parseFloat(document.getElementById('competitorGirocard').value) || 0;
+        const competitorMaestro = parseFloat(document.getElementById('competitorMaestro').value) || 0;
+        const competitorMastercardVisa = parseFloat(document.getElementById('competitorMastercardVisa').value) || 0;
+        const competitorBusinessCard = parseFloat(document.getElementById('competitorBusinessCard').value) || 0;
+
+        const competitorGirocardCost = girocardVolume * (competitorGirocard / 100);
+        const competitorMaestroCost = vpayVolume * (competitorMaestro / 100);
+        const competitorMastercardVisaCost = mastercardVisaVolume * (competitorMastercardVisa / 100);
+        const competitorBusinessCardCost = businessCardVolume * (competitorBusinessCard / 100);
+
+        const competitorTransactionCost = transactions * 0.06; // Angenommen gleicher Transaktionspreis
+
+        totalCompetitorCost = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost + competitorTransactionCost;
+    }
+
+    const savings = totalCompetitorCost - totalDishPayFees;
+
     // PDF erstellen und herunterladen
     const doc = new jsPDF();
 
     doc.setFontSize(16);
-    doc.text(`Angebot für ${salutation} ${customerName}`, 20, 30);
+    doc.text(`Angebot für ${salutation} ${customerName}`, 20, 20);
 
     doc.setFontSize(12);
-    doc.text(`Geplanter Kartenumsatz pro Monat: ${monthlyVolume.toFixed(2)} €`, 20, 50);
-    doc.text(`Erwartete Anzahl an Transaktionen: ${transactions}`, 20, 60);
+    doc.text(`Geplanter Kartenumsatz pro Monat: ${monthlyVolume.toFixed(2)} €`, 20, 30);
+    doc.text(`Erwartete Anzahl an Transaktionen: ${transactions}`, 20, 40);
 
-    doc.text(`\nKartenarten Anteil:`, 20, 70);
-    doc.text(`- Girocard: ${girocardPercentage}%`, 25, 80);
-    doc.text(`- Mastercard / VISA: ${mastercardVisaPercentage}%`, 25, 90);
-    if (purchaseOption === 'ausführlich') {
-        doc.text(`- Maestro / VPAY: ${vpayPercentage}%`, 25, 100);
-        doc.text(`- Business Card: ${businessCardPercentage}%`, 25, 110);
+    doc.text(`\nKartenarten Anteil:`, 20, 50);
+    doc.text(`- Girocard: ${girocardPercentage}%`, 25, 60);
+    doc.text(`- Mastercard / VISA: ${mastercardVisaPercentage}%`, 25, 70);
+    if (calculationType === 'ausführlich') {
+        doc.text(`- Maestro / VPAY: ${vpayPercentage}%`, 25, 80);
+        doc.text(`- Business Card: ${businessCardPercentage}%`, 25, 90);
     }
 
-    doc.text(`\nHardwareoption: ${purchaseOption === 'kaufen' ? 'Kauf' : 'Miete'}`, 20, 120);
-    doc.text(`- ${hardwareSelection}: ${purchaseOption === 'kaufen' ? oneTimeCost.toFixed(2) + ' €' : hardwareCost.toFixed(2) + ' €/Monat'}`, 25, 130);
+    doc.text(`\nHardwareoption: ${purchaseOption === 'kaufen' ? 'Kauf' : 'Miete'}`, 20, 100);
+    doc.text(`- ${hardwareSelection}: ${purchaseOption === 'kaufen' ? oneTimeCost.toFixed(2) + ' €' : hardwareCost.toFixed(2) + ' €/Monat'}`, 25, 110);
     if (purchaseOption === 'kaufen') {
-        doc.text(`- SIM/Service-Gebühr: ${simServiceFee !== '-' ? simServiceFee.toFixed(2) + ' €' : '-'}`, 25, 140);
+        doc.text(`- SIM/Service-Gebühr: ${simServiceFee !== '-' ? simServiceFee.toFixed(2) + ' €' : '-'}`, 25, 120);
     }
 
-    doc.text(`\nGesamtkosten DISH PAY: ${totalMonthlyCost.toFixed(2)} €`, 20, 150);
-    doc.text(`Durchschnittliche Gebühr: ${totalDishPayFeesPercentage}%`, 20, 160);
+    doc.text(`\nGesamtkosten DISH PAY: ${totalMonthlyCost.toFixed(2)} €`, 20, 130);
+    doc.text(`Durchschnittliche Gebühr: ${totalDishPayFeesPercentage}%`, 20, 140);
 
     // Wettbewerber Kosten (falls ausführlich)
     if (calculationType === 'ausführlich') {
-        doc.text(`\nWettbewerber Kosten: ${totalCompetitorCost.toFixed(2)} €`, 20, 170);
-        doc.text(`Ersparnis mit DISH PAY: ${savings.toFixed(2)} €`, 20, 180);
+        doc.text(`\nWettbewerber Kosten: ${totalCompetitorCost.toFixed(2)} €`, 20, 150);
+        doc.text(`Ersparnis mit DISH PAY: ${savings.toFixed(2)} €`, 20, 160);
     }
+
+    // Abschluss
+    doc.text(`\nVielen Dank für Ihre Anfrage!`, 20, 180);
 
     doc.save(`${customerName}_DISH_PAY_Angebot.pdf`);
 }
