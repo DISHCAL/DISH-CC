@@ -74,6 +74,7 @@
                        data-tippy-content="Der prozentuale Anteil der Girocard-Zahlungen am Gesamtumsatz."></i>
                 </label>
                 <input type="number" id="girocard" placeholder="z.B. 70" required>
+                <small class="error-message" id="girocardError"></small>
             </div>
             <div class="percentage-group">
                 <label for="mastercardVisa">Mastercard / VISA (%):<span class="required">*</span>
@@ -81,15 +82,18 @@
                        data-tippy-content="Der prozentuale Anteil der Mastercard/VISA-Zahlungen am Gesamtumsatz."></i>
                 </label>
                 <input type="number" id="mastercardVisa" placeholder="z.B. 30" required>
+                <small class="error-message" id="mastercardVisaError"></small>
             </div>
             <!-- Zusätzliche Felder für ausführliche Berechnung -->
             <div id="vpayField" class="hidden percentage-group">
                 <label for="vpay">Maestro / VPAY (%):</label>
                 <input type="number" id="vpay" placeholder="z.B. 0">
+                <small class="error-message" id="vpayError"></small>
             </div>
             <div id="businessCardField" class="hidden percentage-group">
                 <label for="businessCard">Business Card (%):</label>
                 <input type="number" id="businessCard" placeholder="z.B. 0">
+                <small class="error-message" id="businessCardError"></small>
             </div>
             <small class="error-message" id="percentageError"></small>
         </div>
