@@ -11,18 +11,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Assistenten initialisieren
     initializeTour();
 
-    // Event Listener für Mietdauer-Änderung hinzufügen
+    // Event Listener hinzufügen
     document.getElementById('rentalDuration').addEventListener('change', updateHardwareOptions);
     document.getElementById('purchaseOption').addEventListener('change', () => {
         toggleRentalOptions();
         updateHardwareOptions();
     });
-
-    // Event Listener für Buttons hinzufügen
     document.getElementById('calculateButton').addEventListener('click', calculateCosts);
     document.getElementById('downloadPdfButton').addEventListener('click', generatePDF);
     document.getElementById('sendEmailButton').addEventListener('click', sendEmail);
     document.getElementById('startTourButton').addEventListener('click', startTour);
+    document.getElementById('closeReceiptButton').addEventListener('click', closeReceipt);
+
+    // Beleg nach 10 Sekunden automatisch ausblenden
+    setTimeout(() => {
+        closeReceipt();
+    }, 10000);
 });
 
 // Funktion zum Umschalten der Berechnungsfelder
@@ -322,9 +326,6 @@ function calculateCosts() {
         // Ergebnisbereich aktualisieren
         document.getElementById('resultArea').innerHTML = resultHtml;
 
-        // Diagramm erstellen
-        renderChart(totalMonthlyCost, totalCompetitorCost);
-
         // Bon-Animation anzeigen
         showReceiptAnimation(totalMonthlyCost, totalDishPayFeesPercentage);
 
@@ -337,37 +338,13 @@ function calculateCosts() {
     }, 500); // Geringe Verzögerung für schnellere Berechnung
 }
 
-// Diagramm erstellen
-function renderChart(dishPayCost, competitorCost) {
-    const ctx = document.getElementById('costChart').getContext('2d');
-    if (window.costChartInstance) {
-        window.costChartInstance.destroy();
-    }
-    const data = {
-        labels: ['DISH PAY', 'Wettbewerber'],
-        datasets: [{
-            label: 'Monatliche Kosten (€)',
-            data: [dishPayCost.toFixed(2), competitorCost.toFixed(2)],
-            backgroundColor: ['#e67e22', '#3498db'],
-        }],
-    };
-    window.costChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
-        },
-    });
-}
-
 // Funktion zum Versenden des Angebots per E-Mail
 function sendEmail() {
     const customerName = document.getElementById('customerName').value;
     const salutation = document.getElementById('salutation').value;
+
+    // Hinweis anzeigen
+    alert("Bitte laden Sie das PDF-Angebot herunter und fügen Sie es manuell an die E-Mail an.");
 
     // E-Mail-Inhalt vorbereiten
     const subject = encodeURIComponent('Ihr DISH PAY Angebot');
@@ -378,6 +355,12 @@ function sendEmail() {
 
     // Hinweis: Das automatische Anhängen von Dateien an E-Mails ist aus Sicherheitsgründen in Browsern nicht möglich.
     // Der Benutzer muss das PDF manuell anhängen.
+}
+
+// Funktion zum Schließen des Belegs
+function closeReceipt() {
+    const receiptContainer = document.getElementById('receiptContainer');
+    receiptContainer.classList.add('hidden');
 }
 
 // Interaktiver Assistent initialisieren
