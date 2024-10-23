@@ -1,3 +1,5 @@
+// script.js
+
 // Beim Laden der Seite
 document.addEventListener('DOMContentLoaded', () => {
     // Tooltips initialisieren
@@ -488,27 +490,14 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     const receiptContent = document.getElementById('receiptContent');
     const receiptContainer = document.getElementById('receiptContainer');
 
-    // Beispielhafte Artikel auf dem Beleg
-    const items = [
-        { name: 'Gebühren DISH PAY', price: totalAmount },
-        { name: 'Durchschnittliche Gebühr (%)', price: feesPercentage },
-    ];
-
-    // Gesamtsumme der Artikel berechnen
-    let subtotal = 0;
-    items.forEach(item => {
-        subtotal += parseFloat(item.price);
-    });
-
-    // Gesamtbetrag (kann angepasst werden)
-    const grandTotal = subtotal.toFixed(2);
-
     // Beleginhalt erstellen
     let receiptHtml = '<h4>DISH PAY Angebot</h4>';
-    items.forEach(item => {
-        receiptHtml += `<div class="item"><span>${item.name}</span><span>${item.price} ${item.name.includes('%') ? '%' : '€'}</span></div>`;
-    });
-    receiptHtml += `<div class="item total"><span>Gesamtsumme</span><span>${grandTotal} €</span></div>`;
+    receiptHtml += `<div class="item"><span>Gesamtkosten DISH PAY</span><span>${totalAmount.toFixed(2)} €</span></div>`;
+    receiptHtml += `<div class="item"><span>Durchschnittliche Gebühr</span><span>${feesPercentage}%</span></div>`;
+    if (feesPercentage > 0) {
+        receiptHtml += `<div class="item"><span>Gebührenbetrag</span><span>${(totalAmount * (feesPercentage / 100)).toFixed(2)} €</span></div>`;
+    }
+    receiptHtml += `<div class="item total"><span>Gesamtsumme</span><span>${totalAmount.toFixed(2)} €</span></div>`;
     receiptHtml += `<p style="text-align:center; margin-top:10px;">Vielen Dank für Ihre Anfrage!</p>`;
 
     receiptContent.innerHTML = receiptHtml;
