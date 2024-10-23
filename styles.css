@@ -225,7 +225,7 @@ select:focus {
 
 /* Styles für die Bon-Animation */
 .receipt-container {
-    position: fixed;
+    position: absolute;
     bottom: 20px;
     right: 20px;
     width: 200px; /* Verkleinerte Breite */
@@ -239,6 +239,8 @@ select:focus {
     background: #fff;
     animation: slideIn 2s forwards;
     position: relative;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 @keyframes slideIn {
@@ -255,7 +257,6 @@ select:focus {
     font-family: 'Courier New', monospace;
     font-size: 12px;
     color: #333;
-    border: 1px solid #ccc;
     position: relative;
 }
 
@@ -294,4 +295,20 @@ select:focus {
 
 .receipt-container.hidden {
     display: none;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 18px;
+    text-align: center;
 }
