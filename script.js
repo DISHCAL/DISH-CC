@@ -49,7 +49,23 @@ const translations = {
         receiptAverageFee: "Durchschnittliche Gebühr",
         receiptFeeAmount: "Gebührenbetrag",
         receiptTotalSum: "Gesamtsumme",
-        receiptThankYou: "Vielen Dank für Ihre Anfrage!"
+        receiptThankYou: "Vielen Dank für Ihre Anfrage!",
+        competitorFees: "Wettbewerber Gebühren",
+        savingsWithDISH_PAY: "Ersparnis mit DISH PAY",
+        required_field: "Dieses Feld ist erforderlich.",
+        invalid_number: "Bitte geben Sie eine gültige positive Zahl ein.",
+        calculation_error: "Es ist ein Fehler bei der Berechnung aufgetreten. Bitte versuchen Sie es erneut.",
+        email_hint: "Bitte laden Sie das PDF-Angebot herunter und fügen Sie es manuell an die E-Mail an.",
+        email_subject: "Ihr DISH PAY Angebot",
+        email_greeting: "Sehr geehrte",
+        email_body: "anbei erhalten Sie Ihr DISH PAY Angebot.",
+        email_attachment: "Bitte finden Sie das angehängte PDF-Angebot.",
+        savings_with_DISH_PAY: "Ersparnis mit DISH PAY",
+        tour_step1: "Willkommen beim DISH PAY Rechner! Dieser Assistent führt Sie durch die Eingabe.",
+        tour_step2: "Bitte wählen Sie Ihre Anrede und geben Sie Ihren Namen ein.",
+        tour_step3: "Geben Sie den geplanten Kartenumsatz und die Anzahl der Transaktionen ein.",
+        tour_step4: "Geben Sie den prozentualen Anteil der verschiedenen Kartenarten ein.",
+        tour_step5: "Wählen Sie, ob Sie kaufen oder mieten möchten und geben Sie die Mietdauer an."
     },
     en: {
         title: "DISH PAY Calculator",
@@ -98,7 +114,23 @@ const translations = {
         receiptAverageFee: "Average Fee",
         receiptFeeAmount: "Fee Amount",
         receiptTotalSum: "Total Sum",
-        receiptThankYou: "Thank you for your inquiry!"
+        receiptThankYou: "Thank you for your inquiry!",
+        competitorFees: "Competitor Fees",
+        savingsWithDISH_PAY: "Savings with DISH PAY",
+        required_field: "This field is required.",
+        invalid_number: "Please enter a valid positive number.",
+        calculation_error: "An error occurred during the calculation. Please try again.",
+        email_hint: "Please download the PDF offer and manually attach it to the email.",
+        email_subject: "Your DISH PAY Offer",
+        email_greeting: "Dear",
+        email_body: "please find your DISH PAY offer attached.",
+        email_attachment: "Please find the attached PDF offer.",
+        savings_with_DISH_PAY: "Savings with DISH PAY",
+        tour_step1: "Welcome to the DISH PAY Calculator! This assistant will guide you through the input.",
+        tour_step2: "Please select your salutation and enter your name.",
+        tour_step3: "Enter the planned card revenue and the number of transactions.",
+        tour_step4: "Enter the percentage share of the different card types.",
+        tour_step5: "Choose whether you want to purchase or rent and specify the rental duration."
     }
 };
 
@@ -138,6 +170,15 @@ function applyTranslations() {
             }
         });
     });
+
+    // Aktualisiere die Belegübersetzungen, falls sichtbar
+    const receiptContent = document.getElementById('receiptContent');
+    if (!receiptContent.classList.contains('hidden') && receiptContent.innerHTML !== '') {
+        showReceiptAnimation(
+            parseFloat(document.getElementById('resultArea').dataset.totalMonthlyCost),
+            parseFloat(document.getElementById('resultArea').dataset.totalDishPayFeesPercentage)
+        );
+    }
 }
 
 // Initiale Übersetzung anwenden
@@ -179,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadPdfButton.addEventListener('click', () => {
             const calculationData = getCalculationData();
             if (calculationData) {
+                calculationData.currentLanguage = currentLanguage; // Sprache hinzufügen
                 generatePDF(calculationData);
             }
         });
@@ -207,7 +249,7 @@ function toggleCalculationFields() {
     const vpayField = document.getElementById('vpayField');
     const businessCardField = document.getElementById('businessCardField');
 
-    if (calculationType === 'ausführlich') {
+    if (calculationType === 'ausfuehrlich') {
         competitorSection.classList.remove('hidden');
         vpayField.classList.remove('hidden');
         businessCardField.classList.remove('hidden');
@@ -350,7 +392,7 @@ function validateInputs() {
     if (totalPercentage !== 100) {
         const percentageError = document.getElementById('percentageError');
         if (percentageError) {
-            percentageError.textContent = translations[currentLanguage]['percentage_error'];
+            percentageError.textContent = translations[currentLanguage]['percentage_error'] || "Die Summe der Prozentangaben muss 100% ergeben.";
         }
         isValid = false;
     } else {
@@ -464,7 +506,7 @@ function getCalculationData() {
 
     // Wettbewerber Gebühren (falls Felder ausgefüllt)
     let totalCompetitorCost = 0;
-    if (calculationType === 'ausführlich') {
+    if (calculationType === 'ausfuehrlich') {
         const competitorGirocard = parseFloat(document.getElementById('competitorGirocard').value) || 0;
         const competitorMaestro = parseFloat(document.getElementById('competitorMaestro').value) || 0;
         const competitorMastercardVisa = parseFloat(document.getElementById('competitorMastercardVisa').value) || 0;
@@ -483,7 +525,6 @@ function getCalculationData() {
     const savings = totalCompetitorCost - totalDishPayFees;
 
     return {
-        salutation,
         customerName: document.getElementById('customerName').value.trim(),
         calculationType,
         monthlyVolume,
@@ -513,7 +554,8 @@ function getCalculationData() {
         oneTimeCost,
         totalMonthlyCost,
         totalCompetitorCost,
-        savings
+        savings,
+        currentLanguage
     };
 }
 
@@ -593,29 +635,32 @@ function displayResults(data) {
     let resultHtml = '<table class="result-table">';
 
     // DISH PAY Kosten
-    resultHtml += `<tr><td colspan="2"><strong>${translations[currentLanguage]['receiptTitle']}</strong></td></tr>`;
+    resultHtml += `<tr><td colspan="2"><strong>${translations[data.currentLanguage]['receiptTitle']}</strong></td></tr>`;
 
     if (purchaseOption === 'kaufen') {
-        resultHtml += `<tr><td>${translations[currentLanguage]['receiptTotalCosts']}</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
-        resultHtml += `<tr><td>${translations[currentLanguage]['receiptAverageFee']}</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
+        resultHtml += `<tr><td>${translations[data.currentLanguage]['receiptTotalCosts']}</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
+        resultHtml += `<tr><td>${translations[data.currentLanguage]['receiptAverageFee']}</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
     } else {
-        resultHtml += `<tr><td>${translations[currentLanguage]['receiptTotalCosts']}</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr><td>${translations[data.currentLanguage]['receiptTotalCosts']}</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
     }
 
-    resultHtml += `<tr><td>${translations[currentLanguage]['receiptFeeAmount']}</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
-    resultHtml += `<tr class="total-cost"><td>${translations[currentLanguage]['receiptTotalSum']}</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
+    resultHtml += `<tr><td>${translations[data.currentLanguage]['receiptFeeAmount']}</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
+    resultHtml += `<tr class="total-cost"><td>${translations[data.currentLanguage]['receiptTotalSum']}</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
 
     // Trennung zwischen DISH PAY und Wettbewerber
-    if (calculationType === 'ausführlich') {
-        resultHtml += `<tr><td colspan="2"><strong>${translations[currentLanguage]['competitorSection_header']}</strong></td></tr>`;
-        resultHtml += `<tr><td>Wettbewerber Gebühren</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
-        resultHtml += `<tr class="highlight"><td>${translations[currentLanguage]['savings_with_DISH_PAY'] || 'Ersparnis mit DISH PAY'}</td><td>${savings.toFixed(2)} €</td></tr>`;
+    if (calculationType === 'ausfuehrlich') {
+        resultHtml += `<tr><td colspan="2"><strong>${translations[data.currentLanguage]['competitorSection_header']}</strong></td></tr>`;
+        resultHtml += `<tr><td>${translations[data.currentLanguage]['competitorFees']}</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr class="highlight"><td>${translations[data.currentLanguage]['savingsWithDISH_PAY']}</td><td>${savings.toFixed(2)} €</td></tr>`;
     }
 
     resultHtml += '</table>';
 
-    // Ergebnisbereich aktualisieren
-    document.getElementById('resultArea').innerHTML = resultHtml;
+    // Ergebnisbereich aktualisieren und Daten für die Bon-Animation speichern
+    const resultArea = document.getElementById('resultArea');
+    resultArea.innerHTML = resultHtml;
+    resultArea.dataset.totalMonthlyCost = totalMonthlyCost.toFixed(2);
+    resultArea.dataset.totalDishPayFeesPercentage = totalDishPayFeesPercentage;
 }
 
 // Funktion zum Versenden des Angebots per E-Mail
@@ -624,11 +669,11 @@ function sendEmail() {
     const salutation = document.getElementById('salutation').value;
 
     // Hinweis anzeigen
-    alert(translations[currentLanguage]['email_hint'] || "Bitte laden Sie das PDF-Angebot herunter und fügen Sie es manuell an die E-Mail an.");
+    alert(translations[currentLanguage]['email_hint']);
 
     // E-Mail-Inhalt vorbereiten
-    const subject = encodeURIComponent(translations[currentLanguage]['email_subject'] || 'Ihr DISH PAY Angebot');
-    const body = encodeURIComponent(`${translations[currentLanguage]['email_greeting']} ${salutation} ${customerName},\n\n${translations[currentLanguage]['email_body'] || 'anbei erhalten Sie Ihr DISH PAY Angebot.'}\n\n${translations[currentLanguage]['email_attachment'] || 'Bitte finden Sie das angehängte PDF-Angebot.'}\n\nMit freundlichen Grüßen,\nIhr Team`);
+    const subject = encodeURIComponent(translations[currentLanguage]['email_subject']);
+    const body = encodeURIComponent(`${translations[currentLanguage]['email_greeting']} ${salutation} ${customerName},\n\n${translations[currentLanguage]['email_body']}\n\n${translations[currentLanguage]['email_attachment']}\n\nMit freundlichen Grüßen,\nIhr Team`);
 
     // Mailto-Link erstellen
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
@@ -665,7 +710,7 @@ function initializeTour() {
     // Schritte zum Assistenten hinzufügen
     window.tour.addStep({
         id: 'step-1',
-        text: translations[currentLanguage]['tour_step1'] || 'Willkommen beim DISH PAY Rechner! Dieser Assistent führt Sie durch die Eingabe.',
+        text: translations[currentLanguage]['tour_step1'],
         buttons: [
             {
                 text: 'Weiter',
@@ -676,7 +721,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-2',
-        text: translations[currentLanguage]['tour_step2'] || 'Bitte wählen Sie Ihre Anrede und geben Sie Ihren Namen ein.',
+        text: translations[currentLanguage]['tour_step2'],
         attachTo: {
             element: '.customer-input',
             on: 'bottom',
@@ -695,7 +740,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-3',
-        text: translations[currentLanguage]['tour_step3'] || 'Geben Sie den geplanten Kartenumsatz und die Anzahl der Transaktionen ein.',
+        text: translations[currentLanguage]['tour_step3'],
         attachTo: {
             element: '#monthlyVolume',
             on: 'top',
@@ -714,7 +759,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-4',
-        text: translations[currentLanguage]['tour_step4'] || 'Geben Sie den prozentualen Anteil der verschiedenen Kartenarten ein.',
+        text: translations[currentLanguage]['tour_step4'],
         attachTo: {
             element: '.percentage-group',
             on: 'bottom',
@@ -733,7 +778,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-5',
-        text: translations[currentLanguage]['tour_step5'] || 'Wählen Sie, ob Sie kaufen oder mieten möchten und geben Sie die Mietdauer an.',
+        text: translations[currentLanguage]['tour_step5'],
         attachTo: {
             element: '#purchaseOption',
             on: 'bottom',
