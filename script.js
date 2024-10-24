@@ -1,53 +1,149 @@
 // script.js
 
-// Funktion zum Generieren des PDFs
-function generatePDF(calculationData) {
-    const { jsPDF } = window.jspdf;
-
-    // Kundeninformationen
-    const { salutation, customerName } = calculationData;
-
-    // PDF erstellen und herunterladen
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text(`Angebot für ${salutation} ${customerName}`, 20, 20);
-
-    doc.setFontSize(12);
-    doc.text(`Geplanter Kartenumsatz pro Monat: ${calculationData.monthlyVolume.toFixed(2)} €`, 20, 30);
-    doc.text(`Erwartete Anzahl an Transaktionen: ${calculationData.transactions}`, 20, 40);
-
-    doc.text(`\nKartenarten Anteil:`, 20, 50);
-    doc.text(`- Girocard: ${calculationData.girocardPercentage}%`, 25, 60);
-    doc.text(`- Mastercard / VISA: ${calculationData.mastercardVisaPercentage}%`, 25, 70);
-    if (calculationData.calculationType === 'ausführlich') {
-        doc.text(`- Maestro / VPAY: ${calculationData.vpayPercentage}%`, 25, 80);
-        doc.text(`- Business Card: ${calculationData.businessCardPercentage}%`, 25, 90);
+// Übersetzungsdaten
+const translations = {
+    de: {
+        title: "DISH PAY Rechner",
+        header: "DISH PAY Rechner",
+        language_label: "Sprache:",
+        salutation_label: "Anrede und Name:",
+        salutation_herr: "Herr",
+        salutation_frau: "Frau",
+        customerName_placeholder: "Vor- und Nachname",
+        calculationType_label: "Berechnungsart:",
+        calculation_schnell: "Schnelle Berechnung",
+        calculation_ausfuehrlich: "Ausführliche Berechnung",
+        monthlyVolume_label: "Geplanter Kartenumsatz pro Monat (€):",
+        transactions_label: "Erwartete Anzahl an monatlichen Transaktionen:",
+        cardPercentages_label: "Kartenarten Anteil (Summe muss 100% ergeben):",
+        girocard_label: "Girocard (%):",
+        mastercardVisa_label: "Mastercard / VISA (%):",
+        vpay_label: "Maestro / VPAY (%):",
+        businessCard_label: "Business Card (%):",
+        competitorSection_header: "Wettbewerber Gebühren:",
+        competitorGirocard_label: "Girocard Gebühr (%):",
+        competitorMaestro_label: "Maestro / VPAY Gebühr (%):",
+        competitorMastercardVisa_label: "Mastercard / VISA Gebühr (%):",
+        competitorBusinessCard_label: "Business Card Gebühr (%):",
+        purchaseOption_label: "Kauf oder Miete:",
+        purchaseOption_kaufen: "Kauf",
+        purchaseOption_mieten: "Miete",
+        rentalDuration_label: "Mietdauer:",
+        rentalDuration_12M: "12 Monate",
+        rentalDuration_36M: "36 Monate",
+        rentalDuration_60M: "60 Monate",
+        hardware_label: "Hardware auswählen:",
+        calculate_button: "Berechnen",
+        downloadPdf_button: "PDF Angebot herunterladen",
+        sendEmail_button: "Angebot per E-Mail versenden",
+        startTour_button: "Assistent starten",
+        feesNote_header: "Hinweis zu den Gebühren:",
+        fees_note_transaction: "Transaktionspreis: 0,06 € pro Transaktion",
+        fees_note_girocard_up_to: "Girocard-Gebühr bis 10.000 € monatlich: 0,39%",
+        fees_note_girocard_over: "Girocard-Gebühr über 10.000 € monatlich: 0,29%",
+        fees_note_maestro_vpay: "Disagio Maestro / VPAY: 0,89%",
+        fees_note_mastercard_visa_private: "Disagio Mastercard/VISA Privatkunden: 0,89%",
+        fees_note_mastercard_visa_business: "Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%",
+        receiptTitle: "DISH PAY Angebot",
+        receiptTotalCosts: "Gesamtkosten DISH PAY",
+        receiptAverageFee: "Durchschnittliche Gebühr",
+        receiptFeeAmount: "Gebührenbetrag",
+        receiptTotalSum: "Gesamtsumme",
+        receiptThankYou: "Vielen Dank für Ihre Anfrage!"
+    },
+    en: {
+        title: "DISH PAY Calculator",
+        header: "DISH PAY Calculator",
+        language_label: "Language:",
+        salutation_label: "Salutation and Name:",
+        salutation_herr: "Mr.",
+        salutation_frau: "Ms.",
+        customerName_placeholder: "First and Last Name",
+        calculationType_label: "Calculation Type:",
+        calculation_schnell: "Quick Calculation",
+        calculation_ausfuehrlich: "Detailed Calculation",
+        monthlyVolume_label: "Planned Card Revenue per Month (€):",
+        transactions_label: "Expected Number of Monthly Transactions:",
+        cardPercentages_label: "Card Type Percentage (Total must be 100%):",
+        girocard_label: "Girocard (%):",
+        mastercardVisa_label: "Mastercard / VISA (%):",
+        vpay_label: "Maestro / VPAY (%):",
+        businessCard_label: "Business Card (%):",
+        competitorSection_header: "Competitor Fees:",
+        competitorGirocard_label: "Girocard Fee (%):",
+        competitorMaestro_label: "Maestro / VPAY Fee (%):",
+        competitorMastercardVisa_label: "Mastercard / VISA Fee (%):",
+        competitorBusinessCard_label: "Business Card Fee (%):",
+        purchaseOption_label: "Purchase or Rent:",
+        purchaseOption_kaufen: "Purchase",
+        purchaseOption_mieten: "Rent",
+        rentalDuration_label: "Rental Duration:",
+        rentalDuration_12M: "12 Months",
+        rentalDuration_36M: "36 Months",
+        rentalDuration_60M: "60 Months",
+        hardware_label: "Select Hardware:",
+        calculate_button: "Calculate",
+        downloadPdf_button: "Download PDF Offer",
+        sendEmail_button: "Send Offer via Email",
+        startTour_button: "Start Assistant",
+        feesNote_header: "Note on Fees:",
+        fees_note_transaction: "Transaction Price: €0.06 per transaction",
+        fees_note_girocard_up_to: "Girocard Fee up to €10,000 monthly: 0.39%",
+        fees_note_girocard_over: "Girocard Fee over €10,000 monthly: 0.29%",
+        fees_note_maestro_vpay: "Maestro / VPAY Fee: 0.89%",
+        fees_note_mastercard_visa_private: "Mastercard/VISA Fee for Private Customers: 0.89%",
+        fees_note_mastercard_visa_business: "Mastercard/VISA Fee for Business and NON-EEA AREA: 2.89%",
+        receiptTitle: "DISH PAY Offer",
+        receiptTotalCosts: "Total DISH PAY Costs",
+        receiptAverageFee: "Average Fee",
+        receiptFeeAmount: "Fee Amount",
+        receiptTotalSum: "Total Sum",
+        receiptThankYou: "Thank you for your inquiry!"
     }
+};
 
-    doc.text(`\nHardwareoption: ${calculationData.purchaseOption === 'kaufen' ? 'Kauf' : 'Miete'}`, 20, 100);
-    doc.text(`- ${calculationData.hardwareSelection}: ${calculationData.purchaseOption === 'kaufen' ? calculationData.oneTimeCost.toFixed(2) + ' €' : calculationData.hardwareCost.toFixed(2) + ' €/Monat'}`, 25, 110);
-    if (calculationData.purchaseOption === 'kaufen') {
-        doc.text(`- SIM/Service-Gebühr: ${calculationData.simServiceFee !== '-' ? calculationData.simServiceFee.toFixed(2) + ' €' : '-'}`, 25, 120);
-    }
+// Aktuelle Sprache
+let currentLanguage = 'de';
 
-    doc.text(`\nGesamtkosten DISH PAY: ${calculationData.totalMonthlyCost.toFixed(2)} €`, 20, 130);
-    doc.text(`Durchschnittliche Gebühr: ${calculationData.totalDishPayFeesPercentage}%`, 20, 140);
-
-    // Wettbewerber Kosten (falls ausführlich)
-    if (calculationData.calculationType === 'ausführlich') {
-        doc.text(`\nWettbewerber Kosten: ${calculationData.totalCompetitorCost.toFixed(2)} €`, 20, 150);
-        doc.text(`Ersparnis mit DISH PAY: ${calculationData.savings.toFixed(2)} €`, 20, 160);
-    }
-
-    // Abschluss
-    doc.text(`\nVielen Dank für Ihre Anfrage!`, 20, 180);
-
-    doc.save(`${customerName}_DISH_PAY_Angebot.pdf`);
+// Funktion zur Sprachänderung
+function changeLanguage() {
+    const languageSelect = document.getElementById('language');
+    currentLanguage = languageSelect.value;
+    applyTranslations();
 }
 
-// Beim Laden der Seite
+// Funktion zum Anwenden der Übersetzungen
+function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[currentLanguage][key]) {
+            element.textContent = translations[currentLanguage][key];
+        }
+    });
+
+    // Platzhalterübersetzungen
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        if (translations[currentLanguage][key]) {
+            element.placeholder = translations[currentLanguage][key];
+        }
+    });
+
+    // Update options in selects
+    document.querySelectorAll('select').forEach(select => {
+        select.querySelectorAll('option[data-i18n]').forEach(option => {
+            const key = option.getAttribute('data-i18n');
+            if (translations[currentLanguage][key]) {
+                option.textContent = translations[currentLanguage][key];
+            }
+        });
+    });
+}
+
+// Initiale Übersetzung anwenden
 document.addEventListener('DOMContentLoaded', () => {
+    applyTranslations();
+
     // Tooltips initialisieren
     tippy('[data-tippy-content]', {
         placement: 'right',
@@ -60,21 +156,48 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTour();
 
     // Event Listener hinzufügen
-    document.getElementById('rentalDuration').addEventListener('change', updateHardwareOptions);
-    document.getElementById('purchaseOption').addEventListener('change', () => {
-        toggleRentalOptions();
-        updateHardwareOptions();
-    });
-    document.getElementById('calculateButton').addEventListener('click', startCalculation);
-    document.getElementById('downloadPdfButton').addEventListener('click', () => {
-        const calculationData = getCalculationData();
-        if (calculationData) {
-            generatePDF(calculationData);
-        }
-    });
-    document.getElementById('sendEmailButton').addEventListener('click', sendEmail);
-    document.getElementById('startTourButton').addEventListener('click', startTour);
-    document.getElementById('closeReceiptButton').addEventListener('click', closeReceipt);
+    const rentalDurationElement = document.getElementById('rentalDuration');
+    if (rentalDurationElement) {
+        rentalDurationElement.addEventListener('change', updateHardwareOptions);
+    }
+
+    const purchaseOptionElement = document.getElementById('purchaseOption');
+    if (purchaseOptionElement) {
+        purchaseOptionElement.addEventListener('change', () => {
+            toggleRentalOptions();
+            updateHardwareOptions();
+        });
+    }
+
+    const calculateButton = document.getElementById('calculateButton');
+    if (calculateButton) {
+        calculateButton.addEventListener('click', startCalculation);
+    }
+
+    const downloadPdfButton = document.getElementById('downloadPdfButton');
+    if (downloadPdfButton) {
+        downloadPdfButton.addEventListener('click', () => {
+            const calculationData = getCalculationData();
+            if (calculationData) {
+                generatePDF(calculationData);
+            }
+        });
+    }
+
+    const sendEmailButton = document.getElementById('sendEmailButton');
+    if (sendEmailButton) {
+        sendEmailButton.addEventListener('click', sendEmail);
+    }
+
+    const startTourButton = document.getElementById('startTourButton');
+    if (startTourButton) {
+        startTourButton.addEventListener('click', startTour);
+    }
+
+    const closeReceiptButton = document.getElementById('closeReceiptButton');
+    if (closeReceiptButton) {
+        closeReceiptButton.addEventListener('click', closeReceipt);
+    }
 });
 
 // Funktion zum Umschalten der Berechnungsfelder
@@ -103,6 +226,9 @@ function toggleCalculationFields() {
             const errorField = document.getElementById(id);
             if (errorField) errorField.textContent = '';
         });
+
+        // Prozentangaben anpassen
+        validateInputs();
     }
 }
 
@@ -136,9 +262,9 @@ function updateHardwareOptions() {
 
     if (purchaseOption === 'kaufen') {
         hardwareSelect.innerHTML = `
-            <option value="S1F2">S1F2 Terminal - Kauf: 499,00 €</option>
-            <option value="V400C">V400C Terminal - Kauf: 399,00 €</option>
-            <option value="Moto G14">Moto G14 Terminal - Kauf: 119,00 €</option>
+            <option value="S1F2" data-i18n="hardware_option_S1F2">S1F2 Terminal - Kauf: 499,00 €</option>
+            <option value="V400C" data-i18n="hardware_option_V400C">V400C Terminal - Kauf: 399,00 €</option>
+            <option value="Moto G14" data-i18n="hardware_option_MotoG14">Moto G14 Terminal - Kauf: 119,00 €</option>
         `;
     } else {
         // Mietpreise entsprechend der Mietdauer anzeigen
@@ -158,9 +284,9 @@ function updateHardwareOptions() {
         }
 
         hardwareSelect.innerHTML = `
-            <option value="S1F2">S1F2 Terminal - Miete: ${s1f2Price.toFixed(2)} €/Monat</option>
-            <option value="V400C">V400C Terminal - Miete: ${v400cPrice.toFixed(2)} €/Monat</option>
-            <option value="Tap2Pay">Tap2Pay Lizenz - Miete: ${tap2payPrice.toFixed(2)} €/Monat</option>
+            <option value="S1F2" data-i18n="hardware_option_S1F2_rent">S1F2 Terminal - Miete: ${s1f2Price.toFixed(2)} €/Monat</option>
+            <option value="V400C" data-i18n="hardware_option_V400C_rent">V400C Terminal - Miete: ${v400cPrice.toFixed(2)} €/Monat</option>
+            <option value="Tap2Pay" data-i18n="hardware_option_Tap2Pay_rent">Tap2Pay Lizenz - Miete: ${tap2payPrice.toFixed(2)} €/Monat</option>
         `;
     }
 
@@ -170,6 +296,9 @@ function updateHardwareOptions() {
     } else {
         hardwareSelect.selectedIndex = 0;
     }
+
+    // Prozentangaben validieren nach Aktualisierung der Hardware-Optionen
+    validateInputs();
 }
 
 // Funktion zur Validierung der Eingaben
@@ -183,7 +312,7 @@ function validateInputs() {
         const errorField = document.getElementById(fieldId + 'Error');
         if (!field.value || field.value.trim() === '') {
             field.classList.add('error');
-            if (errorField) errorField.textContent = 'Dieses Feld ist erforderlich.';
+            if (errorField) errorField.textContent = translations[currentLanguage]['required_field'];
             isValid = false;
         } else {
             field.classList.remove('error');
@@ -196,15 +325,18 @@ function validateInputs() {
     numericFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         const value = parseFloat(field.value);
-        if (isNaN(value) || value < 0) {
+        if (field.value !== '' && (isNaN(value) || value < 0)) {
             field.classList.add('error');
             const errorField = document.getElementById(fieldId + 'Error');
-            if (errorField) errorField.textContent = 'Bitte geben Sie eine gültige positive Zahl ein.';
+            if (errorField) errorField.textContent = translations[currentLanguage]['invalid_number'];
             isValid = false;
         } else {
-            field.classList.remove('error');
-            const errorField = document.getElementById(fieldId + 'Error');
-            if (errorField) errorField.textContent = '';
+            // Nur entfernen, wenn das Feld nicht leer ist (um spätere Validierungen zu ermöglichen)
+            if (field.value !== '') {
+                field.classList.remove('error');
+                const errorField = document.getElementById(fieldId + 'Error');
+                if (errorField) errorField.textContent = '';
+            }
         }
     });
 
@@ -218,7 +350,7 @@ function validateInputs() {
     if (totalPercentage !== 100) {
         const percentageError = document.getElementById('percentageError');
         if (percentageError) {
-            percentageError.textContent = 'Die Summe der Prozentangaben muss 100% ergeben.';
+            percentageError.textContent = translations[currentLanguage]['percentage_error'];
         }
         isValid = false;
     } else {
@@ -352,7 +484,7 @@ function getCalculationData() {
 
     return {
         salutation,
-        customerName,
+        customerName: document.getElementById('customerName').value.trim(),
         calculationType,
         monthlyVolume,
         transactions,
@@ -421,7 +553,7 @@ function startCalculation() {
         // Fehlerbehandlung
         console.error("Fehler bei den Berechnungen:", error);
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert("Es ist ein Fehler bei der Berechnung aufgetreten. Bitte versuchen Sie es erneut.");
+        alert(translations[currentLanguage]['calculation_error']);
     });
 }
 
@@ -461,23 +593,23 @@ function displayResults(data) {
     let resultHtml = '<table class="result-table">';
 
     // DISH PAY Kosten
-    resultHtml += '<tr><td colspan="2"><strong>DISH PAY Kosten</strong></td></tr>';
+    resultHtml += `<tr><td colspan="2"><strong>${translations[currentLanguage]['receiptTitle']}</strong></td></tr>`;
 
     if (purchaseOption === 'kaufen') {
-        resultHtml += `<tr><td>Hardwarekosten (einmalig Kauf)</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
-        resultHtml += `<tr><td>SIM/Service-Gebühr (monatlich)</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
+        resultHtml += `<tr><td>${translations[currentLanguage]['receiptTotalCosts']}</td><td>${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}</td></tr>`;
+        resultHtml += `<tr><td>${translations[currentLanguage]['receiptAverageFee']}</td><td>${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}</td></tr>`;
     } else {
-        resultHtml += `<tr><td>Hardwarekosten (monatlich Miete)</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr><td>${translations[currentLanguage]['receiptTotalCosts']}</td><td>${hardwareCost.toFixed(2)} €</td></tr>`;
     }
 
-    resultHtml += `<tr><td>Gebühren</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
-    resultHtml += `<tr class="total-cost"><td>Gesamte monatliche Kosten</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
+    resultHtml += `<tr><td>${translations[currentLanguage]['receiptFeeAmount']}</td><td>${totalDishPayFees.toFixed(2)} €</td></tr>`;
+    resultHtml += `<tr class="total-cost"><td>${translations[currentLanguage]['receiptTotalSum']}</td><td>${totalMonthlyCost.toFixed(2)} €</td></tr>`;
 
     // Trennung zwischen DISH PAY und Wettbewerber
     if (calculationType === 'ausführlich') {
-        resultHtml += '<tr><td colspan="2"><strong>Wettbewerber Kosten</strong></td></tr>';
+        resultHtml += `<tr><td colspan="2"><strong>${translations[currentLanguage]['competitorSection_header']}</strong></td></tr>`;
         resultHtml += `<tr><td>Wettbewerber Gebühren</td><td>${totalCompetitorCost.toFixed(2)} €</td></tr>`;
-        resultHtml += `<tr class="highlight"><td>Ersparnis mit DISH PAY</td><td>${savings.toFixed(2)} €</td></tr>`;
+        resultHtml += `<tr class="highlight"><td>${translations[currentLanguage]['savings_with_DISH_PAY'] || 'Ersparnis mit DISH PAY'}</td><td>${savings.toFixed(2)} €</td></tr>`;
     }
 
     resultHtml += '</table>';
@@ -492,11 +624,11 @@ function sendEmail() {
     const salutation = document.getElementById('salutation').value;
 
     // Hinweis anzeigen
-    alert("Bitte laden Sie das PDF-Angebot herunter und fügen Sie es manuell an die E-Mail an.");
+    alert(translations[currentLanguage]['email_hint'] || "Bitte laden Sie das PDF-Angebot herunter und fügen Sie es manuell an die E-Mail an.");
 
     // E-Mail-Inhalt vorbereiten
-    const subject = encodeURIComponent('Ihr DISH PAY Angebot');
-    const body = encodeURIComponent(`Sehr geehrte${salutation === 'Frau' ? ' Frau' : 'r Herr'} ${customerName},\n\nanbei erhalten Sie Ihr DISH PAY Angebot.\n\nBitte finden Sie das angehängte PDF-Angebot.\n\nMit freundlichen Grüßen,\nIhr Team`);
+    const subject = encodeURIComponent(translations[currentLanguage]['email_subject'] || 'Ihr DISH PAY Angebot');
+    const body = encodeURIComponent(`${translations[currentLanguage]['email_greeting']} ${salutation} ${customerName},\n\n${translations[currentLanguage]['email_body'] || 'anbei erhalten Sie Ihr DISH PAY Angebot.'}\n\n${translations[currentLanguage]['email_attachment'] || 'Bitte finden Sie das angehängte PDF-Angebot.'}\n\nMit freundlichen Grüßen,\nIhr Team`);
 
     // Mailto-Link erstellen
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
@@ -526,13 +658,14 @@ function initializeTour() {
             cancelIcon: {
                 enabled: true
             },
+            classes: 'shadow-md bg-purple-dark',
         },
     });
 
     // Schritte zum Assistenten hinzufügen
     window.tour.addStep({
         id: 'step-1',
-        text: 'Willkommen beim DISH PAY Rechner! Dieser Assistent führt Sie durch die Eingabe.',
+        text: translations[currentLanguage]['tour_step1'] || 'Willkommen beim DISH PAY Rechner! Dieser Assistent führt Sie durch die Eingabe.',
         buttons: [
             {
                 text: 'Weiter',
@@ -543,7 +676,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-2',
-        text: 'Bitte wählen Sie Ihre Anrede und geben Sie Ihren Namen ein.',
+        text: translations[currentLanguage]['tour_step2'] || 'Bitte wählen Sie Ihre Anrede und geben Sie Ihren Namen ein.',
         attachTo: {
             element: '.customer-input',
             on: 'bottom',
@@ -562,7 +695,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-3',
-        text: 'Geben Sie den geplanten Kartenumsatz und die Anzahl der Transaktionen ein.',
+        text: translations[currentLanguage]['tour_step3'] || 'Geben Sie den geplanten Kartenumsatz und die Anzahl der Transaktionen ein.',
         attachTo: {
             element: '#monthlyVolume',
             on: 'top',
@@ -581,7 +714,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-4',
-        text: 'Geben Sie den prozentualen Anteil der verschiedenen Kartenarten ein.',
+        text: translations[currentLanguage]['tour_step4'] || 'Geben Sie den prozentualen Anteil der verschiedenen Kartenarten ein.',
         attachTo: {
             element: '.percentage-group',
             on: 'bottom',
@@ -600,7 +733,7 @@ function initializeTour() {
 
     window.tour.addStep({
         id: 'step-5',
-        text: 'Wählen Sie, ob Sie kaufen oder mieten möchten und geben Sie die Mietdauer an.',
+        text: translations[currentLanguage]['tour_step5'] || 'Wählen Sie, ob Sie kaufen oder mieten möchten und geben Sie die Mietdauer an.',
         attachTo: {
             element: '#purchaseOption',
             on: 'bottom',
@@ -631,14 +764,14 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     const receiptContainer = document.getElementById('receiptContainer');
 
     // Beleginhalt erstellen
-    let receiptHtml = '<h4>DISH PAY Angebot</h4>';
-    receiptHtml += `<div class="item"><span>Gesamtkosten DISH PAY</span><span>${totalAmount.toFixed(2)} €</span></div>`;
-    receiptHtml += `<div class="item"><span>Durchschnittliche Gebühr</span><span>${feesPercentage}%</span></div>`;
+    let receiptHtml = `<h4>${translations[currentLanguage]['receiptTitle']}</h4>`;
+    receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptTotalCosts']}</span><span>${totalAmount.toFixed(2)} €</span></div>`;
+    receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptAverageFee']}</span><span>${feesPercentage}%</span></div>`;
     if (feesPercentage > 0) {
-        receiptHtml += `<div class="item"><span>Gebührenbetrag</span><span>${(totalAmount * (feesPercentage / 100)).toFixed(2)} €</span></div>`;
+        receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptFeeAmount']}</span><span>${(totalAmount * (feesPercentage / 100)).toFixed(2)} €</span></div>`;
     }
-    receiptHtml += `<div class="item total"><span>Gesamtsumme</span><span>${totalAmount.toFixed(2)} €</span></div>`;
-    receiptHtml += `<p style="text-align:center; margin-top:10px;">Vielen Dank für Ihre Anfrage!</p>`;
+    receiptHtml += `<div class="item total"><span>${translations[currentLanguage]['receiptTotalSum']}</span><span>${totalAmount.toFixed(2)} €</span></div>`;
+    receiptHtml += `<p style="text-align:center; margin-top:10px;">${translations[currentLanguage]['receiptThankYou']}</p>`;
 
     receiptContent.innerHTML = receiptHtml;
 
