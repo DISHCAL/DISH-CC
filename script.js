@@ -171,13 +171,13 @@ function applyTranslations() {
         });
     });
 
-    // Aktualisiere die Belegübersetzungen, falls sichtbar
-    const receiptContent = document.getElementById('receiptContent');
-    if (!receiptContent.classList.contains('hidden') && receiptContent.innerHTML !== '') {
-        showReceiptAnimation(
-            parseFloat(document.getElementById('resultArea').dataset.totalMonthlyCost),
-            parseFloat(document.getElementById('resultArea').dataset.totalDishPayFeesPercentage)
-        );
+    // Aktualisiere die Bon-Animation, falls sichtbar
+    const receiptContainer = document.getElementById('receiptContainer');
+    if (!receiptContainer.classList.contains('hidden')) {
+        const resultArea = document.getElementById('resultArea');
+        const totalMonthlyCost = parseFloat(resultArea.dataset.totalMonthlyCost) || 0;
+        const totalDishPayFeesPercentage = parseFloat(resultArea.dataset.totalDishPayFeesPercentage) || 0;
+        showReceiptAnimation(totalMonthlyCost, totalDishPayFeesPercentage);
     }
 }
 
@@ -392,7 +392,7 @@ function validateInputs() {
     if (totalPercentage !== 100) {
         const percentageError = document.getElementById('percentageError');
         if (percentageError) {
-            percentageError.textContent = translations[currentLanguage]['percentage_error'] || "Die Summe der Prozentangaben muss 100% ergeben.";
+            percentageError.textContent = translations[currentLanguage]['percentage_error'];
         }
         isValid = false;
     } else {
@@ -525,6 +525,7 @@ function getCalculationData() {
     const savings = totalCompetitorCost - totalDishPayFees;
 
     return {
+        salutation: document.getElementById('salutation').value,
         customerName: document.getElementById('customerName').value.trim(),
         calculationType,
         monthlyVolume,
@@ -813,7 +814,8 @@ function showReceiptAnimation(totalAmount, feesPercentage) {
     receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptTotalCosts']}</span><span>${totalAmount.toFixed(2)} €</span></div>`;
     receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptAverageFee']}</span><span>${feesPercentage}%</span></div>`;
     if (feesPercentage > 0) {
-        receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptFeeAmount']}</span><span>${(totalAmount * (feesPercentage / 100)).toFixed(2)} €</span></div>`;
+        const feeAmount = (totalAmount * (feesPercentage / 100)).toFixed(2);
+        receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptFeeAmount']}</span><span>${feeAmount} €</span></div>`;
     }
     receiptHtml += `<div class="item total"><span>${translations[currentLanguage]['receiptTotalSum']}</span><span>${totalAmount.toFixed(2)} €</span></div>`;
     receiptHtml += `<p style="text-align:center; margin-top:10px;">${translations[currentLanguage]['receiptThankYou']}</p>`;
