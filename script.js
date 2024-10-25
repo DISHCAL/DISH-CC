@@ -61,6 +61,13 @@ const translations = {
         email_body: "anbei erhalten Sie Ihr DISH PAY Angebot.",
         email_attachment: "Bitte finden Sie das angehängte PDF-Angebot.",
         savings_with_DISH_PAY: "Ersparnis mit DISH PAY",
+        percentage_error: "Die Summe der Prozentangaben muss 100% ergeben.",
+        hardwareType_S1F2_kaufen: "S1F2 Terminal - Kauf: 499,00 €",
+        hardwareType_V400C_kaufen: "V400C Terminal - Kauf: 399,00 €",
+        hardwareType_MotoG14_kaufen: "Moto G14 Terminal - Kauf: 119,00 €",
+        hardwareType_S1F2_mieten: "S1F2 Terminal - Miete:",
+        hardwareType_V400C_mieten: "V400C Terminal - Miete:",
+        hardwareType_Tap2Pay_mieten: "Tap2Pay Lizenz - Miete: 7,90 €/Monat",
         tour_step1: "Willkommen beim DISH PAY Rechner! Dieser Assistent führt Sie durch die Eingabe.",
         tour_step2: "Bitte wählen Sie Ihre Anrede und geben Sie Ihren Namen ein.",
         tour_step3: "Geben Sie den geplanten Kartenumsatz und die Anzahl der Transaktionen ein.",
@@ -126,6 +133,13 @@ const translations = {
         email_body: "please find your DISH PAY offer attached.",
         email_attachment: "Please find the attached PDF offer.",
         savings_with_DISH_PAY: "Savings with DISH PAY",
+        percentage_error: "The sum of percentage inputs must equal 100%.",
+        hardwareType_S1F2_kaufen: "S1F2 Terminal - Purchase: €499.00",
+        hardwareType_V400C_kaufen: "V400C Terminal - Purchase: €399.00",
+        hardwareType_MotoG14_kaufen: "Moto G14 Terminal - Purchase: €119.00",
+        hardwareType_S1F2_mieten: "S1F2 Terminal - Rent:",
+        hardwareType_V400C_mieten: "V400C Terminal - Rent:",
+        hardwareType_Tap2Pay_mieten: "Tap2Pay License - Rent: €7.90/Month",
         tour_step1: "Welcome to the DISH PAY Calculator! This assistant will guide you through the input.",
         tour_step2: "Please select your salutation and enter your name.",
         tour_step3: "Enter the planned card revenue and the number of transactions.",
@@ -171,13 +185,13 @@ function applyTranslations() {
         });
     });
 
-    // Aktualisiere die Bon-Animation, falls sichtbar
-    const receiptContainer = document.getElementById('receiptContainer');
-    if (!receiptContainer.classList.contains('hidden')) {
-        const resultArea = document.getElementById('resultArea');
-        const totalMonthlyCost = parseFloat(resultArea.dataset.totalMonthlyCost) || 0;
-        const totalDishPayFeesPercentage = parseFloat(resultArea.dataset.totalDishPayFeesPercentage) || 0;
-        showReceiptAnimation(totalMonthlyCost, totalDishPayFeesPercentage);
+    // Aktualisiere die Tour-Schritte mit der neuen Sprache
+    if (window.tour) {
+        window.tour.steps.forEach(step => {
+            if (translations[currentLanguage][step.text.split('.')[0]]) {
+                step.text = translations[currentLanguage][step.text.split('.')[0]];
+            }
+        });
     }
 }
 
@@ -234,11 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const startTourButton = document.getElementById('startTourButton');
     if (startTourButton) {
         startTourButton.addEventListener('click', startTour);
-    }
-
-    const closeReceiptButton = document.getElementById('closeReceiptButton');
-    if (closeReceiptButton) {
-        closeReceiptButton.addEventListener('click', closeReceipt);
     }
 });
 
@@ -586,9 +595,6 @@ function startCalculation() {
         // Ergebnisdarstellung aktualisieren
         displayResults(resultData);
 
-        // Bon-Animation anzeigen
-        showReceiptAnimation(resultData.totalMonthlyCost, resultData.totalDishPayFeesPercentage);
-
         // PDF- und E-Mail-Buttons aktivieren
         document.getElementById('downloadPdfButton').disabled = false;
         document.getElementById('sendEmailButton').disabled = false;
@@ -657,7 +663,7 @@ function displayResults(data) {
 
     resultHtml += '</table>';
 
-    // Ergebnisbereich aktualisieren und Daten für die Bon-Animation speichern
+    // Ergebnisbereich aktualisieren und Daten für die Bon-Animation speichern (wurde entfernt)
     const resultArea = document.getElementById('resultArea');
     resultArea.innerHTML = resultHtml;
     resultArea.dataset.totalMonthlyCost = totalMonthlyCost.toFixed(2);
@@ -681,12 +687,6 @@ function sendEmail() {
 
     // Hinweis: Das automatische Anhängen von Dateien an E-Mails ist aus Sicherheitsgründen in Browsern nicht möglich.
     // Der Benutzer muss das PDF manuell anhängen.
-}
-
-// Funktion zum Schließen des Belegs
-function closeReceipt() {
-    const receiptContainer = document.getElementById('receiptContainer');
-    receiptContainer.classList.add('hidden');
 }
 
 // Interaktiver Assistent initialisieren
@@ -714,7 +714,7 @@ function initializeTour() {
         text: translations[currentLanguage]['tour_step1'],
         buttons: [
             {
-                text: 'Weiter',
+                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -729,11 +729,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: 'Zurück',
+                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: 'Weiter',
+                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -748,11 +748,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: 'Zurück',
+                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: 'Weiter',
+                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -767,11 +767,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: 'Zurück',
+                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: 'Weiter',
+                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -786,11 +786,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: 'Zurück',
+                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: 'Fertig',
+                text: translations[currentLanguage] === translations.de ? 'Fertig' : 'Finish',
                 action: window.tour.complete,
             }
         ]
@@ -804,29 +804,4 @@ function startTour() {
     }
 }
 
-// Funktion zur Anzeige der Bon-Animation
-function showReceiptAnimation(totalAmount, feesPercentage) {
-    const receiptContent = document.getElementById('receiptContent');
-    const receiptContainer = document.getElementById('receiptContainer');
-
-    // Beleginhalt erstellen
-    let receiptHtml = `<h4>${translations[currentLanguage]['receiptTitle']}</h4>`;
-    receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptTotalCosts']}</span><span>${totalAmount.toFixed(2)} €</span></div>`;
-    receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptAverageFee']}</span><span>${feesPercentage}%</span></div>`;
-    if (feesPercentage > 0) {
-        const feeAmount = (totalAmount * (feesPercentage / 100)).toFixed(2);
-        receiptHtml += `<div class="item"><span>${translations[currentLanguage]['receiptFeeAmount']}</span><span>${feeAmount} €</span></div>`;
-    }
-    receiptHtml += `<div class="item total"><span>${translations[currentLanguage]['receiptTotalSum']}</span><span>${totalAmount.toFixed(2)} €</span></div>`;
-    receiptHtml += `<p style="text-align:center; margin-top:10px;">${translations[currentLanguage]['receiptThankYou']}</p>`;
-
-    receiptContent.innerHTML = receiptHtml;
-
-    // Animation anzeigen
-    receiptContainer.classList.remove('hidden');
-
-    // Beleg nach 10 Sekunden automatisch ausblenden
-    setTimeout(() => {
-        closeReceipt();
-    }, 10000);
-}
+// Funktion zur Anzeige der Bon-Animation entfernt
