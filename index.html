@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>DISH Tools</title>
+    <title>DISH Digitale Lösungen für die Gastronomie</title>
     <!-- Meta-Tags für responsives Design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Verlinkung der CSS-Datei -->
@@ -16,10 +16,39 @@
     <!-- Tippy.js für Tooltips -->
     <link rel="stylesheet"
           href="https://unpkg.com/tippy.js@6/dist/tippy.css">
+    <!-- Einbindung von jsPDF für die PDF-Funktion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Spracheinstellung -->
+    <script>
+        let currentLanguage = 'de';
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>DISH Tools</h1>
+        <h1>DISH Digitale Lösungen für die Gastronomie</h1>
+
+        <!-- Sprache und Kundenname auswählen -->
+        <div class="top-bar">
+            <div class="language-selector">
+                <label for="languageSelect">Sprache:</label>
+                <select id="languageSelect" onchange="changeLanguage()">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <div class="customer-input">
+                <label for="customerName" data-lang="customerNameLabel">Anrede und Name:<span class="required">*</span></label>
+                <div class="name-group">
+                    <select id="salutation">
+                        <option value="Herr">Herr</option>
+                        <option value="Frau">Frau</option>
+                    </select>
+                    <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+                </div>
+                <small class="error-message" id="customerNameError"></small>
+            </div>
+        </div>
 
         <!-- Navigation Tabs -->
         <div class="tabs">
@@ -31,275 +60,147 @@
         <!-- PAY Rechner -->
         <div id="pay" class="tab-content active">
             <!-- PAY-Rechner-Inhalte -->
-            <!-- Kundeninformationen -->
-            <div class="customer-input">
-                <div class="input-group">
-                    <label for="payCustomerName">Anrede und Name:<span class="required">*</span></label>
-                    <div class="name-group">
-                        <select id="paySalutation">
-                            <option value="Herr">Herr</option>
-                            <option value="Frau">Frau</option>
-                        </select>
-                        <input type="text" id="payCustomerName" placeholder="Vor- und Nachname" required>
-                    </div>
-                    <small class="error-message" id="payCustomerNameError"></small>
-                </div>
+            <h3 data-lang="headline">Kostenberechnung</h3>
+
+            <label for="calculationType" data-lang="calculationTypeLabel">Berechnungsart: <span>*</span></label>
+            <select id="calculationType" onchange="toggleCalculationFields()">
+                <option value="schnell" data-lang="quickCalculation">Schnelle Berechnung</option>
+                <option value="ausführlich" data-lang="detailedCalculation">Ausführliche Berechnung</option>
+            </select>
+
+            <label for="monthlyVolume" data-lang="monthlyVolumeLabel">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
+            <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
+
+            <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
+            <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
+
+            <label for="girocard" data-lang="girocardLabel">Girocard (%): <span>*</span></label>
+            <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
+
+            <label for="mastercardVisa" data-lang="mastercardVisaLabel">Mastercard / VISA (%): <span>*</span></label>
+            <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
+
+            <div id="maestroField" class="hidden">
+                <label for="maestro" data-lang="maestroLabel">Maestro / VPAY (%):</label>
+                <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
             </div>
 
-            <!-- Eingabefelder für PAY-Rechner -->
-            <div class="input-group">
-                <label for="payMonthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span class="required">*</span></label>
-                <input type="number" id="payMonthlyVolume" placeholder="z.B. 20000" required>
-                <small class="error-message" id="payMonthlyVolumeError"></small>
+            <div id="businessCardField" class="hidden">
+                <label for="businessCard" data-lang="businessCardLabel">Business Card (%):</label>
+                <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
             </div>
 
-            <div class="input-group">
-                <label for="payTransactions">Erwartete Anzahl an monatlichen Transaktionen:<span class="required">*</span></label>
-                <input type="number" id="payTransactions" placeholder="z.B. 400" required>
-                <small class="error-message" id="payTransactionsError"></small>
-            </div>
+            <label for="purchaseOption" data-lang="purchaseOptionLabel">Kauf oder Miete: <span>*</span></label>
+            <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+                <option value="mieten" data-lang="rentOption">Mieten</option>
+                <option value="kaufen" data-lang="buyOption">Kaufen</option>
+            </select>
 
-            <!-- Durchschnittlicher Bonbetrag -->
-            <div class="input-group">
-                <label for="payAverageReceipt">Durchschnittlicher Bonbetrag (€):<span class="required">*</span></label>
-                <input type="number" id="payAverageReceipt" placeholder="z.B. 50" required>
-                <small class="error-message" id="payAverageReceiptError"></small>
-            </div>
-
-            <!-- Prozentangaben für Kartentypen -->
-            <div class="input-group">
-                <label>Kartenarten Anteil (Summe muss 100% ergeben):</label>
-                <div class="percentage-group">
-                    <label for="payGirocard">Girocard (%):<span class="required">*</span></label>
-                    <input type="number" id="payGirocard" placeholder="z.B. 70" required>
-                    <small class="error-message" id="payGirocardError"></small>
-                </div>
-                <div class="percentage-group">
-                    <label for="payMastercardVisa">Mastercard / VISA (%):<span class="required">*</span></label>
-                    <input type="number" id="payMastercardVisa" placeholder="z.B. 30" required>
-                    <small class="error-message" id="payMastercardVisaError"></small>
-                </div>
-                <div id="payVpayField" class="percentage-group">
-                    <label for="payVpay">Maestro / VPAY (%):</label>
-                    <input type="number" id="payVpay" placeholder="z.B. 0">
-                    <small class="error-message" id="payVpayError"></small>
-                </div>
-                <div id="payBusinessCardField" class="percentage-group">
-                    <label for="payBusinessCard">Business Card (%):</label>
-                    <input type="number" id="payBusinessCard" placeholder="z.B. 0">
-                    <small class="error-message" id="payBusinessCardError"></small>
-                </div>
-                <small class="error-message" id="payPercentageError"></small>
-            </div>
-
-            <!-- Kauf oder Miete -->
-            <div class="input-group">
-                <label for="payPurchaseOption">Kauf oder Miete:</label>
-                <select id="payPurchaseOption" onchange="togglePayRentalOptions()">
-                    <option value="kaufen">Kauf</option>
-                    <option value="mieten">Miete</option>
+            <div id="hardwareOptions">
+                <label for="hardware" data-lang="hardwareLabel">Hardware auswählen: <span>*</span></label>
+                <select id="hardware" onchange="updateRentalPrices()">
+                    <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+                    <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+                    <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+                    <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
                 </select>
             </div>
 
-            <!-- Mietdauer (wird angezeigt, wenn 'Mieten' ausgewählt ist) -->
-            <div id="payRentalDurationSection" class="input-group hidden">
-                <label for="payRentalDuration">Mietdauer:</label>
-                <select id="payRentalDuration">
-                    <option value="12M">12 Monate</option>
-                    <option value="36M">36 Monate</option>
-                    <option value="60M">60 Monate</option>
+            <div id="rentalOptions">
+                <label for="rentalPeriod" data-lang="rentalPeriodLabel">Mietdauer: <span>*</span></label>
+                <select id="rentalPeriod">
+                    <option value="12">12 Monate</option>
+                    <option value="36">36 Monate</option>
+                    <option value="60">60 Monate</option>
                 </select>
             </div>
 
-            <!-- Hardware -->
-            <div class="input-group">
-                <label for="payHardware">Hardware auswählen:</label>
-                <select id="payHardware">
-                    <!-- Optionen werden dynamisch durch JavaScript hinzugefügt -->
-                </select>
+            <div id="competitorSection" class="competitor-section hidden">
+                <h4 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h4>
+                <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
+                <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+
+                <div id="competitorMaestroField" class="hidden">
+                    <label for="competitorMaestroFee" data-lang="competitorMaestroFeeLabel">Maestro / VPAY Gebühr (%):</label>
+                    <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                </div>
+
+                <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
+                <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
+
+                <div id="competitorBusinessCardField" class="hidden">
+                    <label for="competitorBusinessCardFee" data-lang="competitorBusinessCardFeeLabel">Business Card Gebühr (%):</label>
+                    <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+                </div>
             </div>
 
-            <!-- Wettbewerbsgebühren -->
-            <div class="input-group">
-                <label for="competitorFees">Aktuelle Wettbewerbsgebühren pro Monat (€):</label>
-                <input type="number" id="competitorFees" placeholder="z.B. 500">
-                <small class="error-message" id="competitorFeesError"></small>
+            <button onclick="calculateCosts()" data-lang="calculateButton">Berechnen</button>
+            <button onclick="generatePDF()" data-lang="downloadPDFButton">PDF Angebot herunterladen</button>
+
+            <div id="result">
+                <!-- Ergebnisse werden hier eingefügt -->
             </div>
 
-            <!-- Buttons -->
-            <div class="button-group">
-                <button onclick="calculatePay()">Berechnen</button>
-                <button id="paySendEmailButton" onclick="sendPayEmail()" disabled>Angebot per E-Mail anzeigen</button>
+            <div class="info-section">
+                <h4 data-lang="feesNoteHeading">Hinweis zu den Gebühren:</h4>
+                <ul>
+                    <li data-lang="transactionFeeInfo"><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
+                    <li data-lang="girocardFeeInfoBelow"><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
+                    <li data-lang="girocardFeeInfoAbove"><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
+                    <li data-lang="maestroFeeInfo"><b>Disagio Maestro / VPAY:</b> 0,89%</li>
+                    <li data-lang="mastercardVisaFeeInfo"><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
+                    <li data-lang="businessCardFeeInfo"><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+                </ul>
             </div>
 
-            <!-- Ergebnisbereich -->
-            <div id="payResultArea" class="result-section">
-                <!-- Ergebnis wird hier eingefügt -->
-            </div>
         </div>
 
         <!-- POS Rechner -->
         <div id="pos" class="tab-content hidden">
             <!-- POS-Rechner-Inhalte -->
-            <!-- Kundeninformationen -->
-            <div class="customer-input">
-                <div class="input-group">
-                    <label for="posCustomerName">Anrede und Name:<span class="required">*</span></label>
-                    <div class="name-group">
-                        <select id="posSalutation">
-                            <option value="Herr">Herr</option>
-                            <option value="Frau">Frau</option>
-                        </select>
-                        <input type="text" id="posCustomerName" placeholder="Vor- und Nachname" required>
-                    </div>
-                    <small class="error-message" id="posCustomerNameError"></small>
-                </div>
-            </div>
+            <h3 data-lang="posHeadline">POS Kostenberechnung</h3>
 
-            <!-- Eingabefelder für POS-Rechner -->
-            <h3>Hardware-Komponenten</h3>
-            <div class="input-group">
-                <label for="sunmi">Bildschirm Sunmi:</label>
-                <input type="number" id="sunmi" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="tse">TSE Hardwarenutzung (5 Jahre):</label>
-                <input type="number" id="tse" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="menueingabe">Menü-Eingabeservice:</label>
-                <input type="number" id="menueingabe" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="einrichtung">Einrichtungsservice vor Ort:</label>
-                <input type="number" id="einrichtung" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="handheld">Mobiles Handgerät:</label>
-                <input type="number" id="handheld" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="drucker">Epson Drucker:</label>
-                <input type="number" id="drucker" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="ladestation">Ladestation für mobiles Handgerät:</label>
-                <input type="number" id="ladestation" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="accesspoint">Access Point:</label>
-                <input type="number" id="accesspoint" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="router">POS Router ER605:</label>
-                <input type="number" id="router" placeholder="Anzahl">
-            </div>
-            <div class="input-group">
-                <label for="switch">Switch Lite Ubiquiti UniFi:</label>
-                <input type="number" id="switch" placeholder="Anzahl">
-            </div>
+            <!-- Kundenname wird automatisch übernommen -->
+            <!-- POS-Eingabefelder -->
+            <!-- ... (Fügen Sie die POS-Eingabefelder hinzu, alle mit data-lang Attributen für Übersetzungen) -->
 
-            <h3>Optionales Zubehör</h3>
-            <div class="input-group">
-                <input type="number" id="kassenschublade" placeholder="Anzahl">
-                <label for="kassenschublade">Kassenschublade</label>
-            </div>
-            <div class="input-group">
-                <input type="number" id="qrOrdering" placeholder="Anzahl">
-                <label for="qrOrdering">QR Ordering</label>
-            </div>
-            <div class="input-group">
-                <input type="number" id="aggregator" placeholder="Anzahl">
-                <label for="aggregator">DISH Aggregator</label>
-            </div>
+            <!-- Beispiel für ein Eingabefeld -->
+            <label for="posHardware" data-lang="posHardwareLabel">Hardware auswählen:</label>
+            <input type="number" id="posHardware" placeholder="Anzahl">
 
-            <h3>Monatliche Lizenzen und Services</h3>
-            <div class="input-group">
-                <input type="checkbox" id="hauptlizenz">
-                <label for="hauptlizenz">Hauptlizenz Software</label>
-            </div>
-            <div class="input-group">
-                <input type="checkbox" id="datev">
-                <label for="datev">DATEV „MeinFiskal“ API</label>
-            </div>
-            <div class="input-group">
-                <input type="checkbox" id="gutschein">
-                <label for="gutschein">Gutschein Funktion</label>
-            </div>
-            <div class="input-group">
-                <input type="checkbox" id="tap2pay">
-                <label for="tap2pay">Tap to Pay Lizenz</label>
-            </div>
-
-            <!-- Buttons -->
-            <div class="button-group">
-                <button onclick="calculatePos()">Berechnen</button>
-                <button id="posSendEmailButton" onclick="sendPosEmail()" disabled>Angebot per E-Mail anzeigen</button>
-            </div>
+            <!-- Berechnen-Button -->
+            <button onclick="calculatePos()" data-lang="calculateButton">Berechnen</button>
+            <button onclick="generatePosPDF()" data-lang="downloadPDFButton">PDF Angebot herunterladen</button>
 
             <!-- Ergebnisbereich -->
-            <div id="posResultArea" class="result-section">
-                <!-- Ergebnis wird hier eingefügt -->
+            <div id="posResult">
+                <!-- Ergebnisse werden hier eingefügt -->
             </div>
+
         </div>
 
         <!-- TOOLS Rechner -->
         <div id="tools" class="tab-content hidden">
             <!-- TOOLS-Rechner-Inhalte -->
-            <!-- Kundeninformationen -->
-            <div class="customer-input">
-                <div class="input-group">
-                    <label for="toolsCustomerName">Anrede und Name:<span class="required">*</span></label>
-                    <div class="name-group">
-                        <select id="toolsSalutation">
-                            <option value="Herr">Herr</option>
-                            <option value="Frau">Frau</option>
-                        </select>
-                        <input type="text" id="toolsCustomerName" placeholder="Vor- und Nachname" required>
-                    </div>
-                    <small class="error-message" id="toolsCustomerNameError"></small>
-                </div>
-            </div>
+            <h3 data-lang="toolsHeadline">TOOLS Kostenberechnung</h3>
 
-            <!-- Eingabefelder für TOOLS-Rechner -->
-            <h3>DISH Lösungen</h3>
-            <div class="input-group">
-                <input type="checkbox" id="dishStarter">
-                <label for="dishStarter">DISH STARTER</label>
-            </div>
-            <div class="input-group">
-                <input type="checkbox" id="dishReservation">
-                <label for="dishReservation">DISH RESERVATION</label>
-            </div>
-            <div class="input-group">
-                <input type="checkbox" id="dishOrder">
-                <label for="dishOrder">DISH ORDER</label>
-            </div>
-            <div class="input-group">
-                <input type="checkbox" id="dishPremium">
-                <label for="dishPremium">DISH PREMIUM</label>
-            </div>
+            <!-- Kundenname wird automatisch übernommen -->
+            <!-- TOOLS-Eingabefelder -->
+            <!-- ... (Fügen Sie die TOOLS-Eingabefelder hinzu, alle mit data-lang Attributen für Übersetzungen) -->
 
-            <!-- Vertragslaufzeit auswählen -->
-            <div class="input-group">
-                <label for="contractDuration">Mindestvertragslaufzeit:</label>
-                <select id="contractDuration">
-                    <option value="12M">12 Monate</option>
-                    <option value="36M">36 Monate</option>
-                    <option value="3M">3 Monate</option>
-                </select>
-            </div>
+            <!-- Beispiel für ein Eingabefeld -->
+            <label for="toolsOption" data-lang="toolsOptionLabel">Option auswählen:</label>
+            <input type="checkbox" id="toolsOption">
 
-            <!-- Buttons -->
-            <div class="button-group">
-                <button onclick="calculateTools()">Berechnen</button>
-                <button id="toolsSendEmailButton" onclick="sendToolsEmail()" disabled>Angebot per E-Mail anzeigen</button>
-            </div>
+            <!-- Berechnen-Button -->
+            <button onclick="calculateTools()" data-lang="calculateButton">Berechnen</button>
+            <button onclick="generateToolsPDF()" data-lang="downloadPDFButton">PDF Angebot herunterladen</button>
 
             <!-- Ergebnisbereich -->
-            <div id="toolsResultArea" class="result-section">
-                <!-- Ergebnis wird hier eingefügt -->
+            <div id="toolsResult">
+                <!-- Ergebnisse werden hier eingefügt -->
             </div>
+
         </div>
 
         <!-- Modal für Angebotstext -->
@@ -309,7 +210,7 @@
                 <div id="emailContent">
                     <!-- Angebotstext wird hier eingefügt -->
                 </div>
-                <button onclick="closeEmailContent()">Schließen</button>
+                <button onclick="closeEmailContent()" data-lang="closeButton">Schließen</button>
             </div>
         </div>
 
