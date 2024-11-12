@@ -57,10 +57,98 @@
 
         <!-- PAY Rechner -->
         <div id="pay" class="tab-content active">
-            <!-- PAY-Rechner-Inhalt -->
-            <!-- (Der vollständige PAY-Rechner-Code ist hier enthalten) -->
-            <!-- ... (siehe vorherigen Codeabschnitt für den vollständigen Inhalt) -->
-            <!-- ... -->
+            <h3 data-lang="headline">Kostenberechnung</h3>
+
+            <label for="calculationType" data-lang="calculationTypeLabel">Berechnungsart: <span>*</span></label>
+            <select id="calculationType" onchange="toggleCalculationFields()">
+                <option value="schnell" data-lang="quickCalculation">Schnelle Berechnung</option>
+                <option value="ausführlich" data-lang="detailedCalculation">Ausführliche Berechnung</option>
+            </select>
+
+            <label for="monthlyVolume" data-lang="monthlyVolumeLabel">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
+            <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
+
+            <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
+            <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
+
+            <label for="girocard" data-lang="girocardLabel">Girocard (%): <span>*</span></label>
+            <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
+
+            <label for="mastercardVisa" data-lang="mastercardVisaLabel">Mastercard / VISA (%): <span>*</span></label>
+            <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
+
+            <div id="maestroField" class="hidden">
+                <label for="maestro" data-lang="maestroLabel">Maestro / VPAY (%):</label>
+                <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
+            </div>
+
+            <div id="businessCardField" class="hidden">
+                <label for="businessCard" data-lang="businessCardLabel">Business Card (%):</label>
+                <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
+            </div>
+
+            <label for="purchaseOption" data-lang="purchaseOptionLabel">Kauf oder Miete: <span>*</span></label>
+            <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+                <option value="mieten" data-lang="rentOption">Mieten</option>
+                <option value="kaufen" data-lang="buyOption">Kaufen</option>
+            </select>
+
+            <div id="hardwareOptions">
+                <label for="hardware" data-lang="hardwareLabel">Hardware auswählen: <span>*</span></label>
+                <select id="hardware" onchange="updateRentalPrices()">
+                    <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+                    <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+                    <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+                    <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+                </select>
+            </div>
+
+            <div id="rentalOptions">
+                <label for="rentalPeriod" data-lang="rentalPeriodLabel">Mietdauer: <span>*</span></label>
+                <select id="rentalPeriod">
+                    <option value="12">12 Monate</option>
+                    <option value="36">36 Monate</option>
+                    <option value="60">60 Monate</option>
+                </select>
+            </div>
+
+            <div id="competitorSection" class="competitor-section hidden">
+                <h4 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h4>
+                <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
+                <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+
+                <div id="competitorMaestroField" class="hidden">
+                    <label for="competitorMaestroFee" data-lang="competitorMaestroFeeLabel">Maestro / VPAY Gebühr (%):</label>
+                    <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                </div>
+
+                <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
+                <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
+
+                <div id="competitorBusinessCardField" class="hidden">
+                    <label for="competitorBusinessCardFee" data-lang="competitorBusinessCardFeeLabel">Business Card Gebühr (%):</label>
+                    <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+                </div>
+            </div>
+
+            <button onclick="calculateCosts()" data-lang="calculateButton">Berechnen</button>
+            <button onclick="showEmailContent('pay')" data-lang="showEmailButton">Angebot per E-Mail anzeigen</button>
+
+            <div id="result">
+                <!-- Ergebnisse werden hier eingefügt -->
+            </div>
+
+            <div class="info-section">
+                <h4 data-lang="feesNoteHeading">Hinweis zu den Gebühren:</h4>
+                <ul>
+                    <li data-lang="transactionFeeInfo"><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
+                    <li data-lang="girocardFeeInfoBelow"><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
+                    <li data-lang="girocardFeeInfoAbove"><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
+                    <li data-lang="maestroFeeInfo"><b>Disagio Maestro / VPAY:</b> 0,89%</li>
+                    <li data-lang="mastercardVisaFeeInfo"><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
+                    <li data-lang="businessCardFeeInfo"><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+                </ul>
+            </div>
         </div>
 
         <!-- POS Rechner -->
@@ -77,7 +165,6 @@
                         <label for="screenSunmi">Bildschirm Sunmi (493,00 €):</label>
                         <input type="number" id="screenSunmi" min="0" value="0">
                     </div>
-                    <!-- Weitere Hardware-Komponenten -->
                     <div class="hardware-item">
                         <label for="tseHardware">TSE Hardwarenutzung für 5 Jahre (159,00 €):</label>
                         <input type="number" id="tseHardware" min="0" value="0">
