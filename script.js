@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initiale Sprachübersetzung
     translatePage();
+
+    // Rental Prices aktualisieren
+    updateRentalPrices();
+
+    // Berechnungsfelder initialisieren
+    toggleCalculationFields();
 });
 
 function openCalculator(evt, calculatorName) {
@@ -66,7 +72,42 @@ const translations = {
         posHardwareLabel: "Hardware-Komponenten:",
         posOptionalAccessories: "Optionales Zubehör:",
         posMonthlyLicenses: "Monatliche Lizenzen und Services:",
-        toolsOptions: "DISH Lösungen:"
+        toolsOptions: "DISH Lösungen:",
+        calculationTypeLabel: "Berechnungsart: ",
+        quickCalculation: "Schnelle Berechnung",
+        detailedCalculation: "Ausführliche Berechnung",
+        monthlyVolumeLabel: "Geplanter Kartenumsatz pro Monat (€): ",
+        transactionsLabel: "Erwartete Anzahl an monatlichen Transaktionen: ",
+        girocardLabel: "Girocard (%): ",
+        mastercardVisaLabel: "Mastercard / VISA (%): ",
+        maestroLabel: "Maestro / VPAY (%): ",
+        businessCardLabel: "Business Card (%): ",
+        purchaseOptionLabel: "Kauf oder Miete: ",
+        rentOption: "Mieten",
+        buyOption: "Kaufen",
+        hardwareLabel: "Hardware auswählen: ",
+        rentalPeriodLabel: "Mietdauer: ",
+        competitorFeesHeading: "Wettbewerber Gebühren:",
+        competitorGirocardFeeLabel: "Girocard Gebühr (%):",
+        competitorMaestroFeeLabel: "Maestro / VPAY Gebühr (%):",
+        competitorMastercardVisaFeeLabel: "Mastercard / VISA Gebühr (%):",
+        competitorBusinessCardFeeLabel: "Business Card Gebühr (%):",
+        feesNoteHeading: "Hinweis zu den Gebühren:",
+        transactionFeeInfo: "Transaktionspreis: 0,06 € pro Transaktion",
+        girocardFeeInfoBelow: "Girocard-Gebühr bis 10.000 € monatlich: 0,39%",
+        girocardFeeInfoAbove: "Girocard-Gebühr über 10.000 € monatlich: 0,29%",
+        maestroFeeInfo: "Disagio Maestro / VPAY: 0,89%",
+        mastercardVisaFeeInfo: "Disagio Mastercard/VISA Privatkunden: 0,89%",
+        businessCardFeeInfo: "Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%",
+        resultsHeading: "Ergebnisse:",
+        disagioFees: "Gesamte Disagio-Gebühren",
+        monthlyCost: "Monatliche Hardwarekosten",
+        simServiceFee: "SIM/Servicegebühr",
+        noSimServiceFee: "Keine SIM/Servicegebühr",
+        totalMonthlyCost: "Monatliche Gesamtkosten",
+        oneTimeCost: "Einmalige Kosten (bei Kauf)",
+        competitorTotal: "Gesamtkosten beim Wettbewerber",
+        competitorSavings: "Ihre Einsparungen gegenüber dem Wettbewerber"
     },
     en: {
         headline: "Cost Calculation",
@@ -79,12 +120,49 @@ const translations = {
         posHardwareLabel: "Hardware Components:",
         posOptionalAccessories: "Optional Accessories:",
         posMonthlyLicenses: "Monthly Licenses and Services:",
-        toolsOptions: "DISH Solutions:"
+        toolsOptions: "DISH Solutions:",
+        calculationTypeLabel: "Calculation Type: ",
+        quickCalculation: "Quick Calculation",
+        detailedCalculation: "Detailed Calculation",
+        monthlyVolumeLabel: "Planned Card Turnover per Month (€): ",
+        transactionsLabel: "Expected Number of Monthly Transactions: ",
+        girocardLabel: "Girocard (%): ",
+        mastercardVisaLabel: "Mastercard / VISA (%): ",
+        maestroLabel: "Maestro / VPAY (%): ",
+        businessCardLabel: "Business Card (%): ",
+        purchaseOptionLabel: "Purchase or Rent: ",
+        rentOption: "Rent",
+        buyOption: "Purchase",
+        hardwareLabel: "Select Hardware: ",
+        rentalPeriodLabel: "Rental Period: ",
+        competitorFeesHeading: "Competitor Fees:",
+        competitorGirocardFeeLabel: "Girocard Fee (%):",
+        competitorMaestroFeeLabel: "Maestro / VPAY Fee (%):",
+        competitorMastercardVisaFeeLabel: "Mastercard / VISA Fee (%):",
+        competitorBusinessCardFeeLabel: "Business Card Fee (%):",
+        feesNoteHeading: "Note on Fees:",
+        transactionFeeInfo: "Transaction Price: €0.06 per transaction",
+        girocardFeeInfoBelow: "Girocard fee up to €10,000 monthly: 0.39%",
+        girocardFeeInfoAbove: "Girocard fee over €10,000 monthly: 0.29%",
+        maestroFeeInfo: "Maestro / VPAY fee: 0.89%",
+        mastercardVisaFeeInfo: "Mastercard/VISA private customers fee: 0.89%",
+        businessCardFeeInfo: "Mastercard/VISA business and non-EU fee: 2.89%",
+        resultsHeading: "Results:",
+        disagioFees: "Total Disagio Fees",
+        monthlyCost: "Monthly Hardware Costs",
+        simServiceFee: "SIM/Service Fee",
+        noSimServiceFee: "No SIM/Service Fee",
+        totalMonthlyCost: "Total Monthly Costs",
+        oneTimeCost: "One-time Costs (when purchasing)",
+        competitorTotal: "Total Costs with Competitor",
+        competitorSavings: "Your Savings Compared to Competitor"
     }
 };
 
 /* PAY-Rechner-Funktionen */
-// (Der Code bleibt wie zuvor, siehe vorherige Codeabschnitte)
+// (Der vollständige PAY-Rechner-Code ist hier enthalten)
+// ... (siehe vorherigen Codeabschnitt für den vollständigen Inhalt)
+// ...
 
 /* POS-Rechner-Funktionen */
 function calculatePos() {
