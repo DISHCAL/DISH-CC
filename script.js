@@ -6,197 +6,99 @@ document.addEventListener('DOMContentLoaded', () => {
         placement: 'right',
     });
 
-    // Hardware-Optionen initialisieren
-    updateHardwareOptions();
-
-    // Event Listener hinzufügen
-    const rentalDurationElement = document.getElementById('rentalDuration');
-    if (rentalDurationElement) {
-        rentalDurationElement.addEventListener('change', updateHardwareOptions);
-    }
-
-    const purchaseOptionElement = document.getElementById('purchaseOption');
-    if (purchaseOptionElement) {
-        purchaseOptionElement.addEventListener('change', () => {
-            toggleRentalOptions();
-            updateHardwareOptions();
-        });
-    }
-
-    const calculateButton = document.getElementById('calculateButton');
-    if (calculateButton) {
-        calculateButton.addEventListener('click', startCalculation);
-    }
-
-    const sendEmailButton = document.getElementById('sendEmailButton');
-    if (sendEmailButton) {
-        sendEmailButton.addEventListener('click', sendEmail);
-    }
+    // Standardmäßig PAY-Rechner anzeigen
+    openCalculator(null, 'pay');
 });
 
-// Funktion zum Umschalten der Berechnungsfelder
-function toggleCalculationFields() {
-    const calculationType = document.getElementById('calculationType').value;
-    const vpayField = document.getElementById('vpayField');
-    const businessCardField = document.getElementById('businessCardField');
+// Funktion zum Umschalten zwischen den Rechnern
+function openCalculator(evt, calculatorName) {
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.add('hidden');
+        content.classList.remove('active');
+    });
 
-    if (calculationType === 'ausfuehrlich') {
-        vpayField.classList.remove('hidden');
-        businessCardField.classList.remove('hidden');
+    const tabLinks = document.querySelectorAll('.tab-link');
+    tabLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+
+    document.getElementById(calculatorName).classList.remove('hidden');
+    document.getElementById(calculatorName).classList.add('active');
+
+    if (evt) {
+        evt.currentTarget.classList.add('active');
     } else {
-        vpayField.classList.add('hidden');
-        businessCardField.classList.add('hidden');
-
-        // Felder für vpay und businessCard zurücksetzen
-        document.getElementById('vpay').value = 0;
-        document.getElementById('businessCard').value = 0;
+        // Standardmäßig den ersten Tab aktivieren
+        document.querySelector('.tab-link').classList.add('active');
     }
 }
 
-// Funktion zum Umschalten der Mietoptionen
-function toggleRentalOptions() {
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const rentalDurationSection = document.getElementById('rentalDurationSection');
+/* PAY-Rechner-Funktionen */
+function calculatePay() {
+    // Eingaben validieren
+    const salutation = document.getElementById('paySalutation').value;
+    const customerName = document.getElementById('payCustomerName').value.trim();
+    const customerNameError = document.getElementById('payCustomerNameError');
 
-    if (purchaseOption === 'mieten') {
-        rentalDurationSection.classList.remove('hidden');
+    if (!customerName) {
+        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
+        return;
     } else {
-        rentalDurationSection.classList.add('hidden');
+        customerNameError.textContent = '';
     }
 
-    // Hardware-Dropdown aktualisieren
-    updateHardwareOptions();
-}
+    const monthlyVolume = parseFloat(document.getElementById('payMonthlyVolume').value);
+    const transactions = parseInt(document.getElementById('payTransactions').value);
+    const girocardPercentage = parseFloat(document.getElementById('payGirocard').value);
+    const mastercardVisaPercentage = parseFloat(document.getElementById('payMastercardVisa').value);
 
-// Funktion zum Aktualisieren der Hardware-Optionen basierend auf Kauf oder Miete
-function updateHardwareOptions() {
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const hardwareSelect = document.getElementById('hardware');
-    const rentalDurationElement = document.getElementById('rentalDuration');
-    const rentalDuration = rentalDurationElement ? rentalDurationElement.value : '12M';
-
-    // Aktuelle Auswahl speichern
-    const currentSelection = hardwareSelect.value;
-
-    // Hardware-Optionen zurücksetzen
-    hardwareSelect.innerHTML = '';
-
-    if (purchaseOption === 'kaufen') {
-        hardwareSelect.innerHTML = `
-            <option value="S1F2">S1F2 Terminal - Kauf: 499,00 €</option>
-            <option value="V400C">V400C Terminal - Kauf: 399,00 €</option>
-            <option value="Moto G14">Moto G14 Terminal - Kauf: 119,00 €</option>
-        `;
-    } else {
-        // Mietpreise entsprechend der Mietdauer anzeigen
-        let s1f2Price = 0;
-        let v400cPrice = 0;
-        let tap2payPrice = 7.90; // Nur 12M verfügbar
-
-        if (rentalDuration === '12M') {
-            s1f2Price = 44.90;
-            v400cPrice = 39.90;
-        } else if (rentalDuration === '36M') {
-            s1f2Price = 18.90;
-            v400cPrice = 16.90;
-        } else if (rentalDuration === '60M') {
-            s1f2Price = 14.90;
-            v400cPrice = 12.90;
-        }
-
-        hardwareSelect.innerHTML = `
-            <option value="S1F2">S1F2 Terminal - Miete: ${s1f2Price.toFixed(2)} €/Monat</option>
-            <option value="V400C">V400C Terminal - Miete: ${v400cPrice.toFixed(2)} €/Monat</option>
-            <option value="Tap2Pay">Tap2Pay Lizenz - Miete: ${tap2payPrice.toFixed(2)} €/Monat</option>
-        `;
-    }
-
-    // Wenn die vorherige Auswahl noch vorhanden ist, diese wieder auswählen
-    if (hardwareSelect.querySelector(`option[value="${currentSelection}"]`)) {
-        hardwareSelect.value = currentSelection;
-    } else {
-        hardwareSelect.selectedIndex = 0;
-    }
-}
-
-// Funktion zur Validierung der Eingaben
-function validateInputs() {
+    // Weitere Validierung
     let isValid = true;
-
-    // Fehlermeldungen zurücksetzen
-    document.querySelectorAll('.error-message').forEach(error => {
-        error.textContent = '';
-    });
-
-    // Rote Rahmen entfernen
-    document.querySelectorAll('.error').forEach(element => {
-        element.classList.remove('error');
-    });
-
-    // Pflichtfelder überprüfen
-    const requiredFields = ['customerName', 'monthlyVolume', 'transactions', 'girocard', 'mastercardVisa'];
-    requiredFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        const errorField = document.getElementById(fieldId + 'Error');
-        if (!field.value || field.value.trim() === '') {
-            field.classList.add('error');
-            if (errorField) errorField.textContent = 'Dieses Feld ist erforderlich.';
-            isValid = false;
-        }
-    });
-
-    // Numerische Felder überprüfen
-    const numericFields = ['monthlyVolume', 'transactions', 'girocard', 'mastercardVisa', 'vpay', 'businessCard'];
-    numericFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        const value = parseFloat(field.value);
-        if (field.value !== '' && (isNaN(value) || value < 0)) {
-            field.classList.add('error');
-            const errorField = document.getElementById(fieldId + 'Error');
-            if (errorField) errorField.textContent = 'Bitte geben Sie eine gültige positive Zahl ein.';
-            isValid = false;
-        }
-    });
-
-    // Prozentangaben validieren
-    const girocardPercentage = parseFloat(document.getElementById('girocard').value) || 0;
-    const mastercardVisaPercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const vpayPercentage = parseFloat(document.getElementById('vpay').value) || 0;
-    const businessCardPercentage = parseFloat(document.getElementById('businessCard').value) || 0;
-    const totalPercentage = girocardPercentage + mastercardVisaPercentage + vpayPercentage + businessCardPercentage;
-
-    if (totalPercentage !== 100) {
-        const percentageError = document.getElementById('percentageError');
-        if (percentageError) {
-            percentageError.textContent = 'Die Summe der Prozentangaben muss 100% ergeben.';
-        }
+    if (isNaN(monthlyVolume) || monthlyVolume <= 0) {
+        document.getElementById('payMonthlyVolumeError').textContent = 'Bitte geben Sie einen gültigen Betrag ein.';
         isValid = false;
+    } else {
+        document.getElementById('payMonthlyVolumeError').textContent = '';
     }
 
-    return isValid;
-}
-
-// Funktion zum Sammeln der Berechnungsdaten
-function getCalculationData() {
-    if (!validateInputs()) {
-        return null;
+    if (isNaN(transactions) || transactions <= 0) {
+        document.getElementById('payTransactionsError').textContent = 'Bitte geben Sie eine gültige Anzahl ein.';
+        isValid = false;
+    } else {
+        document.getElementById('payTransactionsError').textContent = '';
     }
 
-    const calculationType = document.getElementById('calculationType').value;
-    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-    const transactions = parseInt(document.getElementById('transactions').value) || 0;
-    const girocardPercentage = parseFloat(document.getElementById('girocard').value) || 0;
-    const mastercardVisaPercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const vpayPercentage = parseFloat(document.getElementById('vpay').value) || 0;
-    const businessCardPercentage = parseFloat(document.getElementById('businessCard').value) || 0;
+    if (isNaN(girocardPercentage) || girocardPercentage < 0) {
+        document.getElementById('payGirocardError').textContent = 'Bitte geben Sie einen gültigen Prozentsatz ein.';
+        isValid = false;
+    } else {
+        document.getElementById('payGirocardError').textContent = '';
+    }
 
-    // Berechnung der Umsätze pro Kartenart
+    if (isNaN(mastercardVisaPercentage) || mastercardVisaPercentage < 0) {
+        document.getElementById('payMastercardVisaError').textContent = 'Bitte geben Sie einen gültigen Prozentsatz ein.';
+        isValid = false;
+    } else {
+        document.getElementById('payMastercardVisaError').textContent = '';
+    }
+
+    const totalPercentage = girocardPercentage + mastercardVisaPercentage;
+    if (totalPercentage !== 100) {
+        document.getElementById('payPercentageError').textContent = 'Die Summe der Prozentangaben muss 100% ergeben.';
+        isValid = false;
+    } else {
+        document.getElementById('payPercentageError').textContent = '';
+    }
+
+    if (!isValid) {
+        return;
+    }
+
+    // Berechnungen durchführen
     const girocardVolume = monthlyVolume * (girocardPercentage / 100);
     const mastercardVisaVolume = monthlyVolume * (mastercardVisaPercentage / 100);
-    const vpayVolume = monthlyVolume * (vpayPercentage / 100);
-    const businessCardVolume = monthlyVolume * (businessCardPercentage / 100);
 
-    // Berechnung der Girocard-Gebühren
     let girocardFeeRate = 0;
     if (girocardVolume <= 10000) {
         girocardFeeRate = 0.0039; // 0,39%
@@ -204,204 +106,283 @@ function getCalculationData() {
         girocardFeeRate = 0.0029; // 0,29%
     }
     const girocardCost = girocardVolume * girocardFeeRate;
-
-    // Berechnungen für andere Gebühren
     const mastercardVisaCost = mastercardVisaVolume * 0.0089; // 0,89%
-    const vpayCost = vpayVolume * 0.0089; // 0,89%
-    const businessCardCost = businessCardVolume * 0.0289; // 2,89%
-
-    // Transaktionskosten
     const transactionCost = transactions * 0.06;
 
-    // Gesamtkosten DISH PAY Gebühren
-    const totalDishPayFees = girocardCost + mastercardVisaCost + vpayCost + businessCardCost + transactionCost;
+    const totalFees = girocardCost + mastercardVisaCost + transactionCost;
 
-    // Durchschnittliche Gebühr in Prozent berechnen
-    const totalSales = girocardVolume + mastercardVisaVolume + vpayVolume + businessCardVolume;
-    const totalDishPayFeesPercentage = totalSales > 0 ? ((totalDishPayFees / totalSales) * 100).toFixed(2) : 0;
-
-    // Hardwarekosten
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const rentalDuration = document.getElementById('rentalDuration').value;
-    const hardwareSelection = document.getElementById('hardware').value;
-
-    let hardwareCost = 0;
-    let simServiceFee = '-';
-    let oneTimeCost = '-';
-
-    // Hardwarepreise entsprechend der Auswahl
-    if (purchaseOption === 'kaufen') {
-        switch (hardwareSelection) {
-            case 'S1F2':
-                hardwareCost = 0; // Keine monatlichen Kosten beim Kauf
-                oneTimeCost = 499.00;
-                simServiceFee = 3.90;
-                break;
-            case 'V400C':
-                hardwareCost = 0;
-                oneTimeCost = 399.00;
-                simServiceFee = 3.90;
-                break;
-            case 'Moto G14':
-                hardwareCost = 0;
-                oneTimeCost = 119.00;
-                simServiceFee = 7.90;
-                break;
-            default:
-                hardwareCost = 0;
-        }
-    } else if (purchaseOption === 'mieten') {
-        switch (hardwareSelection) {
-            case 'S1F2':
-                if (rentalDuration === '12M') hardwareCost = 44.90;
-                else if (rentalDuration === '36M') hardwareCost = 18.90;
-                else if (rentalDuration === '60M') hardwareCost = 14.90;
-                break;
-            case 'V400C':
-                if (rentalDuration === '12M') hardwareCost = 39.90;
-                else if (rentalDuration === '36M') hardwareCost = 16.90;
-                else if (rentalDuration === '60M') hardwareCost = 12.90;
-                break;
-            case 'Tap2Pay':
-                hardwareCost = 7.90; // Nur 12M verfügbar
-                break;
-            default:
-                hardwareCost = 0;
-        }
-        simServiceFee = '-'; // Bei Miete keine SIM/Service-Gebühr
-        oneTimeCost = '-'; // Keine einmaligen Kosten bei Miete
-    }
-
-    // Gesamtkosten DISH PAY
-    const totalMonthlyCost = hardwareCost + (simServiceFee !== '-' ? parseFloat(simServiceFee) : 0) + totalDishPayFees;
-
-    return {
-        salutation: document.getElementById('salutation').value,
-        customerName: document.getElementById('customerName').value.trim(),
-        calculationType,
-        monthlyVolume,
-        transactions,
-        girocardPercentage,
-        mastercardVisaPercentage,
-        vpayPercentage,
-        businessCardPercentage,
-        girocardVolume,
-        mastercardVisaVolume,
-        vpayVolume,
-        businessCardVolume,
-        girocardFeeRate,
-        girocardCost,
-        mastercardVisaCost,
-        vpayCost,
-        businessCardCost,
-        transactionCost,
-        totalDishPayFees,
-        totalSales,
-        totalDishPayFeesPercentage,
-        purchaseOption,
-        rentalDuration,
-        hardwareSelection,
-        hardwareCost,
-        simServiceFee,
-        oneTimeCost,
-        totalMonthlyCost
-    };
-}
-
-// Hauptfunktion zur Berechnung der Kosten
-function startCalculation() {
-    // Validierung der Eingaben
-    if (!validateInputs()) {
-        return;
-    }
-
-    // Berechnungen durchführen
-    const calculationData = getCalculationData();
-
-    if (!calculationData) {
-        return;
-    }
-
-    // Ergebnisdarstellung aktualisieren
-    displayResults(calculationData);
-
-    // Bon-Animation anzeigen
-    showReceiptAnimation(calculationData);
+    // Ergebnis anzeigen
+    const resultArea = document.getElementById('payResultArea');
+    resultArea.innerHTML = `
+        <h2>Angebot für ${salutation} ${customerName}</h2>
+        <p>Vielen Dank für Ihr Interesse an DISH PAY!</p>
+        <table class="result-table">
+            <tr>
+                <th>Posten</th>
+                <th>Betrag (€)</th>
+            </tr>
+            <tr>
+                <td>Girocard Gebühren</td>
+                <td>${girocardCost.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Mastercard/VISA Gebühren</td>
+                <td>${mastercardVisaCost.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Transaktionskosten</td>
+                <td>${transactionCost.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <th>Gesamtkosten</th>
+                <th>${totalFees.toFixed(2)}</th>
+            </tr>
+        </table>
+        <p>Dieses Angebot ist unverbindlich und dient zu Ihrer Information.</p>
+    `;
 
     // E-Mail-Button aktivieren
-    document.getElementById('sendEmailButton').disabled = false;
+    document.getElementById('paySendEmailButton').disabled = false;
 }
 
-// Funktion zur Anzeige der Ergebnisse
-function displayResults(data) {
-    // Ergebnisbereich aktualisieren (kann angepasst werden, wenn notwendig)
+function sendPayEmail() {
+    const salutation = document.getElementById('paySalutation').value;
+    const customerName = document.getElementById('payCustomerName').value.trim();
+
+    // Angebotstext generieren
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    const emailContent = document.getElementById('emailContent');
+    const resultArea = document.getElementById('payResultArea');
+
+    emailContent.innerHTML = resultArea.innerHTML;
+
+    // Modal anzeigen
+    emailContentContainer.classList.remove('hidden');
 }
 
-// Funktion zum Versenden des Angebots per E-Mail
-function sendEmail() {
-    const calculationData = getCalculationData();
-    if (!calculationData) {
+function closeEmailContent() {
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    emailContentContainer.classList.add('hidden');
+}
+
+/* POS-Rechner-Funktionen */
+function calculatePos() {
+    // Eingaben validieren
+    const salutation = document.getElementById('posSalutation').value;
+    const customerName = document.getElementById('posCustomerName').value.trim();
+    const customerNameError = document.getElementById('posCustomerNameError');
+
+    if (!customerName) {
+        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
         return;
+    } else {
+        customerNameError.textContent = '';
     }
 
-    const {
-        salutation,
-        customerName,
-        totalMonthlyCost,
-        totalDishPayFeesPercentage,
-        purchaseOption,
-        hardwareSelection,
-        currentLanguage
-    } = calculationData;
+    // Preise definieren
+    const prices = {
+        hardware: {
+            sunmi: 493.00,
+            tse: 159.00,
+            menueingabe: 300.00,
+            einrichtung: 599.00,
+            handheld: 220.00,
+            drucker: 229.00,
+            ladestation: 79.00,
+            accesspoint: 189.00,
+            router: 55.00,
+            switch: 107.00
+        },
+        optional: {
+            kassenschublade: 69.00,
+            qrOrdering: 49.00,
+            aggregator: 59.00
+        },
+        licenses: {
+            hauptlizenz: 69.00,
+            datev: 25.00,
+            gutschein: 10.00,
+            tap2pay: 7.50
+        }
+    };
 
-    // E-Mail-Inhalt vorbereiten
-    const subject = encodeURIComponent("Ihr DISH PAY Angebot");
-    let body = `${salutation} ${customerName},\n\n`;
-    body += "Vielen Dank für Ihr Interesse an DISH PAY.\n\n";
-    body += "Wir freuen uns, Ihnen folgendes unverbindliches Angebot unterbreiten zu dürfen:\n\n";
-    body += `Gesamtkosten: ${totalMonthlyCost.toFixed(2)} €\n`;
-    body += `Durchschnittliche Gebühr: ${totalDishPayFeesPercentage}%\n`;
-    body += `Hardware: ${hardwareSelection} (${purchaseOption})\n\n`;
-    body += "Dieses Angebot ist unverbindlich und dient zu Ihrer Information.\n\n";
-    body += "Mit freundlichen Grüßen,\nIhr DISH PAY Team";
+    // Eingaben auslesen
+    const quantities = {
+        sunmi: parseInt(document.getElementById('sunmi').value) || 0,
+        // ... weitere Hardware-Komponenten
+    };
 
-    body = encodeURIComponent(body);
+    const options = {
+        kassenschublade: document.getElementById('kassenschublade').checked,
+        // ... weitere Optionen
+    };
 
-    // Mailto-Link erstellen
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    const licenses = {
+        hauptlizenz: document.getElementById('hauptlizenz').checked,
+        // ... weitere Lizenzen
+    };
+
+    // Berechnungen durchführen
+    let totalHardwareCost = 0;
+    totalHardwareCost += quantities.sunmi * prices.hardware.sunmi;
+    // ... weitere Berechnungen
+
+    let totalOptionalCost = 0;
+    if (options.kassenschublade) {
+        totalOptionalCost += prices.optional.kassenschublade;
+    }
+    // ... weitere Berechnungen
+
+    let totalMonthlyCost = 0;
+    if (licenses.hauptlizenz) {
+        totalMonthlyCost += prices.licenses.hauptlizenz;
+    }
+    // ... weitere Berechnungen
+
+    // Ergebnis anzeigen
+    const resultArea = document.getElementById('posResultArea');
+    resultArea.innerHTML = `
+        <h2>Angebot für ${salutation} ${customerName}</h2>
+        <p>Vielen Dank für Ihr Interesse an DISH POS!</p>
+        <table class="result-table">
+            <tr>
+                <th>Posten</th>
+                <th>Betrag (€)</th>
+            </tr>
+            <tr>
+                <td>Gesamtkosten Hardware</td>
+                <td>${totalHardwareCost.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Optionale Kosten</td>
+                <td>${totalOptionalCost.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Monatliche Kosten</td>
+                <td>${totalMonthlyCost.toFixed(2)}</td>
+            </tr>
+        </table>
+        <p>Dieses Angebot ist unverbindlich und dient zu Ihrer Information.</p>
+    `;
+
+    // E-Mail-Button aktivieren
+    document.getElementById('posSendEmailButton').disabled = false;
 }
 
-// Funktion zur Anzeige der Bon-Animation
-function showReceiptAnimation(data) {
-    const receiptContainer = document.getElementById('receiptContainer');
-    const receiptContent = document.getElementById('receiptContent');
+function sendPosEmail() {
+    const salutation = document.getElementById('posSalutation').value;
+    const customerName = document.getElementById('posCustomerName').value.trim();
 
-    // Bon-Inhalt erstellen
-    let receiptHtml = `<h4>${data.customerName}</h4>`;
-    receiptHtml += `<p>Vielen Dank für Ihr Interesse an DISH PAY!</p>`;
-    receiptHtml += `<p>Wir freuen uns, Ihnen folgendes unverbindliches Angebot zu unterbreiten:</p>`;
-    receiptHtml += `<table>`;
-    receiptHtml += `<tr><td>Gesamtkosten:</td><td>${data.totalMonthlyCost.toFixed(2)} €</td></tr>`;
-    receiptHtml += `<tr><td>Durchschnittliche Gebühr:</td><td>${data.totalDishPayFeesPercentage}%</td></tr>`;
-    receiptHtml += `<tr><td>Hardware:</td><td>${data.hardwareSelection} (${data.purchaseOption})</td></tr>`;
-    receiptHtml += `</table>`;
-    receiptHtml += `<p>Dieses Angebot ist unverbindlich und dient zu Ihrer Information.</p>`;
+    // Angebotstext generieren
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    const emailContent = document.getElementById('emailContent');
+    const resultArea = document.getElementById('posResultArea');
 
-    receiptContent.innerHTML = receiptHtml;
+    emailContent.innerHTML = resultArea.innerHTML;
 
-    // Animation starten
-    receiptContainer.classList.remove('hidden');
-    receiptContainer.classList.add('animate');
+    // Modal anzeigen
+    emailContentContainer.classList.remove('hidden');
+}
 
-    // Nach der Animation den Bon in die Ecke verschieben
-    setTimeout(() => {
-        receiptContainer.classList.remove('animate');
-        receiptContainer.classList.add('pinned');
+/* TOOLS-Rechner-Funktionen */
+function calculateTools() {
+    // Eingaben validieren
+    const salutation = document.getElementById('toolsSalutation').value;
+    const customerName = document.getElementById('toolsCustomerName').value.trim();
+    const customerNameError = document.getElementById('toolsCustomerNameError');
 
-        // Nach einigen Sekunden den Bon wieder ausblenden
-        setTimeout(() => {
-            receiptContainer.classList.add('hidden');
-            receiptContainer.classList.remove('pinned');
-        }, 5000); // Bon bleibt 5 Sekunden in der Ecke
-    }, 3000); // Dauer der Animation (3 Sekunden)
+    if (!customerName) {
+        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
+        return;
+    } else {
+        customerNameError.textContent = '';
+    }
+
+    // Preise definieren
+    const prices = {
+        dishStarter: {
+            monatlich: 10.00,
+            aktivierung: 69.00
+        },
+        dishReservation: {
+            monatlich12: 44.00,
+            monatlich36: 34.90,
+            monatlich3: 49.00,
+            aktivierung: 69.00
+        },
+        dishOrder: {
+            monatlich12: 49.90,
+            monatlich3: 59.90,
+            aktivierung: 299.00
+        },
+        dishPremium: {
+            monatlich12: 69.90,
+            monatlich3: 79.90,
+            aktivierung: 279.00
+        }
+    };
+
+    // Eingaben auslesen
+    const solutions = {
+        dishStarter: document.getElementById('dishStarter').checked,
+        // ... weitere Lösungen
+    };
+
+    // Vertragslaufzeiten auslesen (wenn zutreffend)
+    // ...
+
+    // Berechnungen durchführen
+    let totalMonthlyCost = 0;
+    let totalActivationCost = 0;
+
+    if (solutions.dishStarter) {
+        totalMonthlyCost += prices.dishStarter.monatlich;
+        totalActivationCost += prices.dishStarter.aktivierung;
+    }
+    // ... weitere Berechnungen
+
+    // Ergebnis anzeigen
+    const resultArea = document.getElementById('toolsResultArea');
+    resultArea.innerHTML = `
+        <h2>Angebot für ${salutation} ${customerName}</h2>
+        <p>Vielen Dank für Ihr Interesse an DISH TOOLS!</p>
+        <table class="result-table">
+            <tr>
+                <th>Posten</th>
+                <th>Betrag (€)</th>
+            </tr>
+            <tr>
+                <td>Monatliche Kosten</td>
+                <td>${totalMonthlyCost.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Aktivierungsgebühren</td>
+                <td>${totalActivationCost.toFixed(2)}</td>
+            </tr>
+        </table>
+        <p>Dieses Angebot ist unverbindlich und dient zu Ihrer Information.</p>
+    `;
+
+    // E-Mail-Button aktivieren
+    document.getElementById('toolsSendEmailButton').disabled = false;
+}
+
+function sendToolsEmail() {
+    const salutation = document.getElementById('toolsSalutation').value;
+    const customerName = document.getElementById('toolsCustomerName').value.trim();
+
+    // Angebotstext generieren
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    const emailContent = document.getElementById('emailContent');
+    const resultArea = document.getElementById('toolsResultArea');
+
+    emailContent.innerHTML = resultArea.innerHTML;
+
+    // Modal anzeigen
+    emailContentContainer.classList.remove('hidden');
+}
+
+function closeEmailContent() {
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    emailContentContainer.classList.add('hidden');
 }
