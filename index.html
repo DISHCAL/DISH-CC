@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>DISH PAY Rechner</title>
+    <title>DISH Tools</title>
     <!-- Meta-Tags für responsives Design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Verlinkung der CSS-Datei -->
@@ -19,135 +19,175 @@
 </head>
 <body>
     <div class="container">
-        <h1>DISH PAY Rechner</h1>
+        <h1>DISH Tools</h1>
 
-        <!-- Kundeninformationen -->
-        <div class="customer-input">
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-link active" onclick="openCalculator(event, 'pay')">PAY</button>
+            <button class="tab-link" onclick="openCalculator(event, 'pos')">POS</button>
+            <button class="tab-link" onclick="openCalculator(event, 'tools')">TOOLS</button>
+        </div>
+
+        <!-- PAY Rechner -->
+        <div id="pay" class="tab-content active">
+            <!-- PAY-Rechner-Inhalte -->
+            <!-- Kundeninformationen -->
+            <div class="customer-input">
+                <div class="input-group">
+                    <label for="payCustomerName">Anrede und Name:<span class="required">*</span></label>
+                    <div class="name-group">
+                        <select id="paySalutation">
+                            <option value="Herr">Herr</option>
+                            <option value="Frau">Frau</option>
+                        </select>
+                        <input type="text" id="payCustomerName" placeholder="Vor- und Nachname" required>
+                    </div>
+                    <small class="error-message" id="payCustomerNameError"></small>
+                </div>
+            </div>
+
+            <!-- Eingabefelder für PAY-Rechner -->
             <div class="input-group">
-                <label for="salutation">Anrede und Name:<span class="required">*</span></label>
-                <div class="name-group">
-                    <select id="salutation">
-                        <option value="Herr">Herr</option>
-                        <option value="Frau">Frau</option>
-                    </select>
-                    <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
+                <label for="payMonthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span class="required">*</span></label>
+                <input type="number" id="payMonthlyVolume" placeholder="z.B. 20000" required>
+                <small class="error-message" id="payMonthlyVolumeError"></small>
+            </div>
+
+            <div class="input-group">
+                <label for="payTransactions">Erwartete Anzahl an monatlichen Transaktionen:<span class="required">*</span></label>
+                <input type="number" id="payTransactions" placeholder="z.B. 400" required>
+                <small class="error-message" id="payTransactionsError"></small>
+            </div>
+
+            <!-- Prozentangaben für Kartentypen -->
+            <div class="input-group">
+                <label>Kartenarten Anteil (Summe muss 100% ergeben):</label>
+                <div class="percentage-group">
+                    <label for="payGirocard">Girocard (%):<span class="required">*</span></label>
+                    <input type="number" id="payGirocard" placeholder="z.B. 70" required>
+                    <small class="error-message" id="payGirocardError"></small>
                 </div>
-                <small class="error-message" id="customerNameError"></small>
+                <div class="percentage-group">
+                    <label for="payMastercardVisa">Mastercard / VISA (%):<span class="required">*</span></label>
+                    <input type="number" id="payMastercardVisa" placeholder="z.B. 30" required>
+                    <small class="error-message" id="payMastercardVisaError"></small>
+                </div>
+                <small class="error-message" id="payPercentageError"></small>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button onclick="calculatePay()">Berechnen</button>
+                <button id="paySendEmailButton" onclick="sendPayEmail()" disabled>Angebot per E-Mail anzeigen</button>
+            </div>
+
+            <!-- Ergebnisbereich -->
+            <div id="payResultArea" class="result-section">
+                <!-- Ergebnis wird hier eingefügt -->
             </div>
         </div>
 
-        <!-- Berechnungsart -->
-        <div class="input-group">
-            <label for="calculationType">Berechnungsart:</label>
-            <select id="calculationType" onchange="toggleCalculationFields()">
-                <option value="schnell">Schnelle Berechnung</option>
-                <option value="ausfuehrlich">Ausführliche Berechnung</option>
-            </select>
-        </div>
-
-        <!-- Eingabefelder für Berechnung -->
-        <div class="input-group">
-            <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€):<span class="required">*</span>
-                <i class="fa fa-info-circle"
-                   data-tippy-content="Der erwartete Gesamtumsatz aller Kartenzahlungen pro Monat."></i>
-            </label>
-            <input type="number" id="monthlyVolume" placeholder="z.B. 20000" required>
-            <small class="error-message" id="monthlyVolumeError"></small>
-        </div>
-
-        <div class="input-group">
-            <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen:<span class="required">*</span>
-                <i class="fa fa-info-circle"
-                   data-tippy-content="Die geschätzte Anzahl der Kartenzahlungen pro Monat."></i>
-            </label>
-            <input type="number" id="transactions" placeholder="z.B. 400" required>
-            <small class="error-message" id="transactionsError"></small>
-        </div>
-
-        <!-- Prozentangaben für Kartentypen -->
-        <div class="input-group">
-            <label>Kartenarten Anteil (Summe muss 100% ergeben):</label>
-            <div class="percentage-group">
-                <label for="girocard">Girocard (%):<span class="required">*</span>
-                    <i class="fa fa-info-circle"
-                       data-tippy-content="Der prozentuale Anteil der Girocard-Zahlungen am Gesamtumsatz."></i>
-                </label>
-                <input type="number" id="girocard" placeholder="z.B. 70" required>
-                <small class="error-message" id="girocardError"></small>
-            </div>
-            <div class="percentage-group">
-                <label for="mastercardVisa">Mastercard / VISA (%):<span class="required">*</span>
-                    <i class="fa fa-info-circle"
-                       data-tippy-content="Der prozentuale Anteil der Mastercard/VISA-Zahlungen am Gesamtumsatz."></i>
-                </label>
-                <input type="number" id="mastercardVisa" placeholder="z.B. 30" required>
-                <small class="error-message" id="mastercardVisaError"></small>
-            </div>
-            <!-- Zusätzliche Felder für ausführliche Berechnung -->
-            <div id="vpayField" class="hidden percentage-group">
-                <label for="vpay">Maestro / VPAY (%):</label>
-                <input type="number" id="vpay" placeholder="z.B. 0">
-                <small class="error-message" id="vpayError"></small>
-            </div>
-            <div id="businessCardField" class="hidden percentage-group">
-                <label for="businessCard">Business Card (%):</label>
-                <input type="number" id="businessCard" placeholder="z.B. 0">
-                <small class="error-message" id="businessCardError"></small>
-            </div>
-            <small class="error-message" id="percentageError"></small>
-        </div>
-
-        <!-- Kauf oder Miete -->
-        <div class="input-group">
-            <label for="purchaseOption">Kauf oder Miete:</label>
-            <select id="purchaseOption" onchange="toggleRentalOptions()">
-                <option value="kaufen">Kauf</option>
-                <option value="mieten">Miete</option>
-            </select>
-        </div>
-
-        <!-- Mietdauer (wird angezeigt, wenn 'Mieten' ausgewählt ist) -->
-        <div id="rentalDurationSection" class="input-group hidden">
-            <label for="rentalDuration">Mietdauer:</label>
-            <select id="rentalDuration">
-                <option value="12M">12 Monate</option>
-                <option value="36M">36 Monate</option>
-                <option value="60M">60 Monate</option>
-            </select>
-        </div>
-
-        <!-- Hardware -->
-        <div class="input-group">
-            <label for="hardware">Hardware auswählen:</label>
-            <select id="hardware">
-                <!-- Optionen werden dynamisch durch JavaScript hinzugefügt -->
-            </select>
-        </div>
-
-        <!-- Buttons -->
-        <div class="button-group">
-            <button id="calculateButton">Berechnen</button>
-            <button id="sendEmailButton" disabled>Angebot per E-Mail versenden</button>
-        </div>
-
-        <!-- Ergebnisbereich -->
-        <div id="resultArea" class="result-section">
-            <!-- Bon-Animation -->
-            <div id="receiptContainer" class="receipt-container hidden">
-                <div id="receiptContent" class="receipt-content">
-                    <!-- Der Inhalt des Bons wird dynamisch generiert -->
+        <!-- POS Rechner -->
+        <div id="pos" class="tab-content hidden">
+            <!-- POS-Rechner-Inhalte -->
+            <!-- Kundeninformationen -->
+            <div class="customer-input">
+                <div class="input-group">
+                    <label for="posCustomerName">Anrede und Name:<span class="required">*</span></label>
+                    <div class="name-group">
+                        <select id="posSalutation">
+                            <option value="Herr">Herr</option>
+                            <option value="Frau">Frau</option>
+                        </select>
+                        <input type="text" id="posCustomerName" placeholder="Vor- und Nachname" required>
+                    </div>
+                    <small class="error-message" id="posCustomerNameError"></small>
                 </div>
             </div>
+
+            <!-- Eingabefelder für POS-Rechner -->
+            <h3>Hardware-Komponenten</h3>
+            <div class="input-group">
+                <label for="sunmi">Bildschirm Sunmi:</label>
+                <input type="number" id="sunmi" placeholder="Anzahl">
+            </div>
+            <!-- Fügen Sie hier weitere Hardware-Eingabefelder hinzu -->
+
+            <h3>Optionales Zubehör</h3>
+            <div class="input-group">
+                <input type="checkbox" id="kassenschublade">
+                <label for="kassenschublade">Kassenschublade</label>
+            </div>
+            <!-- Weitere optionale Zubehörteile -->
+
+            <h3>Monatliche Lizenzen und Services</h3>
+            <div class="input-group">
+                <input type="checkbox" id="hauptlizenz">
+                <label for="hauptlizenz">Hauptlizenz Software</label>
+            </div>
+            <!-- Weitere Lizenzen und Services -->
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button onclick="calculatePos()">Berechnen</button>
+                <button id="posSendEmailButton" onclick="sendPosEmail()" disabled>Angebot per E-Mail anzeigen</button>
+            </div>
+
+            <!-- Ergebnisbereich -->
+            <div id="posResultArea" class="result-section">
+                <!-- Ergebnis wird hier eingefügt -->
+            </div>
         </div>
 
-        <!-- Gebührenhinweis -->
-        <h4>Hinweis zu den Gebühren:</h4>
-        <p>Transaktionspreis: 0,06 € pro Transaktion</p>
-        <p>Girocard-Gebühr bis 10.000 € monatlich: 0,39%</p>
-        <p>Girocard-Gebühr über 10.000 € monatlich: 0,29%</p>
-        <p>Disagio Maestro / VPAY: 0,89%</p>
-        <p>Disagio Mastercard/VISA Privatkunden: 0,89%</p>
-        <p>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%</p>
+        <!-- TOOLS Rechner -->
+        <div id="tools" class="tab-content hidden">
+            <!-- TOOLS-Rechner-Inhalte -->
+            <!-- Kundeninformationen -->
+            <div class="customer-input">
+                <div class="input-group">
+                    <label for="toolsCustomerName">Anrede und Name:<span class="required">*</span></label>
+                    <div class="name-group">
+                        <select id="toolsSalutation">
+                            <option value="Herr">Herr</option>
+                            <option value="Frau">Frau</option>
+                        </select>
+                        <input type="text" id="toolsCustomerName" placeholder="Vor- und Nachname" required>
+                    </div>
+                    <small class="error-message" id="toolsCustomerNameError"></small>
+                </div>
+            </div>
+
+            <!-- Eingabefelder für TOOLS-Rechner -->
+            <h3>DISH Lösungen</h3>
+            <div class="input-group">
+                <input type="checkbox" id="dishStarter">
+                <label for="dishStarter">DISH STARTER</label>
+            </div>
+            <!-- Weitere DISH-Lösungen mit Auswahl der Vertragslaufzeit -->
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button onclick="calculateTools()">Berechnen</button>
+                <button id="toolsSendEmailButton" onclick="sendToolsEmail()" disabled>Angebot per E-Mail anzeigen</button>
+            </div>
+
+            <!-- Ergebnisbereich -->
+            <div id="toolsResultArea" class="result-section">
+                <!-- Ergebnis wird hier eingefügt -->
+            </div>
+        </div>
+
+        <!-- Modal für Angebotstext -->
+        <div id="emailContentContainer" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeEmailContent()">&times;</span>
+                <div id="emailContent">
+                    <!-- Angebotstext wird hier eingefügt -->
+                </div>
+                <button onclick="closeEmailContent()">Schließen</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- JavaScript-Dateien einbinden -->
