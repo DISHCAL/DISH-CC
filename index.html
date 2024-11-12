@@ -164,14 +164,18 @@
         <!-- Buttons -->
         <div class="button-group">
             <button id="calculateButton" data-i18n="calculate_button">Berechnen</button>
-            <button id="downloadPdfButton" disabled data-i18n="downloadPdf_button">PDF Angebot herunterladen</button>
             <button id="sendEmailButton" disabled data-i18n="sendEmail_button">Angebot per E-Mail versenden</button>
             <button id="startTourButton" data-i18n="startTour_button">Assistent starten</button>
         </div>
 
         <!-- Ergebnisbereich -->
         <div id="resultArea" class="result-section">
-            <!-- Bon-Animation wurde entfernt -->
+            <!-- Bon-Animation -->
+            <div id="receiptContainer" class="receipt-container hidden">
+                <div id="receiptContent" class="receipt-content">
+                    <!-- Der Inhalt des Bons wird dynamisch generiert -->
+                </div>
+            </div>
         </div>
 
         <!-- Gebührenhinweis -->
@@ -184,15 +188,7 @@
         <p data-i18n="fees_note_mastercard_visa_business">Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%</p>
     </div>
 
-    <!-- Fortschrittsanzeige -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-    </div>
-
     <!-- JavaScript-Dateien einbinden -->
-    <!-- Einbindung von jsPDF und jsPDF-AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <!-- Tippy.js -->
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.min.js"></script>
@@ -200,6 +196,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/8.4.1/js/shepherd.min.js"></script>
     <!-- Eigene Skripte -->
     <script src="script.js"></script>
-    <script src="pdf-generator.js"></script>
 </body>
 </html>
