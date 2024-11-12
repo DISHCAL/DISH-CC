@@ -5,6 +5,7 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #fff;
 }
 
 /* Container */
@@ -12,6 +13,12 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+}
+
+/* Überschrift */
+h1 {
+    text-align: center;
+    color: #FF7F00; /* Orange */
 }
 
 /* Eingabefelder */
@@ -23,6 +30,7 @@ body {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
+    color: #333;
 }
 
 .input-group input,
@@ -30,6 +38,11 @@ body {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
+}
+
+.input-group input.error,
+.input-group select.error {
+    border: 2px solid red;
 }
 
 .error-message {
@@ -45,6 +58,15 @@ body {
 .button-group button {
     padding: 10px 20px;
     margin-right: 10px;
+    background-color: #FF7F00; /* Orange */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.button-group button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 /* Ergebnisbereich */
@@ -63,7 +85,7 @@ body {
 .receipt-content {
     background-color: #fff;
     padding: 20px;
-    border: 1px dashed #000;
+    border: 1px dashed #FF7F00; /* Orange */
     font-size: 14px;
 }
 
