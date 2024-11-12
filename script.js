@@ -34,7 +34,6 @@ const translations = {
         rentalDuration_60M: "60 Monate",
         hardware_label: "Hardware auswählen:",
         calculate_button: "Berechnen",
-        downloadPdf_button: "PDF Angebot herunterladen",
         sendEmail_button: "Angebot per E-Mail versenden",
         startTour_button: "Assistent starten",
         feesNote_header: "Hinweis zu den Gebühren:",
@@ -55,11 +54,10 @@ const translations = {
         required_field: "Dieses Feld ist erforderlich.",
         invalid_number: "Bitte geben Sie eine gültige positive Zahl ein.",
         calculation_error: "Es ist ein Fehler bei der Berechnung aufgetreten. Bitte versuchen Sie es erneut.",
-        email_hint: "Bitte laden Sie das PDF-Angebot herunter und fügen Sie es manuell an die E-Mail an.",
         email_subject: "Ihr DISH PAY Angebot",
-        email_greeting: "Sehr geehrte",
-        email_body: "anbei erhalten Sie Ihr DISH PAY Angebot.",
-        email_attachment: "Bitte finden Sie das angehängte PDF-Angebot.",
+        email_greeting: "Sehr geehrte/r",
+        email_body: "anbei erhalten Sie Ihr DISH PAY Angebot:\n\n",
+        email_attachment: "Bitte finden Sie das angehängte Angebot.",
         savings_with_DISH_PAY: "Ersparnis mit DISH PAY",
         percentage_error: "Die Summe der Prozentangaben muss 100% ergeben.",
         hardwareType_S1F2_kaufen: "S1F2 Terminal - Kauf: 499,00 €",
@@ -106,7 +104,6 @@ const translations = {
         rentalDuration_60M: "60 Months",
         hardware_label: "Select Hardware:",
         calculate_button: "Calculate",
-        downloadPdf_button: "Download PDF Offer",
         sendEmail_button: "Send Offer via Email",
         startTour_button: "Start Assistant",
         feesNote_header: "Note on Fees:",
@@ -127,11 +124,10 @@ const translations = {
         required_field: "This field is required.",
         invalid_number: "Please enter a valid positive number.",
         calculation_error: "An error occurred during the calculation. Please try again.",
-        email_hint: "Please download the PDF offer and manually attach it to the email.",
         email_subject: "Your DISH PAY Offer",
         email_greeting: "Dear",
-        email_body: "please find your DISH PAY offer attached.",
-        email_attachment: "Please find the attached PDF offer.",
+        email_body: "Please find your DISH PAY offer below:\n\n",
+        email_attachment: "Please find the attached offer.",
         savings_with_DISH_PAY: "Savings with DISH PAY",
         percentage_error: "The sum of percentage inputs must equal 100%.",
         hardwareType_S1F2_kaufen: "S1F2 Terminal - Purchase: €499.00",
@@ -187,11 +183,7 @@ function applyTranslations() {
 
     // Aktualisiere die Tour-Schritte mit der neuen Sprache
     if (window.tour) {
-        window.tour.steps.forEach(step => {
-            if (translations[currentLanguage][step.text.split('.')[0]]) {
-                step.text = translations[currentLanguage][step.text.split('.')[0]];
-            }
-        });
+        initializeTour(); // Tour neu initialisieren
     }
 }
 
@@ -227,17 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateButton = document.getElementById('calculateButton');
     if (calculateButton) {
         calculateButton.addEventListener('click', startCalculation);
-    }
-
-    const downloadPdfButton = document.getElementById('downloadPdfButton');
-    if (downloadPdfButton) {
-        downloadPdfButton.addEventListener('click', () => {
-            const calculationData = getCalculationData();
-            if (calculationData) {
-                calculationData.currentLanguage = currentLanguage; // Sprache hinzufügen
-                generatePDF(calculationData);
-            }
-        });
     }
 
     const sendEmailButton = document.getElementById('sendEmailButton');
@@ -576,51 +557,21 @@ function startCalculation() {
         return;
     }
 
-    // Fortschrittsanzeige einblenden
-    document.getElementById('loadingOverlay').classList.remove('hidden');
-
-    // Berechnungen asynchron durchführen
+    // Berechnungen durchführen
     const calculationData = getCalculationData();
 
     if (!calculationData) {
-        // Wenn keine Berechnungsdaten vorhanden sind, lade Overlay ausblenden und abbrechen
-        document.getElementById('loadingOverlay').classList.add('hidden');
         return;
     }
 
-    performCalculations(calculationData).then((resultData) => {
-        // Sobald die Berechnungen abgeschlossen sind, lade Overlay ausblenden
-        document.getElementById('loadingOverlay').classList.add('hidden');
+    // Ergebnisdarstellung aktualisieren
+    displayResults(calculationData);
 
-        // Ergebnisdarstellung aktualisieren
-        displayResults(resultData);
+    // Bon-Animation anzeigen
+    showReceiptAnimation(calculationData);
 
-        // PDF- und E-Mail-Buttons aktivieren
-        document.getElementById('downloadPdfButton').disabled = false;
-        document.getElementById('sendEmailButton').disabled = false;
-    }).catch((error) => {
-        // Fehlerbehandlung
-        console.error("Fehler bei den Berechnungen:", error);
-        document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(translations[currentLanguage]['calculation_error']);
-    });
-}
-
-// Beispiel für eine Funktion, die asynchrone Berechnungen simuliert
-function performCalculations(calculationData) {
-    return new Promise((resolve, reject) => {
-        try {
-            // Simuliere eine Verzögerung für die Berechnungen, z.B. durch API-Aufruf oder komplexe Operationen
-            setTimeout(() => {
-                // In einem realen Szenario würden hier komplexe Berechnungen oder API-Aufrufe stehen
-                // Für dieses Beispiel nutzen wir die bereits berechneten Daten
-
-                resolve(calculationData);
-            }, 2000);  // Diese Zeit könnte je nach Komplexität der Berechnungen angepasst werden
-        } catch (error) {
-            reject(error);
-        }
-    });
+    // E-Mail-Button aktivieren
+    document.getElementById('sendEmailButton').disabled = false;
 }
 
 // Funktion zur Anzeige der Ergebnisse
@@ -663,30 +614,60 @@ function displayResults(data) {
 
     resultHtml += '</table>';
 
-    // Ergebnisbereich aktualisieren und Daten für die Bon-Animation speichern (wurde entfernt)
+    // Ergebnisbereich aktualisieren
     const resultArea = document.getElementById('resultArea');
     resultArea.innerHTML = resultHtml;
-    resultArea.dataset.totalMonthlyCost = totalMonthlyCost.toFixed(2);
-    resultArea.dataset.totalDishPayFeesPercentage = totalDishPayFeesPercentage;
 }
 
 // Funktion zum Versenden des Angebots per E-Mail
 function sendEmail() {
-    const customerName = document.getElementById('customerName').value;
-    const salutation = document.getElementById('salutation').value;
+    const calculationData = getCalculationData();
+    if (!calculationData) {
+        return;
+    }
 
-    // Hinweis anzeigen
-    alert(translations[currentLanguage]['email_hint']);
+    const {
+        salutation,
+        customerName,
+        purchaseOption,
+        simServiceFee,
+        oneTimeCost,
+        hardwareCost,
+        totalMonthlyCost,
+        totalDishPayFees,
+        totalDishPayFeesPercentage,
+        calculationType,
+        totalCompetitorCost,
+        savings,
+        currentLanguage
+    } = calculationData;
 
     // E-Mail-Inhalt vorbereiten
     const subject = encodeURIComponent(translations[currentLanguage]['email_subject']);
-    const body = encodeURIComponent(`${translations[currentLanguage]['email_greeting']} ${salutation} ${customerName},\n\n${translations[currentLanguage]['email_body']}\n\n${translations[currentLanguage]['email_attachment']}\n\nMit freundlichen Grüßen,\nIhr Team`);
+    let body = `${translations[currentLanguage]['email_greeting']} ${salutation} ${customerName},\n\n`;
+    body += translations[currentLanguage]['email_body'];
+
+    body += `\n\n${translations[currentLanguage]['receiptTitle']}\n`;
+
+    if (purchaseOption === 'kaufen') {
+        body += `${translations[currentLanguage]['receiptTotalCosts']}: ${oneTimeCost !== '-' ? oneTimeCost.toFixed(2) + ' €' : '-'}\n`;
+        body += `${translations[currentLanguage]['receiptAverageFee']}: ${simServiceFee !== '-' ? parseFloat(simServiceFee).toFixed(2) + ' €' : '-'}\n`;
+    } else {
+        body += `${translations[currentLanguage]['receiptTotalCosts']}: ${hardwareCost.toFixed(2)} €\n`;
+    }
+
+    body += `${translations[currentLanguage]['receiptFeeAmount']}: ${totalDishPayFees.toFixed(2)} €\n`;
+    body += `${translations[currentLanguage]['receiptTotalSum']}: ${totalMonthlyCost.toFixed(2)} €\n`;
+
+    if (calculationType === 'ausfuehrlich') {
+        body += `\n${translations[currentLanguage]['competitorFees']}: ${totalCompetitorCost.toFixed(2)} €\n`;
+        body += `${translations[currentLanguage]['savingsWithDISH_PAY']}: ${savings.toFixed(2)} €\n`;
+    }
+
+    body = encodeURIComponent(body);
 
     // Mailto-Link erstellen
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
-
-    // Hinweis: Das automatische Anhängen von Dateien an E-Mails ist aus Sicherheitsgründen in Browsern nicht möglich.
-    // Der Benutzer muss das PDF manuell anhängen.
 }
 
 // Interaktiver Assistent initialisieren
@@ -714,7 +695,7 @@ function initializeTour() {
         text: translations[currentLanguage]['tour_step1'],
         buttons: [
             {
-                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
+                text: currentLanguage === 'de' ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -729,11 +710,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
+                text: currentLanguage === 'de' ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
+                text: currentLanguage === 'de' ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -748,11 +729,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
+                text: currentLanguage === 'de' ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
+                text: currentLanguage === 'de' ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -767,11 +748,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
+                text: currentLanguage === 'de' ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: translations[currentLanguage] === translations.de ? 'Weiter' : 'Next',
+                text: currentLanguage === 'de' ? 'Weiter' : 'Next',
                 action: window.tour.next,
             }
         ]
@@ -786,11 +767,11 @@ function initializeTour() {
         },
         buttons: [
             {
-                text: translations[currentLanguage] === translations.de ? 'Zurück' : 'Back',
+                text: currentLanguage === 'de' ? 'Zurück' : 'Back',
                 action: window.tour.back,
             },
             {
-                text: translations[currentLanguage] === translations.de ? 'Fertig' : 'Finish',
+                text: currentLanguage === 'de' ? 'Fertig' : 'Finish',
                 action: window.tour.complete,
             }
         ]
@@ -804,4 +785,33 @@ function startTour() {
     }
 }
 
-// Funktion zur Anzeige der Bon-Animation entfernt
+// Funktion zur Anzeige der Bon-Animation
+function showReceiptAnimation(data) {
+    const receiptContainer = document.getElementById('receiptContainer');
+    const receiptContent = document.getElementById('receiptContent');
+
+    // Bon-Inhalt erstellen
+    let receiptHtml = `<h4>${translations[data.currentLanguage]['receiptTitle']}</h4>`;
+    receiptHtml += `<p>${translations[data.currentLanguage]['salutation']}: ${data.salutation} ${data.customerName}</p>`;
+    receiptHtml += `<p>${translations[data.currentLanguage]['receiptTotalCosts']}: ${data.totalMonthlyCost.toFixed(2)} €</p>`;
+    receiptHtml += `<p>${translations[data.currentLanguage]['receiptAverageFee']}: ${data.totalDishPayFeesPercentage}%</p>`;
+    receiptHtml += `<p>${translations[data.currentLanguage]['receiptFeeAmount']}: ${data.totalDishPayFees.toFixed(2)} €</p>`;
+
+    receiptContent.innerHTML = receiptHtml;
+
+    // Animation starten
+    receiptContainer.classList.remove('hidden');
+    receiptContainer.classList.add('animate');
+
+    // Nach der Animation den Bon in die Ecke verschieben
+    setTimeout(() => {
+        receiptContainer.classList.remove('animate');
+        receiptContainer.classList.add('pinned');
+
+        // Nach einigen Sekunden den Bon wieder ausblenden
+        setTimeout(() => {
+            receiptContainer.classList.add('hidden');
+            receiptContainer.classList.remove('pinned');
+        }, 5000); // Bon bleibt 5 Sekunden in der Ecke
+    }, 3000); // Dauer der Animation (3 Sekunden)
+}
