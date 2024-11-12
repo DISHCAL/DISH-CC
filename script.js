@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Berechnungsfelder initialisieren
     toggleCalculationFields();
+    toggleRentalOptions();
 });
 
 function openCalculator(evt, calculatorName) {
@@ -160,9 +161,181 @@ const translations = {
 };
 
 /* PAY-Rechner-Funktionen */
-// (Der vollständige PAY-Rechner-Code ist hier enthalten)
-// ... (siehe vorherigen Codeabschnitt für den vollständigen Inhalt)
-// ...
+
+function toggleCalculationFields() {
+    const calculationType = document.getElementById('calculationType').value;
+    const businessCardField = document.getElementById('businessCardField');
+    const maestroField = document.getElementById('maestroField');
+    const competitorMaestroField = document.getElementById('competitorMaestroField');
+    const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
+    const competitorSection = document.getElementById('competitorSection');
+
+    if (calculationType === 'schnell' || calculationType === 'quick') {
+        businessCardField.classList.add('hidden');
+        maestroField.classList.add('hidden');
+        competitorMaestroField.classList.add('hidden');
+        competitorBusinessCardField.classList.add('hidden');
+        competitorSection.classList.add('hidden');
+    } else {
+        businessCardField.classList.remove('hidden');
+        maestroField.classList.remove('hidden');
+        competitorMaestroField.classList.remove('hidden');
+        competitorBusinessCardField.classList.remove('hidden');
+        competitorSection.classList.remove('hidden');
+    }
+}
+
+function toggleRentalOptions() {
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    const rentalOptions = document.getElementById('rentalOptions');
+    rentalOptions.style.display = purchaseOption === "mieten" || purchaseOption === "rent" ? 'block' : 'none';
+}
+
+function updateRentalPrices() {
+    const hardwareSelect = document.getElementById('hardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    const rentalPeriodSelect = document.getElementById('rentalPeriod');
+    const price12 = selectedHardware.getAttribute('data-price-12');
+    const price36 = selectedHardware.getAttribute('data-price-36');
+    const price60 = selectedHardware.getAttribute('data-price-60');
+
+    rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
+    rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
+    rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
+}
+
+function updateHardwareCosts() {
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    const hardwareSelect = document.getElementById('hardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+
+    const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
+    let monthlyCost = 0;
+
+    if (purchaseOption === "mieten" || purchaseOption === "rent") {
+        const rentalPeriod = document.getElementById('rentalPeriod').value;
+        if (rentalPeriod === "12") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
+        } else if (rentalPeriod === "36") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
+        } else if (rentalPeriod === "60") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
+        }
+    } else {
+        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
+    }
+
+    return { onceCost: priceOnce, monthlyCost };
+}
+
+function validatePercentages() {
+    const girocard = parseFloat(document.getElementById('girocard').value) || 0;
+    const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+    const maestro = parseFloat(document.getElementById('maestro').value) || 0;
+    const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
+
+    const totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+
+    if (totalPercentage !== 100) {
+        alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
+        return false;
+    }
+    return true;
+}
+
+function calculateCosts() {
+    if (!validatePercentages()) {
+        return;
+    }
+
+    // Kundendaten abrufen
+    const salutation = document.getElementById('salutation').value;
+    const customerName = document.getElementById('customerName').value.trim();
+    const customerNameError = document.getElementById('customerNameError');
+
+    if (!customerName) {
+        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
+        return;
+    } else {
+        customerNameError.textContent = '';
+    }
+
+    const calculationType = document.getElementById('calculationType').value;
+    const purchaseOption = document.getElementById('purchaseOption').value;
+    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
+    const transactions = parseFloat(document.getElementById('transactions').value) || 0;
+
+    const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
+    const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
+    const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
+    const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
+
+    const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
+
+    const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
+    const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
+    const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
+    const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
+
+    let girocardFeeRate = 0;
+    if (girocardRevenue <= 10000) {
+        girocardFeeRate = 0.0039; // 0,39%
+    } else {
+        girocardFeeRate = 0.0029; // 0,29%
+    }
+
+    const girocardFee = girocardRevenue * girocardFeeRate;
+    const mastercardVisaFee = mastercardVisaRevenue * 0.0089;
+    const maestroFee = maestroRevenue * 0.0089;
+    const businessCardFee = businessCardRevenue * 0.0289;
+
+    const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
+    const transactionFee = transactions * 0.06;
+
+    let simServiceFee = 0;
+    const hardwareSelectValue = document.getElementById('hardware').value;
+    if ((purchaseOption === "kaufen" || purchaseOption === "buy") && (hardwareSelectValue === "S1F2" || hardwareSelectValue === "V400C")) {
+        simServiceFee = 3.90;
+    }
+
+    const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
+
+    let resultHtml = `
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['resultsHeading']}</h3>
+        <div class="result-section">
+            <p>${(totalDisagioFees + transactionFee).toFixed(2)} € - ${translations[currentLanguage]['disagioFees']}</p>
+            ${ (purchaseOption === "mieten" || purchaseOption === "rent") ? `<p>${hardwareMonthlyCost.toFixed(2)} € - ${translations[currentLanguage]['monthlyCost']}</p>` : ''}
+            <p>${simServiceFee > 0 ? simServiceFee.toFixed(2) + ' € - ' + translations[currentLanguage]['simServiceFee'] : translations[currentLanguage]['noSimServiceFee']}</p>
+            <p>${totalMonthlyCost.toFixed(2)} € - ${translations[currentLanguage]['totalMonthlyCost']}</p>
+            ${(purchaseOption === "kaufen" || purchaseOption === "buy") ? `<p>${onceCost.toFixed(2)} € - ${translations[currentLanguage]['oneTimeCost']}</p>` : ''}
+    `;
+
+    if (calculationType === 'ausführlich' || calculationType === 'detailed') {
+        const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
+        const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
+        const competitorMastercardVisaFee = parseFloat(document.getElementById('competitorMastercardVisaFee').value) / 100 || 0;
+        const competitorBusinessCardFee = parseFloat(document.getElementById('competitorBusinessCardFee').value) / 100 || 0;
+
+        const competitorGirocardCost = girocardRevenue * competitorGirocardFee;
+        const competitorMaestroCost = maestroRevenue * competitorMaestroFee;
+        const competitorMastercardVisaCost = mastercardVisaRevenue * competitorMastercardVisaFee;
+        const competitorBusinessCardCost = businessCardRevenue * competitorBusinessCardFee;
+
+        const competitorTotalFees = competitorGirocardCost + competitorMaestroCost + competitorMastercardVisaCost + competitorBusinessCardCost + transactionFee + hardwareMonthlyCost + simServiceFee;
+
+        const savings = competitorTotalFees - totalMonthlyCost;
+
+        resultHtml += `
+            <p>${competitorTotalFees.toFixed(2)} € - ${translations[currentLanguage]['competitorTotal']}</p>
+            <p>${savings.toFixed(2)} € - ${translations[currentLanguage]['competitorSavings']}</p>
+        `;
+    }
+
+    resultHtml += `</div>`;
+
+    const resultArea = document.getElementById('result');
+    resultArea.innerHTML = resultHtml;
+}
 
 /* POS-Rechner-Funktionen */
 function calculatePos() {
