@@ -6,137 +6,59 @@ body {
     margin: 0;
     padding: 0;
     background-color: #fff;
+    color: #333;
 }
 
 h1, h2, h3, h4 {
     color: #FF7F00; /* Orange */
+    margin-bottom: 10px;
 }
 
 .container {
-    max-width: 1000px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header, footer {
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+main {
+    flex: 1;
     padding: 20px;
 }
 
 .top-bar {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
     flex-wrap: wrap;
-    margin-bottom: 20px;
-}
-
-.language-selector {
-    display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: space-between;
 }
 
-.language-selector label {
-    margin-right: 5px;
-}
-
+.language-selector,
 .customer-input {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    margin-left: 20px;
+    margin-bottom: 10px;
 }
 
 .name-group {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
 }
 
 .name-group select,
 .name-group input {
-    margin-right: 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
     padding: 8px;
     font-size: 16px;
-}
-
-.name-group select {
-    width: auto;
 }
 
 .name-group input {
-    flex-grow: 1;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.input-group input,
-.input-group select {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.input-group input.error,
-.input-group select.error {
-    border: 2px solid red;
-}
-
-.error-message {
-    color: red;
-    font-size: 12px;
-}
-
-.button-group {
-    margin-top: 20px;
-}
-
-.button-group button {
-    padding: 10px 20px;
-    margin-right: 10px;
-    background-color: #FF7F00; /* Orange */
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.button-group button:hover {
-    background-color: #e26900;
-}
-
-.button-group button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-.result-section {
-    margin-top: 30px;
-}
-
-.result-section p {
-    margin-bottom: 10px;
-    font-size: 16px;
-}
-
-.result-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.result-table th,
-.result-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.result-table th {
-    background-color: #FF7F00; /* Orange */
-    color: white;
+    flex: 1;
+    min-width: 200px;
 }
 
 .tabs {
@@ -167,45 +89,70 @@ h1, h2, h3, h4 {
     display: block;
 }
 
-.hidden {
-    display: none !important;
+.input-group {
+    margin-bottom: 15px;
 }
 
-.competitor-section {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    clear: both;
-}
-
-.hardware-item,
-.license-item,
-.tools-item {
-    margin-bottom: 10px;
-}
-
-.hardware-item label,
-.license-item label,
-.tools-item label {
+.input-group label {
     display: block;
+    font-weight: bold;
     margin-bottom: 5px;
-    font-weight: normal;
 }
 
-.hardware-item input[type="number"],
-.tools-item input[type="number"],
-.license-item input[type="number"] {
+.input-group input,
+.input-group select {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
 }
 
-.info-section {
+.hardware-item,
+.tools-item,
+.license-item,
+.discount-item {
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.button-group button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #FF7F00;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.button-group button:hover {
+    background-color: #e26900;
+}
+
+.result-section {
     margin-top: 30px;
+}
+
+.result-section p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.info-section {
+    margin-top: 20px;
+    background-color: #fff5e6;
     padding: 15px;
-    background-color: #f1f1f1;
-    border: 1px solid #ddd;
+    border: 1px solid #ffd699;
 }
 
 .info-section h4 {
@@ -242,7 +189,7 @@ h1, h2, h3, h4 {
 .modal-content {
     background-color: #fff;
     padding: 20px;
-    border: 1px solid #FF7F00; /* Orange */
+    border: 1px solid #FF7F00;
     width: 90%;
     max-width: 800px;
     position: relative;
@@ -269,29 +216,26 @@ h1, h2, h3, h4 {
     color: red;
 }
 
+.hidden {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .top-bar {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .customer-input {
-        margin-left: 0;
-        margin-top: 10px;
+    .tab-link {
+        font-size: 14px;
     }
 
-    .name-group {
+    .button-group {
         flex-direction: column;
     }
 
-    .name-group select,
-    .name-group input {
-        margin-right: 0;
+    .button-group button {
         margin-bottom: 10px;
         width: 100%;
-    }
-
-    .tab-link {
-        font-size: 14px;
     }
 }
