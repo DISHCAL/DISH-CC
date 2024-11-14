@@ -75,29 +75,29 @@
                 <!-- Geplanter Kartenumsatz -->
                 <div class="form-group">
                     <label for="monthlyVolume" data-lang="monthlyVolumeLabel">Geplanter Kartenumsatz pro Monat (€):</label>
-                    <input type="number" id="monthlyVolume">
+                    <input type="number" id="monthlyVolume" min="0">
                 </div>
                 <!-- Erwartete Transaktionen -->
                 <div class="form-group">
                     <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen:</label>
-                    <input type="number" id="transactions">
+                    <input type="number" id="transactions" min="0">
                 </div>
                 <!-- Kartenarten Prozentangaben -->
                 <div class="form-group">
                     <label for="girocard" data-lang="girocardLabel">Girocard (%):</label>
-                    <input type="number" id="girocard">
+                    <input type="number" id="girocard" min="0" max="100">
                 </div>
                 <div class="form-group">
                     <label for="mastercardVisa" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
-                    <input type="number" id="mastercardVisa">
+                    <input type="number" id="mastercardVisa" min="0" max="100">
                 </div>
                 <div class="form-group">
                     <label for="maestro" data-lang="maestroLabel">Maestro / VPAY (%):</label>
-                    <input type="number" id="maestro">
+                    <input type="number" id="maestro" min="0" max="100">
                 </div>
                 <div class="form-group">
                     <label for="businessCard" data-lang="businessCardLabel">Business Card (%):</label>
-                    <input type="number" id="businessCard">
+                    <input type="number" id="businessCard" min="0" max="100">
                 </div>
                 <!-- Kauf oder Miete -->
                 <div class="form-group">
@@ -111,9 +111,18 @@
                 <div class="form-group">
                     <label for="hardware" data-lang="hardwareLabel">Hardware auswählen:</label>
                     <select id="hardware">
-                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2</option>
-                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C</option>
-                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14</option>
+                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">
+                            S1F2 - Kauf: 499,00 € / Miete ab 14,90 €
+                        </option>
+                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">
+                            V400C - Kauf: 399,00 € / Miete ab 12,90 €
+                        </option>
+                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">
+                            Moto G14 - Kauf: 119,00 € / Miete: 7,90 € (nur 12M)
+                        </option>
+                        <option value="TapToPay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">
+                            Tap to Pay Lizenz - Miete: 7,90 € (nur 12M)
+                        </option>
                     </select>
                 </div>
                 <!-- Mietdauer -->
@@ -124,31 +133,6 @@
                         <option value="36">36 Monate</option>
                         <option value="60">60 Monate</option>
                     </select>
-                </div>
-                <!-- Tap2Pay Lizenz -->
-                <div class="form-group">
-                    <label for="tap2payLicense">Tap2Pay Lizenz:</label>
-                    <input type="checkbox" id="tap2payLicense" data-price-monthly="7.90">
-                </div>
-                <!-- Wettbewerber Gebühren -->
-                <div id="competitorSection" class="hidden">
-                    <h3 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h3>
-                    <div class="form-group">
-                        <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
-                        <input type="number" id="competitorGirocardFee">
-                    </div>
-                    <div class="form-group">
-                        <label for="competitorMaestroFee" data-lang="competitorMaestroFeeLabel">Maestro / VPAY Gebühr (%):</label>
-                        <input type="number" id="competitorMaestroFee">
-                    </div>
-                    <div class="form-group">
-                        <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
-                        <input type="number" id="competitorMastercardVisaFee">
-                    </div>
-                    <div class="form-group">
-                        <label for="competitorBusinessCardFee" data-lang="competitorBusinessCardFeeLabel">Business Card Gebühr (%):</label>
-                        <input type="number" id="competitorBusinessCardFee">
-                    </div>
                 </div>
                 <!-- Hinweis zu den Gebühren -->
                 <div class="notes">
@@ -193,57 +177,57 @@
                 <h3 data-lang="posHardwareLabel">Hardware-Komponenten:</h3>
                 <div class="form-group">
                     <label for="screenSunmi">1. Bildschirm Sunmi (493,00 €):</label>
-                    <input type="number" id="screenSunmi">
+                    <input type="number" id="screenSunmi" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="tseHardware">2. TSE Hardwarenutzung für 5 Jahre (159,00 €):</label>
-                    <input type="number" id="tseHardware">
+                    <input type="number" id="tseHardware" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="menuService">3. Menü-Eingabeservice (300,00 €):</label>
-                    <input type="number" id="menuService">
+                    <input type="number" id="menuService" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="setupService">4. Einrichtungsservice vor Ort (599,00 €):</label>
-                    <input type="number" id="setupService">
+                    <input type="number" id="setupService" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="mobileDevice">5. Mobiles Handgerät (220,00 €):</label>
-                    <input type="number" id="mobileDevice">
+                    <input type="number" id="mobileDevice" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="epsonPrinter">6. Epson Drucker (229,00 €):</label>
-                    <input type="number" id="epsonPrinter">
+                    <input type="number" id="epsonPrinter" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="chargingStation">7. Ladestation für mobiles Handgerät (79,00 €):</label>
-                    <input type="number" id="chargingStation">
+                    <input type="number" id="chargingStation" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="accessPoint">8. Access Point (189,00 €):</label>
-                    <input type="number" id="accessPoint">
+                    <input type="number" id="accessPoint" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="routerER605">9. POS Router ER605 (55,00 €):</label>
-                    <input type="number" id="routerER605">
+                    <input type="number" id="routerER605" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="switchLite">10. Switch Lite Ubiquiti UniFi (107,00 €):</label>
-                    <input type="number" id="switchLite">
+                    <input type="number" id="switchLite" min="0" value="0">
                 </div>
                 <!-- Optionales Zubehör -->
                 <h3>Optionales Zubehör:</h3>
                 <div class="form-group">
                     <label for="cashDrawer">1. Kassenschublade (69,00 €):</label>
-                    <input type="number" id="cashDrawer">
+                    <input type="number" id="cashDrawer" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="qrOrdering">2. QR Ordering (49,00 €):</label>
-                    <input type="number" id="qrOrdering">
+                    <input type="number" id="qrOrdering" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label for="dishAggregator">3. DISH Aggregator (59,00 €):</label>
-                    <input type="number" id="dishAggregator">
+                    <input type="number" id="dishAggregator" min="0" value="0">
                 </div>
                 <!-- Monatliche Lizenzen und Services -->
                 <h3 data-lang="posMonthlyLicenses">Monatliche Lizenzen und Services:</h3>
