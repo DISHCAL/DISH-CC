@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
         placement: 'right',
     });
 
-    // Standardmäßig PAY-Rechner anzeigen
-    openCalculator(null, 'pay');
-
     // Spracheinstellung
     document.getElementById('languageSelect')
         .addEventListener('change', changeLanguage);
@@ -16,16 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initiale Sprachübersetzung
     translatePage();
 
-    // Rental Prices aktualisieren
-    updateRentalPrices();
-
     // Berechnungsfelder initialisieren
     toggleCalculationFields();
     toggleRentalOptions();
-
-    // Berechnen-Button für alle Rechner
-    document.querySelector('.button-group button[data-lang="calculateButton"]')
-        .addEventListener('click', calculate);
 
     // Event Listener für die Formularelemente hinzufügen
     document.getElementById('calculationType').addEventListener('change', toggleCalculationFields);
@@ -42,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('closeEmailButton').addEventListener('click', closeEmailContent);
 });
 
+/* Tab-Umschaltung */
 function openCalculator(evt, calculatorName) {
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(content => {
@@ -54,18 +45,14 @@ function openCalculator(evt, calculatorName) {
         link.classList.remove('active');
     });
 
-    document.getElementById(calculatorName)
-        .classList.remove('hidden');
-    document.getElementById(calculatorName)
-        .classList.add('active');
+    const activeContent = document.getElementById(calculatorName);
+    activeContent.classList.remove('hidden');
+    activeContent.classList.add('active');
 
-    if (evt) {
-        evt.currentTarget.classList.add('active');
-    } else {
-        document.querySelector(`.tab-link[onclick*="${calculatorName}"]`).classList.add('active');
-    }
+    evt.currentTarget.classList.add('active');
 }
 
+/* Sprachumschaltung */
 let currentLanguage = 'de';
 
 function changeLanguage() {
@@ -86,7 +73,7 @@ function translatePage() {
 const translations = {
     de: {
         // Deutsche Übersetzungen
-        headline: "Kostenberechnung",
+        headline: "Ergebnisse:",
         customerNameLabel: "Anrede und Name:",
         calculateButton: "Berechnen",
         showEmailButton: "Angebot per E-Mail anzeigen",
@@ -117,26 +104,17 @@ const translations = {
         maestroFeeInfo: "Disagio Maestro / VPAY: 0,89%",
         mastercardVisaFeeInfo: "Disagio Mastercard/VISA Privatkunden: 0,89%",
         businessCardFeeInfo: "Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%",
-        resultsHeading: "Ergebnisse:",
-        disagioFees: "Summe Disagio Gebühren",
-        monthlyCost: "Monatliche Hardwarekosten",
-        simServiceFee: "SIM/Servicegebühr",
-        noSimServiceFee: "Keine SIM/Servicegebühr",
-        totalMonthlyCost: "Gesamte monatliche Kosten",
-        oneTimeCost: "Einmalige Kosten (bei Kauf)",
-        competitorTotal: "Gesamtkosten beim Wettbewerber",
-        competitorSavings: "Ihre Ersparnis gegenüber dem Wettbewerber",
         posHeadline: "POS Kostenberechnung",
         posHardwareLabel: "Hardware-Komponenten:",
-        posOptionalAccessories: "Optionales Zubehör:",
         posMonthlyLicenses: "Monatliche Lizenzen und Services:",
         toolsHeadline: "TOOLS Kostenberechnung",
         toolsOptions: "DISH Lösungen:",
-        // Weitere Übersetzungen...
+        noResults: "Keine Ergebnisse verfügbar."
+        // Weitere Übersetzungen können hier hinzugefügt werden...
     },
     en: {
         // Englische Übersetzungen
-        headline: "Cost Calculation",
+        headline: "Results:",
         customerNameLabel: "Salutation and Name:",
         calculateButton: "Calculate",
         showEmailButton: "Show Offer via Email",
@@ -167,22 +145,13 @@ const translations = {
         maestroFeeInfo: "Maestro / VPAY Disagio: 0.89%",
         mastercardVisaFeeInfo: "Mastercard/VISA Consumer Disagio: 0.89%",
         businessCardFeeInfo: "Mastercard/VISA Business and Non-EU: 2.89%",
-        resultsHeading: "Results:",
-        disagioFees: "Total Disagio Fees",
-        monthlyCost: "Monthly Hardware Costs",
-        simServiceFee: "SIM/Service Fee",
-        noSimServiceFee: "No SIM/Service Fee",
-        totalMonthlyCost: "Total Monthly Costs",
-        oneTimeCost: "One-Time Costs (when purchasing)",
-        competitorTotal: "Total Competitor Costs",
-        competitorSavings: "Your Savings Compared to Competitor",
         posHeadline: "POS Cost Calculation",
         posHardwareLabel: "Hardware Components:",
-        posOptionalAccessories: "Optional Accessories:",
         posMonthlyLicenses: "Monthly Licenses and Services:",
         toolsHeadline: "TOOLS Cost Calculation",
         toolsOptions: "DISH Solutions:",
-        // Weitere Übersetzungen...
+        noResults: "No results available."
+        // Weitere Übersetzungen können hier hinzugefügt werden...
     }
 };
 
@@ -197,47 +166,24 @@ function calculate() {
     }
 }
 
-function showEmailContent() {
-    const activeCalculator = document.querySelector('.tab-content.active').id;
-    const emailContentContainer = document.getElementById('emailContentContainer');
-    const emailContent = document.getElementById('emailContent');
-    let content = '';
-
-    if (activeCalculator === 'pay') {
-        content = document.getElementById('result').innerHTML;
-    } else if (activeCalculator === 'pos') {
-        content = document.getElementById('posResult').innerHTML;
-    } else if (activeCalculator === 'tools') {
-        content = document.getElementById('toolsResult').innerHTML;
-    }
-
-    emailContent.innerHTML = content;
-    emailContentContainer.classList.add('show');
-}
-
-function closeEmailContent() {
-    const emailContentContainer = document.getElementById('emailContentContainer');
-    emailContentContainer.classList.remove('show');
-}
-
 /* PAY-Rechner-Funktionen */
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
-    const businessCardField = document.getElementById('businessCardField');
     const maestroField = document.getElementById('maestroField');
+    const businessCardField = document.getElementById('businessCardField');
     const competitorMaestroField = document.getElementById('competitorMaestroField');
     const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
     const competitorSection = document.getElementById('competitorSection');
 
     if (calculationType === 'schnell' || calculationType === 'quick') {
-        businessCardField.classList.add('hidden');
         maestroField.classList.add('hidden');
+        businessCardField.classList.add('hidden');
         competitorMaestroField.classList.add('hidden');
         competitorBusinessCardField.classList.add('hidden');
         competitorSection.classList.add('hidden');
     } else {
-        businessCardField.classList.remove('hidden');
         maestroField.classList.remove('hidden');
+        businessCardField.classList.remove('hidden');
         competitorMaestroField.classList.remove('hidden');
         competitorBusinessCardField.classList.remove('hidden');
         competitorSection.classList.remove('hidden');
@@ -247,20 +193,26 @@ function toggleCalculationFields() {
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
-    rentalOptions.style.display = purchaseOption === "mieten" || purchaseOption === "rent" ? 'block' : 'none';
+    rentalOptions.style.display = (purchaseOption === "mieten" || purchaseOption === "rent") ? 'block' : 'none';
 }
 
 function updateRentalPrices() {
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
     const rentalPeriodSelect = document.getElementById('rentalPeriod');
-    const price12 = selectedHardware.getAttribute('data-price-12');
-    const price36 = selectedHardware.getAttribute('data-price-36');
-    const price60 = selectedHardware.getAttribute('data-price-60');
 
-    rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
-    rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
-    rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
+    // Update Mietdauer Dropdown basierend auf ausgewählter Hardware
+    if (selectedHardware.value === "MotoG14" || selectedHardware.value === "TapToPay") {
+        rentalPeriodSelect.innerHTML = `
+            <option value="12">12 Monate</option>
+        `;
+    } else {
+        rentalPeriodSelect.innerHTML = `
+            <option value="12">12 Monate</option>
+            <option value="36">36 Monate</option>
+            <option value="60">60 Monate</option>
+        `;
+    }
 }
 
 function updateHardwareCosts() {
@@ -367,17 +319,17 @@ function calculatePay() {
     if (totalMonthlyCost < 0) totalMonthlyCost = 0;
 
     let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['resultsHeading']}</h3>
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
         <div class="result-section">
-            <p>${(totalDisagioFees + transactionFee).toFixed(2)} € - ${translations[currentLanguage]['disagioFees']}</p>
+            <p>${(totalDisagioFees + transactionFee).toFixed(2)} € - ${translations[currentLanguage]['headline']}</p>
             ${(purchaseOption === "mieten" || purchaseOption === "rent") ? `<p>${hardwareMonthlyCost.toFixed(2)} € - ${translations[currentLanguage]['monthlyCost']}</p>` : ''}
-            <p>${simServiceFee > 0 ? simServiceFee.toFixed(2) + ' € - ' + translations[currentLanguage]['simServiceFee'] : translations[currentLanguage]['noSimServiceFee']}</p>
+            <p>${simServiceFee > 0 ? simServiceFee.toFixed(2) + ' € - SIM/Servicegebühr' : 'Keine SIM/Servicegebühr'}</p>
             <h4>Angewendete Rabatte:</h4>
             <ul>
                 <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
             </ul>
-            <p><b>${totalMonthlyCost.toFixed(2)} € - ${translations[currentLanguage]['totalMonthlyCost']}</b></p>
-            ${(purchaseOption === "kaufen" || purchaseOption === "buy") ? `<p>${onceCost.toFixed(2)} € - ${translations[currentLanguage]['oneTimeCost']}</p>` : ''}
+            <p><b>${totalMonthlyCost.toFixed(2)} € - Gesamte monatliche Kosten</b></p>
+            ${(purchaseOption === "kaufen" || purchaseOption === "buy") ? `<p>${onceCost.toFixed(2)} € - Einmalige Kosten (bei Kauf)</p>` : ''}
         </div>
     `;
 
@@ -405,13 +357,15 @@ function calculatePos() {
             screenSunmi: 493.00,
             tseHardware: 159.00,
             menuService: 300.00,
-            onSiteSetup: 599.00,
+            setupService: 599.00,
             mobileDevice: 220.00,
             epsonPrinter: 229.00,
             chargingStation: 79.00,
             accessPoint: 189.00,
-            posRouter: 55.00,
-            switchLite: 107.00,
+            routerER605: 55.00,
+            switchLite: 107.00
+        },
+        optionalAccessories: {
             cashDrawer: 69.00,
             qrOrdering: 49.00,
             dishAggregator: 59.00
@@ -429,12 +383,12 @@ function calculatePos() {
         screenSunmi: parseInt(document.getElementById('screenSunmi').value) || 0,
         tseHardware: parseInt(document.getElementById('tseHardware').value) || 0,
         menuService: parseInt(document.getElementById('menuService').value) || 0,
-        onSiteSetup: parseInt(document.getElementById('onSiteSetup').value) || 0,
+        setupService: parseInt(document.getElementById('setupService').value) || 0,
         mobileDevice: parseInt(document.getElementById('mobileDevice').value) || 0,
         epsonPrinter: parseInt(document.getElementById('epsonPrinter').value) || 0,
         chargingStation: parseInt(document.getElementById('chargingStation').value) || 0,
         accessPoint: parseInt(document.getElementById('accessPoint').value) || 0,
-        posRouter: parseInt(document.getElementById('posRouter').value) || 0,
+        routerER605: parseInt(document.getElementById('routerER605').value) || 0,
         switchLite: parseInt(document.getElementById('switchLite').value) || 0,
         cashDrawer: parseInt(document.getElementById('cashDrawer').value) || 0,
         qrOrdering: parseInt(document.getElementById('qrOrdering').value) || 0,
@@ -455,7 +409,11 @@ function calculatePos() {
     // Berechnungen durchführen
     let totalHardwareCost = 0;
     for (let item in quantities) {
-        totalHardwareCost += quantities[item] * prices.hardware[item];
+        if (prices.hardware[item] !== undefined) {
+            totalHardwareCost += quantities[item] * prices.hardware[item];
+        } else if (prices.optionalAccessories[item] !== undefined) {
+            totalHardwareCost += quantities[item] * prices.optionalAccessories[item];
+        }
     }
 
     let totalMonthlyCost = 0;
@@ -482,21 +440,23 @@ function calculatePos() {
     const totalMonthlyBrutto = totalMonthlyCost + totalMonthlyMwst;
 
     // Ergebnis anzeigen
-    const resultArea = document.getElementById('posResult');
-    resultArea.innerHTML = `
-        <h3>${salutation} ${customerName}, hier ist Ihr POS Angebot:</h3>
+    let resultHtml = `
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
         <div class="result-section">
+            <p>${totalHardwareCost.toFixed(2)} € - Gesamtkosten Hardware (Netto)</p>
+            <p>${totalHardwareBrutto.toFixed(2)} € - Gesamtkosten Hardware (Brutto)</p>
+            <p>${totalMonthlyCost.toFixed(2)} € - Monatliche Kosten Lizenzen (Netto)</p>
+            <p>${totalMonthlyBrutto.toFixed(2)} € - Monatliche Kosten Lizenzen (Brutto)</p>
             <h4>Angewendete Rabatte:</h4>
             <ul>
                 <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
                 <li>Kostenlose Monate: ${freeMonths}</li>
             </ul>
-            <p>Gesamtkosten Hardware (Netto): ${totalHardwareCost.toFixed(2)} €</p>
-            <p>Gesamtkosten Hardware (Brutto): ${totalHardwareBrutto.toFixed(2)} €</p>
-            <p>Monatliche Kosten Lizenzen (Netto): ${totalMonthlyCost.toFixed(2)} €</p>
-            <p>Monatliche Kosten Lizenzen (Brutto): ${totalMonthlyBrutto.toFixed(2)} €</p>
         </div>
     `;
+
+    const resultArea = document.getElementById('posResult');
+    resultArea.innerHTML = resultHtml;
 }
 
 /* TOOLS-Rechner-Funktionen */
@@ -613,9 +573,8 @@ function calculateTools() {
     const totalActivationBrutto = totalActivationCost + totalActivationMwst;
 
     // Ergebnis anzeigen
-    const resultArea = document.getElementById('toolsResult');
-    resultArea.innerHTML = `
-        <h3>${salutation} ${customerName}, hier ist Ihr TOOLS Angebot:</h3>
+    let resultHtml = `
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
         <div class="result-section">
             <h4>Angewendete Rabatte:</h4>
             <ul>
@@ -628,4 +587,31 @@ function calculateTools() {
             <p>Aktivierungskosten (Brutto): ${totalActivationBrutto.toFixed(2)} €</p>
         </div>
     `;
+
+    const resultArea = document.getElementById('toolsResult');
+    resultArea.innerHTML = resultHtml;
+}
+
+/* Modal-Funktionen */
+function showEmailContent(calculatorType) {
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    const emailContent = document.getElementById('emailContent');
+
+    let content = '';
+
+    if (calculatorType === 'pay') {
+        content = document.getElementById('result').innerHTML;
+    } else if (calculatorType === 'pos') {
+        content = document.getElementById('posResult').innerHTML;
+    } else if (calculatorType === 'tools') {
+        content = document.getElementById('toolsResult').innerHTML;
+    }
+
+    emailContent.innerHTML = content;
+    emailContentContainer.classList.remove('hidden');
+}
+
+function closeEmailContent() {
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    emailContentContainer.classList.add('hidden');
 }
