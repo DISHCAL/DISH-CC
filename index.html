@@ -2,396 +2,278 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>DISH - Digitale Lösungen für die Gastronomie</title>
-    <!-- Responsives Design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS-Datei -->
+    <title>Kostenberechnung</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <!-- Tippy.js für Tooltips -->
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
-    <!-- Spracheinstellung -->
-    <script>
-        let currentLanguage = 'de';
-    </script>
 </head>
 <body>
     <div class="container">
-        <!-- Ebene 1: Überschrift, Sprache, Kundenname -->
-        <header>
-            <h1>DISH - Digitale Lösungen für die Gastronomie</h1>
-            <div class="top-bar">
-                <div class="language-selector">
-                    <label for="languageSelect">Sprache:</label>
-                    <select id="languageSelect" onchange="changeLanguage()">
-                        <option value="de">Deutsch</option>
-                        <option value="en">English</option>
-                    </select>
+        <h1 data-lang="headline">Kostenberechnung</h1>
+        <div class="language-selector">
+            <label for="languageSelect">Sprache:</label>
+            <select id="languageSelect">
+                <option value="de">Deutsch</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+        <div class="customer-info">
+            <label for="salutation" data-lang="customerNameLabel">Anrede und Name:</label>
+            <select id="salutation">
+                <option value="Herr">Herr</option>
+                <option value="Frau">Frau</option>
+            </select>
+            <input type="text" id="customerName" placeholder="Kundenname">
+            <span id="customerNameError" class="error"></span>
+        </div>
+        <div class="tab">
+            <button class="tab-link" onclick="openCalculator(event, 'pay')">PAY</button>
+            <button class="tab-link" onclick="openCalculator(event, 'pos')">POS</button>
+            <button class="tab-link" onclick="openCalculator(event, 'tools')">TOOLS</button>
+        </div>
+
+        <!-- PAY Rechner -->
+        <div id="pay" class="tab-content">
+            <h2>PAY Rechner</h2>
+            <div class="form-group">
+                <label for="calculationType" data-lang="calculationTypeLabel">Berechnungsart:</label>
+                <select id="calculationType">
+                    <option value="schnell" data-lang="quickCalculation">Schnelle Berechnung</option>
+                    <option value="detailliert" data-lang="detailedCalculation">Ausführliche Berechnung</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monthlyVolume" data-lang="monthlyVolumeLabel">Geplanter Kartenumsatz pro Monat (€):</label>
+                <input type="number" id="monthlyVolume">
+            </div>
+            <div class="form-group">
+                <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen:</label>
+                <input type="number" id="transactions">
+            </div>
+            <div class="form-group">
+                <label for="girocard" data-lang="girocardLabel">Girocard (%):</label>
+                <input type="number" id="girocard">
+            </div>
+            <div class="form-group">
+                <label for="mastercardVisa" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
+                <input type="number" id="mastercardVisa">
+            </div>
+            <div class="form-group" id="maestroField">
+                <label for="maestro" data-lang="maestroLabel">Maestro / VPAY (%):</label>
+                <input type="number" id="maestro">
+            </div>
+            <div class="form-group" id="businessCardField">
+                <label for="businessCard" data-lang="businessCardLabel">Business Card (%):</label>
+                <input type="number" id="businessCard">
+            </div>
+            <div class="form-group">
+                <label for="purchaseOption" data-lang="purchaseOptionLabel">Kauf oder Miete:</label>
+                <select id="purchaseOption">
+                    <option value="mieten" data-lang="rentOption">Mieten</option>
+                    <option value="kaufen" data-lang="buyOption">Kaufen</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="hardware" data-lang="hardwareLabel">Hardware auswählen:</label>
+                <select id="hardware">
+                    <option value="S1F2" data-price-once="349.00" data-price-12="12.90" data-price-36="9.90" data-price-60="7.90">S1F2</option>
+                    <option value="V400C" data-price-once="299.00" data-price-12="11.90" data-price-36="8.90" data-price-60="6.90">V400C</option>
+                    <option value="V400M" data-price-once="379.00" data-price-12="13.90" data-price-36="10.90" data-price-60="8.90">V400M</option>
+                </select>
+            </div>
+            <div class="form-group" id="rentalOptions">
+                <label for="rentalPeriod" data-lang="rentalPeriodLabel">Mietdauer:</label>
+                <select id="rentalPeriod">
+                    <option value="12">12 Monate</option>
+                    <option value="36">36 Monate</option>
+                    <option value="60">60 Monate</option>
+                </select>
+            </div>
+            <div id="competitorSection" class="hidden">
+                <h3 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h3>
+                <div class="form-group">
+                    <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
+                    <input type="number" id="competitorGirocardFee">
                 </div>
-                <div class="customer-input">
-                    <label for="customerName" data-lang="customerNameLabel">
-                        Anrede und Name:<span class="required">*</span>
-                    </label>
-                    <div class="name-group">
-                        <select id="salutation">
-                            <option value="Herr">Herr</option>
-                            <option value="Frau">Frau</option>
-                        </select>
-                        <input type="text" id="customerName" placeholder="Vor- und Nachname" required>
-                    </div>
-                    <small class="error-message" id="customerNameError"></small>
+                <div class="form-group" id="competitorMaestroField">
+                    <label for="competitorMaestroFee" data-lang="competitorMaestroFeeLabel">Maestro / VPAY Gebühr (%):</label>
+                    <input type="number" id="competitorMaestroFee">
+                </div>
+                <div class="form-group">
+                    <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
+                    <input type="number" id="competitorMastercardVisaFee">
+                </div>
+                <div class="form-group" id="competitorBusinessCardField">
+                    <label for="competitorBusinessCardFee" data-lang="competitorBusinessCardFeeLabel">Business Card Gebühr (%):</label>
+                    <input type="number" id="competitorBusinessCardFee">
                 </div>
             </div>
-        </header>
-
-        <!-- Ebene 2: Rechner-Auswahl -->
-        <main>
-            <div class="tabs">
-                <button class="tab-link active" onclick="openCalculator(event, 'pay')">
-                    PAY
-                </button>
-                <button class="tab-link" onclick="openCalculator(event, 'pos')">
-                    POS
-                </button>
-                <button class="tab-link" onclick="openCalculator(event, 'tools')">
-                    TOOLS
-                </button>
+            <div class="notes">
+                <h3 data-lang="feesNoteHeading">Hinweis zu den Gebühren:</h3>
+                <ul>
+                    <li data-lang="transactionFeeInfo">Transaktionspreis: 0,06 € pro Transaktion</li>
+                    <li data-lang="girocardFeeInfoBelow">Girocard-Gebühr bis 10.000 € monatlich: 0,39%</li>
+                    <li data-lang="girocardFeeInfoAbove">Girocard-Gebühr über 10.000 € monatlich: 0,29%</li>
+                    <li data-lang="maestroFeeInfo">Disagio Maestro / VPAY: 0,89%</li>
+                    <li data-lang="mastercardVisaFeeInfo">Disagio Mastercard/VISA Privatkunden: 0,89%</li>
+                    <li data-lang="businessCardFeeInfo">Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%</li>
+                </ul>
             </div>
-
-            <!-- PAY Rechner -->
-            <div id="pay" class="tab-content active">
-                <h3 data-lang="headline">Kostenberechnung PAY</h3>
-
-                <!-- Formularelemente für den PAY-Rechner -->
-                <div class="input-group">
-                    <label for="calculationType" data-lang="calculationTypeLabel">Berechnungsart: <span>*</span></label>
-                    <select id="calculationType" onchange="toggleCalculationFields()">
-                        <option value="schnell" data-lang="quickCalculation">Schnelle Berechnung</option>
-                        <option value="ausführlich" data-lang="detailedCalculation">Ausführliche Berechnung</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="monthlyVolume" data-lang="monthlyVolumeLabel">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
-                    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
-                    <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="girocard" data-lang="girocardLabel">Girocard (%): <span>*</span></label>
-                    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="mastercardVisa" data-lang="mastercardVisaLabel">Mastercard / VISA (%): <span>*</span></label>
-                    <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
-                </div>
-
-                <div id="maestroField" class="input-group hidden">
-                    <label for="maestro" data-lang="maestroLabel">Maestro / VPAY (%):</label>
-                    <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
-                </div>
-
-                <div id="businessCardField" class="input-group hidden">
-                    <label for="businessCard" data-lang="businessCardLabel">Business Card (%):</label>
-                    <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
-                </div>
-
-                <div class="input-group">
-                    <label for="purchaseOption" data-lang="purchaseOptionLabel">Kauf oder Miete: <span>*</span></label>
-                    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
-                        <option value="mieten" data-lang="rentOption">Mieten</option>
-                        <option value="kaufen" data-lang="buyOption">Kaufen</option>
-                    </select>
-                </div>
-
-                <div id="hardwareOptions" class="input-group">
-                    <label for="hardware" data-lang="hardwareLabel">Hardware auswählen: <span>*</span></label>
-                    <select id="hardware" onchange="updateRentalPrices()">
-                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
-                        <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
-                    </select>
-                </div>
-
-                <div id="rentalOptions" class="input-group">
-                    <label for="rentalPeriod" data-lang="rentalPeriodLabel">Mietdauer: <span>*</span></label>
-                    <select id="rentalPeriod">
-                        <option value="12">12 Monate</option>
-                        <option value="36">36 Monate</option>
-                        <option value="60">60 Monate</option>
-                    </select>
-                </div>
-
-                <div id="competitorSection" class="competitor-section hidden">
-                    <h4 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h4>
-                    <div class="input-group">
-                        <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
-                        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
-                    </div>
-
-                    <div id="competitorMaestroField" class="input-group hidden">
-                        <label for="competitorMaestroFee" data-lang="competitorMaestroFeeLabel">Maestro / VPAY Gebühr (%):</label>
-                        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
-                        <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
-                    </div>
-
-                    <div id="competitorBusinessCardField" class="input-group hidden">
-                        <label for="competitorBusinessCardFee" data-lang="competitorBusinessCardFeeLabel">Business Card Gebühr (%):</label>
-                        <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
-                    </div>
-                </div>
-
-                <!-- Rabattfelder -->
-                <div class="input-group">
-                    <label>Rabatt:</label>
-                    <div class="discount-item">
-                        <label for="payDiscountAmount">Rabattbetrag (€):</label>
-                        <input type="number" id="payDiscountAmount" min="0" value="0">
-                    </div>
-                </div>
-
-                <!-- Ergebnisbereich -->
-                <div id="result">
-                    <!-- Ergebnisse werden hier eingefügt -->
-                </div>
-
-                <!-- Gebührenhinweise -->
-                <div class="info-section">
-                    <h4 data-lang="feesNoteHeading">Hinweis zu den Gebühren:</h4>
-                    <ul>
-                        <li data-lang="transactionFeeInfo"><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
-                        <li data-lang="girocardFeeInfoBelow"><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
-                        <li data-lang="girocardFeeInfoAbove"><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
-                        <li data-lang="maestroFeeInfo"><b>Disagio Maestro / VPAY:</b> 0,89%</li>
-                        <li data-lang="mastercardVisaFeeInfo"><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
-                        <li data-lang="businessCardFeeInfo"><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
-                    </ul>
-                </div>
+            <!-- Rabatt -->
+            <div class="form-group">
+                <label for="payDiscountAmount">Rabattbetrag (€):</label>
+                <input type="number" id="payDiscountAmount">
             </div>
-
-            <!-- POS Rechner -->
-            <div id="pos" class="tab-content hidden">
-                <h3 data-lang="posHeadline">POS Kostenberechnung</h3>
-
-                <!-- Hardware-Komponenten -->
-                <div class="input-group">
-                    <label data-lang="posHardwareLabel">Hardware-Komponenten:</label>
-                    <div id="posHardwareComponents">
-                        <!-- Liste der Hardware-Komponenten mit Anzahl -->
-                        <div class="hardware-item">
-                            <label for="screenSunmi">Bildschirm Sunmi (493,00 €):</label>
-                            <input type="number" id="screenSunmi" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="tseHardware">TSE Hardwarenutzung für 5 Jahre (159,00 €):</label>
-                            <input type="number" id="tseHardware" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="menuService">Menü-Eingabeservice (300,00 €):</label>
-                            <input type="number" id="menuService" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="onSiteSetup">Einrichtungsservice vor Ort (599,00 €):</label>
-                            <input type="number" id="onSiteSetup" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="mobileDevice">Mobiles Handgerät (220,00 €):</label>
-                            <input type="number" id="mobileDevice" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="epsonPrinter">Epson Drucker (229,00 €):</label>
-                            <input type="number" id="epsonPrinter" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="chargingStation">Ladestation für mobiles Handgerät (79,00 €):</label>
-                            <input type="number" id="chargingStation" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="accessPoint">Access Point (189,00 €):</label>
-                            <input type="number" id="accessPoint" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="posRouter">POS Router ER605 (55,00 €):</label>
-                            <input type="number" id="posRouter" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="switchLite">Switch Lite Ubiquiti UniFi (107,00 €):</label>
-                            <input type="number" id="switchLite" min="0" value="0">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Optionales Zubehör -->
-                <div class="input-group">
-                    <label data-lang="posOptionalAccessories">Optionales Zubehör:</label>
-                    <div id="posOptionalAccessories">
-                        <div class="hardware-item">
-                            <label for="cashDrawer">Kassenschublade (69,00 €):</label>
-                            <input type="number" id="cashDrawer" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="qrOrdering">QR Ordering (49,00 €):</label>
-                            <input type="number" id="qrOrdering" min="0" value="0">
-                        </div>
-                        <div class="hardware-item">
-                            <label for="dishAggregator">DISH Aggregator (59,00 €):</label>
-                            <input type="number" id="dishAggregator" min="0" value="0">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Monatliche Lizenzen -->
-                <div class="input-group">
-                    <label data-lang="posMonthlyLicenses">Monatliche Lizenzen und Services:</label>
-                    <div id="posMonthlyLicenses">
-                        <div class="license-item">
-                            <input type="checkbox" id="mainLicense" value="69.00">
-                            <label for="mainLicense">Hauptlizenz Software (69,00 € pro Monat)</label>
-                        </div>
-                        <div class="license-item">
-                            <input type="checkbox" id="datevApi" value="25.00">
-                            <label for="datevApi">DATEV „MeinFiskal“ API (25,00 € pro Monat)</label>
-                        </div>
-                        <div class="license-item">
-                            <input type="checkbox" id="voucherFunction" value="10.00">
-                            <label for="voucherFunction">Gutschein Funktion (10,00 € pro Monat)</label>
-                        </div>
-                        <div class="license-item">
-                            <input type="checkbox" id="tapToPayLicense" value="7.50">
-                            <label for="tapToPayLicense">Tap to Pay Lizenz (7,50 € pro Monat)</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rabattfelder -->
-                <div class="input-group">
-                    <label>Rabatt:</label>
-                    <div class="discount-item">
-                        <label for="posDiscountAmount">Rabattbetrag (€):</label>
-                        <input type="number" id="posDiscountAmount" min="0" value="0">
-                    </div>
-                    <div class="discount-item">
-                        <label for="posFreeMonths">Anzahl kostenloser Monate:</label>
-                        <input type="number" id="posFreeMonths" min="0" value="0">
-                    </div>
-                </div>
-
-                <!-- Ergebnisbereich -->
-                <div id="posResult">
-                    <!-- Ergebnisse werden hier eingefügt -->
-                </div>
-            </div>
-
-            <!-- TOOLS Rechner -->
-            <div id="tools" class="tab-content hidden">
-                <h3 data-lang="toolsHeadline">TOOLS Kostenberechnung</h3>
-
-                <!-- DISH Lösungen -->
-                <div class="input-group">
-                    <label data-lang="toolsOptions">DISH Lösungen:</label>
-                    <div id="toolsOptions">
-                        <!-- DISH STARTER -->
-                        <div class="tools-item">
-                            <input type="checkbox" id="dishStarter">
-                            <label for="dishStarter">DISH STARTER (10,00 € monatlich + 69,00 € einmalige Aktivierungsgebühr)</label>
-                            <p>Mindestvertragslaufzeit: 12 Monate</p>
-                        </div>
-
-                        <!-- DISH RESERVATION -->
-                        <div class="tools-item">
-                            <input type="checkbox" id="dishReservation">
-                            <label for="dishReservation">DISH RESERVATION</label>
-                            <select id="dishReservationDuration">
-                                <option value="36" data-activation-fee="69.00">36 Monate - 34,90 € monatlich + 69,00 € einmalige Aktivierungsgebühr</option>
-                                <option value="12" data-activation-fee="69.00">12 Monate - 44,00 € monatlich + 69,00 € einmalige Aktivierungsgebühr</option>
-                                <option value="3" data-activation-fee="69.00">3 Monate - 49,00 € monatlich + 69,00 € einmalige Aktivierungsgebühr</option>
-                            </select>
-                        </div>
-
-                        <!-- DISH ORDER -->
-                        <div class="tools-item">
-                            <input type="checkbox" id="dishOrder">
-                            <label for="dishOrder">DISH ORDER</label>
-                            <select id="dishOrderDuration">
-                                <option value="12" data-activation-fee="299.00">12 Monate - 49,90 € monatlich + 299,00 € einmalige Aktivierungsgebühr</option>
-                                <option value="3" data-activation-fee="299.00">3 Monate - 59,90 € monatlich + 299,00 € einmalige Aktivierungsgebühr</option>
-                            </select>
-                        </div>
-
-                        <!-- DISH PREMIUM -->
-                        <div class="tools-item">
-                            <input type="checkbox" id="dishPremium">
-                            <label for="dishPremium">DISH PREMIUM</label>
-                            <select id="dishPremiumDuration">
-                                <option value="12" data-activation-fee="279.00">12 Monate - 69,90 € monatlich + 279,00 € einmalige Aktivierungsgebühr</option>
-                                <option value="3" data-activation-fee="279.00">3 Monate - 79,90 € monatlich + 279,00 € einmalige Aktivierungsgebühr</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rabattfelder -->
-                <div class="input-group">
-                    <label>Rabatt:</label>
-                    <div class="discount-item">
-                        <label for="toolsDiscountAmount">Rabattbetrag (€):</label>
-                        <input type="number" id="toolsDiscountAmount" min="0" value="0">
-                    </div>
-                    <div class="discount-item">
-                        <label for="toolsFreeMonths">Anzahl kostenloser Monate:</label>
-                        <input type="number" id="toolsFreeMonths" min="0" value="0">
-                    </div>
-                </div>
-
-                <!-- Ergebnisbereich -->
-                <div id="toolsResult">
-                    <!-- Ergebnisse werden hier eingefügt -->
-                </div>
-            </div>
-        </main>
-
-        <!-- Ebene 3: Berechnen- und E-Mail-Buttons -->
-        <footer>
             <div class="button-group">
-                <button onclick="calculate()" data-lang="calculateButton">
-                    Berechnen
-                </button>
-                <button onclick="showEmailContent()" data-lang="showEmailButton">
-                    Angebot per E-Mail anzeigen
-                </button>
+                <button onclick="calculatePay()" data-lang="calculateButton">Berechnen</button>
+                <button id="showEmailButton" data-lang="showEmailButton">Angebot per E-Mail anzeigen</button>
             </div>
-        </footer>
+            <div id="result"></div>
+        </div>
 
-        <!-- Modal für Angebotstext -->
-        <div id="emailContentContainer" class="modal">
-            <div class="modal-content">
-                <span class="close-button" onclick="closeEmailContent()">&times;</span>
-                <div id="emailContent">
-                    <!-- Angebotstext wird hier eingefügt -->
-                </div>
-                <button onclick="closeEmailContent()" data-lang="closeButton">
-                    Schließen
-                </button>
+        <!-- POS Rechner -->
+        <div id="pos" class="tab-content">
+            <h2 data-lang="posHeadline">POS Kostenberechnung</h2>
+            <h3 data-lang="posHardwareLabel">Hardware-Komponenten:</h3>
+            <div class="form-group">
+                <label for="screenSunmi">15,6" Touchscreen Sunmi D2s Lite (Anzahl):</label>
+                <input type="number" id="screenSunmi">
             </div>
+            <div class="form-group">
+                <label for="tseHardware">TSE Hardware (Anzahl):</label>
+                <input type="number" id="tseHardware">
+            </div>
+            <div class="form-group">
+                <label for="menuService">Speisekartendienstleistung (Anzahl):</label>
+                <input type="number" id="menuService">
+            </div>
+            <div class="form-group">
+                <label for="onSiteSetup">Vor-Ort Einrichtung (Anzahl):</label>
+                <input type="number" id="onSiteSetup">
+            </div>
+            <h3 data-lang="posOptionalAccessories">Optionales Zubehör:</h3>
+            <div class="form-group">
+                <label for="mobileDevice">Mobiles Bestellgerät Sunmi PDA (Anzahl):</label>
+                <input type="number" id="mobileDevice">
+            </div>
+            <div class="form-group">
+                <label for="epsonPrinter">Bondrucker Epson TM-M30 (Anzahl):</label>
+                <input type="number" id="epsonPrinter">
+            </div>
+            <div class="form-group">
+                <label for="chargingStation">Ladestation (Anzahl):</label>
+                <input type="number" id="chargingStation">
+            </div>
+            <div class="form-group">
+                <label for="accessPoint">Access Point (Anzahl):</label>
+                <input type="number" id="accessPoint">
+            </div>
+            <div class="form-group">
+                <label for="posRouter">POS Router (Anzahl):</label>
+                <input type="number" id="posRouter">
+            </div>
+            <div class="form-group">
+                <label for="switchLite">Unifi Switch Lite 8 PoE (Anzahl):</label>
+                <input type="number" id="switchLite">
+            </div>
+            <div class="form-group">
+                <label for="cashDrawer">Kassenschublade (Anzahl):</label>
+                <input type="number" id="cashDrawer">
+            </div>
+            <h3 data-lang="posMonthlyLicenses">Monatliche Lizenzen und Services:</h3>
+            <div class="form-group">
+                <label for="mainLicense">Hauptlizenz:</label>
+                <input type="checkbox" id="mainLicense">
+            </div>
+            <div class="form-group">
+                <label for="datevApi">DATEV API:</label>
+                <input type="checkbox" id="datevApi">
+            </div>
+            <div class="form-group">
+                <label for="voucherFunction">Gutschein Funktion:</label>
+                <input type="checkbox" id="voucherFunction">
+            </div>
+            <div class="form-group">
+                <label for="tapToPayLicense">Tap to Pay Lizenz:</label>
+                <input type="checkbox" id="tapToPayLicense">
+            </div>
+            <!-- Rabatt -->
+            <div class="form-group">
+                <label for="posDiscountAmount">Rabattbetrag (€):</label>
+                <input type="number" id="posDiscountAmount">
+            </div>
+            <div class="form-group">
+                <label for="posFreeMonths">Kostenlose Monate:</label>
+                <input type="number" id="posFreeMonths">
+            </div>
+            <div class="button-group">
+                <button onclick="calculatePos()" data-lang="calculateButton">Berechnen</button>
+                <button id="showEmailButtonPos" data-lang="showEmailButton">Angebot per E-Mail anzeigen</button>
+            </div>
+            <div id="posResult"></div>
+        </div>
+
+        <!-- TOOLS Rechner -->
+        <div id="tools" class="tab-content">
+            <h2 data-lang="toolsHeadline">TOOLS Kostenberechnung</h2>
+            <h3 data-lang="toolsOptions">DISH Lösungen:</h3>
+            <div class="form-group">
+                <label for="dishStarter">DISH Starter:</label>
+                <input type="checkbox" id="dishStarter">
+            </div>
+            <div class="form-group">
+                <label for="dishReservation">DISH Reservation:</label>
+                <input type="checkbox" id="dishReservation">
+                <select id="dishReservationDuration">
+                    <option value="36">36 Monate</option>
+                    <option value="12">12 Monate</option>
+                    <option value="3">3 Monate</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dishOrder">DISH Order:</label>
+                <input type="checkbox" id="dishOrder">
+                <select id="dishOrderDuration">
+                    <option value="12">12 Monate</option>
+                    <option value="3">3 Monate</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dishPremium">DISH Premium:</label>
+                <input type="checkbox" id="dishPremium">
+                <select id="dishPremiumDuration">
+                    <option value="12">12 Monate</option>
+                    <option value="3">3 Monate</option>
+                </select>
+            </div>
+            <!-- Rabatt -->
+            <div class="form-group">
+                <label for="toolsDiscountAmount">Rabattbetrag (€):</label>
+                <input type="number" id="toolsDiscountAmount">
+            </div>
+            <div class="form-group">
+                <label for="toolsFreeMonths">Kostenlose Monate:</label>
+                <input type="number" id="toolsFreeMonths">
+            </div>
+            <div class="button-group">
+                <button onclick="calculateTools()" data-lang="calculateButton">Berechnen</button>
+                <button id="showEmailButtonTools" data-lang="showEmailButton">Angebot per E-Mail anzeigen</button>
+            </div>
+            <div id="toolsResult"></div>
         </div>
     </div>
 
-    <!-- JavaScript-Dateien -->
-    <!-- Tippy.js -->
-    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.min.js"></script>
-    <!-- Eigene Skripte -->
+    <!-- Email Content Modal -->
+    <div id="emailContentContainer" class="hidden">
+        <div id="emailContentWrapper">
+            <button id="closeEmailButton" data-lang="closeButton">Schließen</button>
+            <div id="emailContent"></div>
+        </div>
+    </div>
+
+    <!-- Einbindung der JavaScript-Datei -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
     <script src="script.js"></script>
 </body>
 </html>
