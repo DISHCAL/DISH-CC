@@ -1,7 +1,7 @@
 // script.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Tooltips initialisieren
+    // Tooltips initialisieren (optional, falls benötigt)
     tippy('[data-tippy-content]', {
         placement: 'right',
     });
@@ -19,17 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listener für die Formularelemente hinzufügen
     document.getElementById('calculationType').addEventListener('change', toggleCalculationFields);
-    document.getElementById('purchaseOption').addEventListener('change', () => {
-        toggleRentalOptions();
-        updateHardwareCosts();
-    });
+    document.getElementById('purchaseOption').addEventListener('change', toggleRentalOptions);
     document.getElementById('hardware').addEventListener('change', () => {
         updateRentalPrices();
         updateHardwareCosts();
     });
     document.getElementById('rentalPeriod').addEventListener('change', updateHardwareCosts);
-    document.getElementById('showEmailButton').addEventListener('click', showEmailContent);
-    document.getElementById('closeEmailButton').addEventListener('click', closeEmailContent);
+
+    // Event Listener für die DISH Tools Rechner
+    document.getElementById('dishReservation').addEventListener('change', toggleDishReservationDuration);
+    document.getElementById('dishOrder').addEventListener('change', toggleDishOrderDuration);
+    document.getElementById('dishPremium').addEventListener('change', toggleDishPremiumDuration);
 });
 
 /* Tab-Umschaltung */
@@ -73,7 +73,6 @@ function translatePage() {
 const translations = {
     de: {
         // Deutsche Übersetzungen
-        headline: "Ergebnisse:",
         customerNameLabel: "Anrede und Name:",
         calculateButton: "Berechnen",
         showEmailButton: "Angebot per E-Mail anzeigen",
@@ -92,11 +91,6 @@ const translations = {
         buyOption: "Kaufen",
         hardwareLabel: "Hardware auswählen:",
         rentalPeriodLabel: "Mietdauer:",
-        competitorFeesHeading: "Wettbewerber Gebühren:",
-        competitorGirocardFeeLabel: "Girocard Gebühr (%):",
-        competitorMaestroFeeLabel: "Maestro / VPAY Gebühr (%):",
-        competitorMastercardVisaFeeLabel: "Mastercard / VISA Gebühr (%):",
-        competitorBusinessCardFeeLabel: "Business Card Gebühr (%):",
         feesNoteHeading: "Hinweis zu den Gebühren:",
         transactionFeeInfo: "Transaktionspreis: 0,06 € pro Transaktion",
         girocardFeeInfoBelow: "Girocard-Gebühr bis 10.000 € monatlich: 0,39%",
@@ -104,6 +98,7 @@ const translations = {
         maestroFeeInfo: "Disagio Maestro / VPAY: 0,89%",
         mastercardVisaFeeInfo: "Disagio Mastercard/VISA Privatkunden: 0,89%",
         businessCardFeeInfo: "Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%",
+        payHeadline: "Kostenberechnung PAY",
         posHeadline: "POS Kostenberechnung",
         posHardwareLabel: "Hardware-Komponenten:",
         posMonthlyLicenses: "Monatliche Lizenzen und Services:",
@@ -114,7 +109,6 @@ const translations = {
     },
     en: {
         // Englische Übersetzungen
-        headline: "Results:",
         customerNameLabel: "Salutation and Name:",
         calculateButton: "Calculate",
         showEmailButton: "Show Offer via Email",
@@ -133,11 +127,6 @@ const translations = {
         buyOption: "Purchase",
         hardwareLabel: "Select Hardware:",
         rentalPeriodLabel: "Rental Period:",
-        competitorFeesHeading: "Competitor Fees:",
-        competitorGirocardFeeLabel: "Girocard Fee (%):",
-        competitorMaestroFeeLabel: "Maestro / VPAY Fee (%):",
-        competitorMastercardVisaFeeLabel: "Mastercard / VISA Fee (%):",
-        competitorBusinessCardFeeLabel: "Business Card Fee (%):",
         feesNoteHeading: "Note on Fees:",
         transactionFeeInfo: "Transaction Price: €0.06 per transaction",
         girocardFeeInfoBelow: "Girocard Fee up to €10,000 monthly: 0.39%",
@@ -145,6 +134,7 @@ const translations = {
         maestroFeeInfo: "Maestro / VPAY Disagio: 0.89%",
         mastercardVisaFeeInfo: "Mastercard/VISA Consumer Disagio: 0.89%",
         businessCardFeeInfo: "Mastercard/VISA Business and Non-EU: 2.89%",
+        payHeadline: "PAY Cost Calculation",
         posHeadline: "POS Cost Calculation",
         posHardwareLabel: "Hardware Components:",
         posMonthlyLicenses: "Monthly Licenses and Services:",
@@ -155,45 +145,26 @@ const translations = {
     }
 };
 
-function calculate() {
-    const activeCalculator = document.querySelector('.tab-content.active').id;
-    if (activeCalculator === 'pay') {
-        calculatePay();
-    } else if (activeCalculator === 'pos') {
-        calculatePos();
-    } else if (activeCalculator === 'tools') {
-        calculateTools();
-    }
-}
-
 /* PAY-Rechner-Funktionen */
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
-    const maestroField = document.getElementById('maestroField');
-    const businessCardField = document.getElementById('businessCardField');
-    const competitorMaestroField = document.getElementById('competitorMaestroField');
-    const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
-    const competitorSection = document.getElementById('competitorSection');
+    const detailedFields = document.querySelectorAll('.detailed-field');
 
-    if (calculationType === 'schnell' || calculationType === 'quick') {
-        maestroField.classList.add('hidden');
-        businessCardField.classList.add('hidden');
-        competitorMaestroField.classList.add('hidden');
-        competitorBusinessCardField.classList.add('hidden');
-        competitorSection.classList.add('hidden');
+    if (calculationType === 'detailliert') {
+        detailedFields.forEach(field => {
+            field.style.display = 'block';
+        });
     } else {
-        maestroField.classList.remove('hidden');
-        businessCardField.classList.remove('hidden');
-        competitorMaestroField.classList.remove('hidden');
-        competitorBusinessCardField.classList.remove('hidden');
-        competitorSection.classList.remove('hidden');
+        detailedFields.forEach(field => {
+            field.style.display = 'none';
+        });
     }
 }
 
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
-    rentalOptions.style.display = (purchaseOption === "mieten" || purchaseOption === "rent") ? 'block' : 'none';
+    rentalOptions.style.display = (purchaseOption === "mieten") ? 'block' : 'none';
 }
 
 function updateRentalPrices() {
@@ -223,7 +194,7 @@ function updateHardwareCosts() {
     const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
     let monthlyCost = 0;
 
-    if (purchaseOption === "mieten" || purchaseOption === "rent") {
+    if (purchaseOption === "mieten") {
         const rentalPeriod = document.getElementById('rentalPeriod').value;
         if (rentalPeriod === "12") {
             monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
@@ -305,7 +276,7 @@ function calculatePay() {
 
     let simServiceFee = 0;
     const hardwareSelectValue = document.getElementById('hardware').value;
-    if ((purchaseOption === "kaufen" || purchaseOption === "buy") && (hardwareSelectValue === "S1F2" || hardwareSelectValue === "V400C")) {
+    if (purchaseOption === "kaufen" && (hardwareSelectValue === "S1F2" || hardwareSelectValue === "V400C")) {
         simServiceFee = 3.90;
     }
 
@@ -321,15 +292,15 @@ function calculatePay() {
     let resultHtml = `
         <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
         <div class="result-section">
-            <p>${(totalDisagioFees + transactionFee).toFixed(2)} € - ${translations[currentLanguage]['headline']}</p>
-            ${(purchaseOption === "mieten" || purchaseOption === "rent") ? `<p>${hardwareMonthlyCost.toFixed(2)} € - ${translations[currentLanguage]['monthlyCost']}</p>` : ''}
+            <p>${(totalDisagioFees + transactionFee).toFixed(2)} € - Disagio und Transaktionsgebühren</p>
+            ${ (purchaseOption === "mieten") ? `<p>${hardwareMonthlyCost.toFixed(2)} € - Monatliche Hardwarekosten</p>` : '' }
             <p>${simServiceFee > 0 ? simServiceFee.toFixed(2) + ' € - SIM/Servicegebühr' : 'Keine SIM/Servicegebühr'}</p>
             <h4>Angewendete Rabatte:</h4>
             <ul>
                 <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
             </ul>
             <p><b>${totalMonthlyCost.toFixed(2)} € - Gesamte monatliche Kosten</b></p>
-            ${(purchaseOption === "kaufen" || purchaseOption === "buy") ? `<p>${onceCost.toFixed(2)} € - Einmalige Kosten (bei Kauf)</p>` : ''}
+            ${(purchaseOption === "kaufen") ? `<p>${onceCost.toFixed(2)} € - Einmalige Kosten (bei Kauf)</p>` : ''}
         </div>
     `;
 
@@ -450,7 +421,7 @@ function calculatePos() {
             <h4>Angewendete Rabatte:</h4>
             <ul>
                 <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
-                <li>Kostenlose Monate: ${freeMonths}</li>
+                <li>Anzahl kostenlose Monate: ${freeMonths}</li>
             </ul>
         </div>
     `;
@@ -460,6 +431,24 @@ function calculatePos() {
 }
 
 /* TOOLS-Rechner-Funktionen */
+function toggleDishReservationDuration() {
+    const dishReservation = document.getElementById('dishReservation').checked;
+    const dishReservationDuration = document.getElementById('dishReservationDuration');
+    dishReservationDuration.disabled = !dishReservation;
+}
+
+function toggleDishOrderDuration() {
+    const dishOrder = document.getElementById('dishOrder').checked;
+    const dishOrderDuration = document.getElementById('dishOrderDuration');
+    dishOrderDuration.disabled = !dishOrder;
+}
+
+function toggleDishPremiumDuration() {
+    const dishPremium = document.getElementById('dishPremium').checked;
+    const dishPremiumDuration = document.getElementById('dishPremiumDuration');
+    dishPremiumDuration.disabled = !dishPremium;
+}
+
 function calculateTools() {
     // Kundendaten abrufen
     const salutation = document.getElementById('salutation').value;
@@ -579,7 +568,7 @@ function calculateTools() {
             <h4>Angewendete Rabatte:</h4>
             <ul>
                 <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
-                <li>Kostenlose Monate: ${freeMonths}</li>
+                <li>Anzahl kostenlose Monate: ${freeMonths}</li>
             </ul>
             <p>Monatliche Kosten (Netto): ${totalMonthlyCost.toFixed(2)} €</p>
             <p>Monatliche Kosten (Brutto): ${totalMonthlyBrutto.toFixed(2)} €</p>
