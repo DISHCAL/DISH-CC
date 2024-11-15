@@ -73,6 +73,7 @@ function translatePage() {
 const translations = {
     de: {
         // Deutsche Übersetzungen
+        languageLabel: "Sprache:",
         customerNameLabel: "Anrede und Name:",
         calculateButton: "Berechnen",
         showEmailButton: "Angebot per E-Mail anzeigen",
@@ -91,6 +92,9 @@ const translations = {
         buyOption: "Kaufen",
         hardwareLabel: "Hardware auswählen:",
         rentalPeriodLabel: "Mietdauer:",
+        competitorFeesHeading: "Wettbewerber Gebühren:",
+        competitorGirocardFeeLabel: "Girocard Gebühr (%):",
+        competitorMastercardVisaFeeLabel: "Mastercard / VISA Gebühr (%):",
         feesNoteHeading: "Hinweis zu den Gebühren:",
         transactionFeeInfo: "Transaktionspreis: 0,06 € pro Transaktion",
         girocardFeeInfoBelow: "Girocard-Gebühr bis 10.000 € monatlich: 0,39%",
@@ -109,6 +113,7 @@ const translations = {
     },
     en: {
         // Englische Übersetzungen
+        languageLabel: "Language:",
         customerNameLabel: "Salutation and Name:",
         calculateButton: "Calculate",
         showEmailButton: "Show Offer via Email",
@@ -127,6 +132,9 @@ const translations = {
         buyOption: "Purchase",
         hardwareLabel: "Select Hardware:",
         rentalPeriodLabel: "Rental Period:",
+        competitorFeesHeading: "Competitor Fees:",
+        competitorGirocardFeeLabel: "Girocard Fee (%):",
+        competitorMastercardVisaFeeLabel: "Mastercard / VISA Fee (%):",
         feesNoteHeading: "Note on Fees:",
         transactionFeeInfo: "Transaction Price: €0.06 per transaction",
         girocardFeeInfoBelow: "Girocard Fee up to €10,000 monthly: 0.39%",
@@ -148,13 +156,20 @@ const translations = {
 /* PAY-Rechner-Funktionen */
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
+    const quickFields = document.querySelectorAll('.quick-field');
     const detailedFields = document.querySelectorAll('.detailed-field');
 
     if (calculationType === 'detailliert') {
+        quickFields.forEach(field => {
+            field.style.display = 'none';
+        });
         detailedFields.forEach(field => {
             field.style.display = 'block';
         });
     } else {
+        quickFields.forEach(field => {
+            field.style.display = 'block';
+        });
         detailedFields.forEach(field => {
             field.style.display = 'none';
         });
@@ -211,12 +226,20 @@ function updateHardwareCosts() {
 }
 
 function validatePercentages() {
-    const girocard = parseFloat(document.getElementById('girocard').value) || 0;
-    const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const maestro = parseFloat(document.getElementById('maestro').value) || 0;
-    const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
+    const calculationType = document.getElementById('calculationType').value;
+    let totalPercentage = 0;
 
-    const totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+    if (calculationType === 'schnell') {
+        const girocard = parseFloat(document.getElementById('girocardQuick').value) || 0;
+        const mastercardVisa = parseFloat(document.getElementById('mastercardVisaQuick').value) || 0;
+        totalPercentage = girocard + mastercardVisa;
+    } else {
+        const girocard = parseFloat(document.getElementById('girocardDetailed').value) || 0;
+        const mastercardVisa = parseFloat(document.getElementById('mastercardVisaDetailed').value) || 0;
+        const maestro = parseFloat(document.getElementById('maestroDetailed').value) || 0;
+        const businessCard = parseFloat(document.getElementById('businessCardDetailed').value) || 0;
+        totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+    }
 
     if (totalPercentage !== 100) {
         alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
@@ -247,18 +270,28 @@ function calculatePay() {
     const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
     const transactions = parseFloat(document.getElementById('transactions').value) || 0;
 
-    const girocardFeePercentage = parseFloat(document.getElementById('girocard').value) || 0;
-    const mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisa').value) || 0;
-    const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
-    const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
+    let girocardFeePercentage, mastercardVisaFeePercentage, maestroFeePercentage, businessCardFeePercentage;
+    if (calculationType === 'schnell') {
+        girocardFeePercentage = parseFloat(document.getElementById('girocardQuick').value) || 0;
+        mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisaQuick').value) || 0;
+        maestroFeePercentage = 0;
+        businessCardFeePercentage = 0;
+    } else {
+        girocardFeePercentage = parseFloat(document.getElementById('girocardDetailed').value) || 0;
+        mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisaDetailed').value) || 0;
+        maestroFeePercentage = parseFloat(document.getElementById('maestroDetailed').value) || 0;
+        businessCardFeePercentage = parseFloat(document.getElementById('businessCardDetailed').value) || 0;
+    }
 
     const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
+    // Einnahmen basierend auf Prozentsätzen
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
     const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
     const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
     const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
 
+    // Gebührenraten
     let girocardFeeRate = 0;
     if (girocardRevenue <= 10000) {
         girocardFeeRate = 0.0039; // 0,39%
@@ -289,18 +322,74 @@ function calculatePay() {
     let totalMonthlyCost = totalMonthlyCostBeforeDiscount - discountAmount;
     if (totalMonthlyCost < 0) totalMonthlyCost = 0;
 
+    // MwSt berechnen
+    const mwstRate = 0.19;
+    const totalDisagioFeesMwst = totalDisagioFees * mwstRate;
+    const transactionFeeMwst = transactionFee * mwstRate;
+    const hardwareMonthlyCostMwst = hardwareMonthlyCost * mwstRate;
+    const simServiceFeeMwst = simServiceFee * mwstRate;
+    const totalMonthlyCostMwst = totalMonthlyCost * mwstRate;
+
+    const totalMonthlyCostBrutto = totalMonthlyCost + totalMonthlyCostMwst;
+    const totalMonthlyCostNetto = totalMonthlyCost;
+
+    const totalMonthlyCostGesamt = totalMonthlyCostBrutto;
+
+    // Einmalige Kosten
+    let einmaligeKosten = 0;
+    let einmaligeKostenBrutto = 0;
+    if (purchaseOption === "kaufen") {
+        einmaligeKosten = onceCost;
+        einmaligeKostenBrutto = einmaligeKosten * (1 + mwstRate);
+    }
+
+    // Ergebnis anzeigen
     let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['payHeadline']}</h3>
         <div class="result-section">
-            <p>${(totalDisagioFees + transactionFee).toFixed(2)} € - Disagio und Transaktionsgebühren</p>
-            ${ (purchaseOption === "mieten") ? `<p>${hardwareMonthlyCost.toFixed(2)} € - Monatliche Hardwarekosten</p>` : '' }
-            <p>${simServiceFee > 0 ? simServiceFee.toFixed(2) + ' € - SIM/Servicegebühr' : 'Keine SIM/Servicegebühr'}</p>
-            <h4>Angewendete Rabatte:</h4>
-            <ul>
-                <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
-            </ul>
-            <p><b>${totalMonthlyCost.toFixed(2)} € - Gesamte monatliche Kosten</b></p>
-            ${(purchaseOption === "kaufen") ? `<p>${onceCost.toFixed(2)} € - Einmalige Kosten (bei Kauf)</p>` : ''}
+            <table>
+                <tr>
+                    <th>Gebühr</th>
+                    <th>Netto (€)</th>
+                    <th>Brutto (€)</th>
+                </tr>
+                <tr>
+                    <td>Disagio und Transaktionsgebühren</td>
+                    <td>${totalDisagioFees.toFixed(2)}</td>
+                    <td>${(totalDisagioFees + totalDisagioFeesMwst).toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Transaktionsgebühren</td>
+                    <td>${transactionFee.toFixed(2)}</td>
+                    <td>${transactionFeeMwst.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Monatliche Hardwarekosten</td>
+                    <td>${hardwareMonthlyCost.toFixed(2)}</td>
+                    <td>${hardwareMonthlyCostMwst.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>SIM/Servicegebühr</td>
+                    <td>${simServiceFee.toFixed(2)}</td>
+                    <td>${simServiceFeeMwst.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Rabattbetrag</td>
+                    <td>-${discountAmount.toFixed(2)}</td>
+                    <td>-${(discountAmount * (1 + mwstRate)).toFixed(2)}</td>
+                </tr>
+                ${purchaseOption === "kaufen" ? `
+                <tr>
+                    <td>Einmalige Kosten (bei Kauf)</td>
+                    <td>${einmaligeKosten.toFixed(2)}</td>
+                    <td>${einmaligeKostenBrutto.toFixed(2)}</td>
+                </tr>` : ''}
+                <tr class="total-row">
+                    <td>Gesamte monatliche Kosten</td>
+                    <td>${totalMonthlyCostNetto.toFixed(2)} € (Netto)</td>
+                    <td>${totalMonthlyCostBrutto.toFixed(2)} € (Brutto)</td>
+                </tr>
+            </table>
         </div>
     `;
 
@@ -345,7 +434,8 @@ function calculatePos() {
             mainLicense: 69.00,
             datevApi: 25.00,
             voucherFunction: 10.00,
-            tapToPayLicense: 7.50
+            tapToPayLicense: 7.50,
+            handDeviceLicense: 29.00
         }
     };
 
@@ -370,7 +460,8 @@ function calculatePos() {
         mainLicense: document.getElementById('mainLicense').checked,
         datevApi: document.getElementById('datevApi').checked,
         voucherFunction: document.getElementById('voucherFunction').checked,
-        tapToPayLicense: document.getElementById('tapToPayLicense').checked
+        tapToPayLicense: document.getElementById('tapToPayLicense').checked,
+        handDeviceLicense: parseInt(document.getElementById('handDeviceLicense').value) || 0
     };
 
     // Rabatte einlesen
@@ -387,10 +478,12 @@ function calculatePos() {
         }
     }
 
-    let totalMonthlyCost = 0;
+    let totalLicenseCost = 0;
     for (let license in licenses) {
-        if (licenses[license]) {
-            totalMonthlyCost += prices.licenses[license];
+        if (license === 'handDeviceLicense') {
+            totalLicenseCost += licenses[license] * prices.licenses[license];
+        } else if (licenses[license]) {
+            totalLicenseCost += prices.licenses[license];
         }
     }
 
@@ -399,30 +492,60 @@ function calculatePos() {
     if (totalHardwareCost < 0) totalHardwareCost = 0;
 
     if (freeMonths > 0) {
-        totalMonthlyCost = totalMonthlyCost * ((12 - freeMonths) / 12);
+        totalLicenseCost = totalLicenseCost * ((12 - freeMonths) / 12);
     }
 
     // MwSt berechnen
     const mwstRate = 0.19;
     const totalHardwareMwst = totalHardwareCost * mwstRate;
-    const totalMonthlyMwst = totalMonthlyCost * mwstRate;
+    const totalLicenseMwst = totalLicenseCost * mwstRate;
 
     const totalHardwareBrutto = totalHardwareCost + totalHardwareMwst;
-    const totalMonthlyBrutto = totalMonthlyCost + totalMonthlyMwst;
+    const totalLicenseBrutto = totalLicenseCost + totalLicenseMwst;
+
+    const totalBrutto = totalHardwareBrutto + totalLicenseBrutto;
+
+    // Einmalige Kosten (falls vorhanden)
+    let einmaligeKosten = 0;
+    let einmaligeKostenBrutto = 0;
 
     // Ergebnis anzeigen
     let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['posHeadline']}</h3>
         <div class="result-section">
-            <p>${totalHardwareCost.toFixed(2)} € - Gesamtkosten Hardware (Netto)</p>
-            <p>${totalHardwareBrutto.toFixed(2)} € - Gesamtkosten Hardware (Brutto)</p>
-            <p>${totalMonthlyCost.toFixed(2)} € - Monatliche Kosten Lizenzen (Netto)</p>
-            <p>${totalMonthlyBrutto.toFixed(2)} € - Monatliche Kosten Lizenzen (Brutto)</p>
-            <h4>Angewendete Rabatte:</h4>
-            <ul>
-                <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
-                <li>Anzahl kostenlose Monate: ${freeMonths}</li>
-            </ul>
+            <table>
+                <tr>
+                    <th>Beschreibung</th>
+                    <th>Netto (€)</th>
+                    <th>Brutto (€)</th>
+                </tr>
+                <tr>
+                    <td>Gesamtkosten Hardware</td>
+                    <td>${totalHardwareCost.toFixed(2)}</td>
+                    <td>${totalHardwareBrutto.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Gesamtkosten Lizenzen und Services</td>
+                    <td>${totalLicenseCost.toFixed(2)}</td>
+                    <td>${totalLicenseBrutto.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Rabattbetrag</td>
+                    <td>-${discountAmount.toFixed(2)}</td>
+                    <td>-${(discountAmount * (1 + mwstRate)).toFixed(2)}</td>
+                </tr>
+                ${einmaligeKosten > 0 ? `
+                <tr>
+                    <td>Einmalige Kosten</td>
+                    <td>${einmaligeKosten.toFixed(2)}</td>
+                    <td>${einmaligeKostenBrutto.toFixed(2)}</td>
+                </tr>` : ''}
+                <tr class="total-row">
+                    <td>Gesamtkosten (Netto)</td>
+                    <td>${(totalHardwareCost + totalLicenseCost).toFixed(2)} €</td>
+                    <td>${totalBrutto.toFixed(2)} €</td>
+                </tr>
+            </table>
         </div>
     `;
 
@@ -561,19 +684,39 @@ function calculateTools() {
     const totalMonthlyBrutto = totalMonthlyCost + totalMonthlyMwst;
     const totalActivationBrutto = totalActivationCost + totalActivationMwst;
 
+    const totalBrutto = totalMonthlyBrutto + totalActivationBrutto;
+
     // Ergebnis anzeigen
     let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['headline']}</h3>
+        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['toolsHeadline']}</h3>
         <div class="result-section">
-            <h4>Angewendete Rabatte:</h4>
-            <ul>
-                <li>Rabattbetrag: -${discountAmount.toFixed(2)} €</li>
-                <li>Anzahl kostenlose Monate: ${freeMonths}</li>
-            </ul>
-            <p>Monatliche Kosten (Netto): ${totalMonthlyCost.toFixed(2)} €</p>
-            <p>Monatliche Kosten (Brutto): ${totalMonthlyBrutto.toFixed(2)} €</p>
-            <p>Aktivierungskosten (Netto): ${totalActivationCost.toFixed(2)} €</p>
-            <p>Aktivierungskosten (Brutto): ${totalActivationBrutto.toFixed(2)} €</p>
+            <table>
+                <tr>
+                    <th>Beschreibung</th>
+                    <th>Netto (€)</th>
+                    <th>Brutto (€)</th>
+                </tr>
+                <tr>
+                    <td>Monatliche Kosten</td>
+                    <td>${totalMonthlyCost.toFixed(2)}</td>
+                    <td>${totalMonthlyBrutto.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Aktivierungskosten</td>
+                    <td>${totalActivationCost.toFixed(2)}</td>
+                    <td>${totalActivationBrutto.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Rabattbetrag</td>
+                    <td>-${discountAmount.toFixed(2)}</td>
+                    <td>-${(discountAmount * (1 + mwstRate)).toFixed(2)}</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Gesamtkosten</td>
+                    <td>${(totalMonthlyCost + totalActivationCost).toFixed(2)} € (Netto)</td>
+                    <td>${totalBrutto.toFixed(2)} € (Brutto)</td>
+                </tr>
+            </table>
         </div>
     `;
 
@@ -603,4 +746,25 @@ function showEmailContent(calculatorType) {
 function closeEmailContent() {
     const emailContentContainer = document.getElementById('emailContentContainer');
     emailContentContainer.classList.add('hidden');
+}
+
+/* Email Versand Funktion */
+function sendEmail(calculatorType) {
+    const salutation = document.getElementById('salutation').value;
+    const customerName = document.getElementById('customerName').value.trim();
+    let subject = '';
+    let body = '';
+
+    if (calculatorType === 'pay') {
+        subject = 'Ihr PAY Angebot';
+        body = encodeURIComponent(document.getElementById('result').innerText);
+    } else if (calculatorType === 'pos') {
+        subject = 'Ihr POS Angebot';
+        body = encodeURIComponent(document.getElementById('posResult').innerText);
+    } else if (calculatorType === 'tools') {
+        subject = 'Ihr TOOLS Angebot';
+        body = encodeURIComponent(document.getElementById('toolsResult').innerText);
+    }
+
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
 }
