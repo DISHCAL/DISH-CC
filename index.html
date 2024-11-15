@@ -17,15 +17,30 @@
         <h1>DISH Rechner</h1>
     </header>
 
-    <!-- Tabs zum Wechseln zwischen den Rechnern -->
-    <div class="tabs">
-        <button class="tab-link active" onclick="openTab(event, 'PAY')">PAY Rechner</button>
-        <button class="tab-link" onclick="openTab(event, 'POS')">POS Rechner</button>
-        <button class="tab-link" onclick="openTab(event, 'TOOLS')">TOOLS Rechner</button>
+    <!-- Ebene 1: Namens- und Sprachauswahl -->
+    <div class="selection-section">
+        <label for="customerName">Kundenname: <span class="required">*</span></label>
+        <input type="text" id="customerName" placeholder="z.B. Max Mustermann" required>
+
+        <label for="languageSelect">Sprache auswählen: <span class="required">*</span></label>
+        <select id="languageSelect">
+            <option value="de">Deutsch</option>
+            <option value="en">Englisch</option>
+            <!-- Weitere Sprachen hinzufügen, falls benötigt -->
+        </select>
     </div>
 
+    <!-- Ebene 2: Rechnerumschaltung -->
+    <div class="calculator-selection">
+        <button class="calculator-button active" onclick="showCalculator('PAY')">PAY Rechner</button>
+        <button class="calculator-button" onclick="showCalculator('POS')">POS Rechner</button>
+        <button class="calculator-button" onclick="showCalculator('TOOLS')">TOOLS Rechner</button>
+    </div>
+
+    <!-- Ebene 3: Rechner und Ergebnisse -->
+    
     <!-- PAY Rechner -->
-    <div id="PAY" class="tab-content active">
+    <div id="PAY" class="calculator-section active">
         <h3>PAY Rechner - Kostenberechnung</h3>
 
         <label for="payCalculationType">Berechnungsart: <span class="required">*</span></label>
@@ -33,9 +48,6 @@
             <option value="schnell">Schnelle Berechnung</option>
             <option value="ausfuehrlich">Ausführliche Berechnung</option>
         </select>
-
-        <label for="payCustomerName">Kundenname: <span class="required">*</span></label>
-        <input type="text" id="payCustomerName" placeholder="z.B. Max Mustermann" required>
 
         <label for="payMonthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span class="required">*</span></label>
         <input type="number" id="payMonthlyVolume" placeholder="z.B. 20000" min="0" required>
@@ -109,76 +121,72 @@
         <div id="payResult">
             <h3>Ergebnisse:</h3>
             <div class="result-section">
+                <h4>Einmalige Kosten</h4>
                 <table>
-                    <tr>
-                        <th>Beschreibung</th>
-                        <th>Netto (€)</th>
-                        <th>Mehrwertsteuer (19%) (€)</th>
-                        <th>Gesamtbetrag (€)</th>
-                    </tr>
-                    <tr>
-                        <td>Gebühren gesamt</td>
-                        <td id="payDisagioFeesNetto">0,00</td>
-                        <td id="payDisagioFeesMwSt">0,00</td>
-                        <td id="payDisagioFeesBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Monatliche Hardwarekosten</td>
-                        <td id="payMonthlyCostNetto">0,00</td>
-                        <td id="payMonthlyCostMwSt">0,00</td>
-                        <td id="payMonthlyCostBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>SIM/Servicegebühr</td>
-                        <td id="paySimServiceFeeNetto">0,00</td>
-                        <td id="paySimServiceFeeMwSt">0,00</td>
-                        <td id="paySimServiceFeeBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Einmalige Kosten (Kauf)</td>
-                        <td id="payOneTimeCostNetto">0,00</td>
-                        <td id="payOneTimeCostMwSt">0,00</td>
-                        <td id="payOneTimeCostBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Rabattbetrag</td>
-                        <td id="payDiscountNetto">0,00</td>
-                        <td id="payDiscountMwSt">0,00</td>
-                        <td id="payDiscountBrutto">0,00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td>Gesamte monatliche Kosten</td>
-                        <td id="payTotalNetto">0,00 €</td>
-                        <td id="payTotalMwSt">0,00 €</td>
-                        <td id="payTotalBrutto">0,00 €</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Produkt / Service</th>
+                            <th>Menge</th>
+                            <th>Preis pro Stück (€)</th>
+                            <th>Gesamtkosten (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch generierte Zeilen -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Gesamt einmalige Kosten</strong></td>
+                            <td id="payTotalOneTimeBrutto"><strong>0,00 €</strong></td>
+                        </tr>
+                    </tfoot>
                 </table>
+
+                <h4>Monatliche Kosten</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lizenz / Service</th>
+                            <th>Menge</th>
+                            <th>Preis pro Stück (€)</th>
+                            <th>Gesamtkosten (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch generierte Zeilen -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Gesamt monatliche Kosten</strong></td>
+                            <td id="payTotalMonthlyBrutto"><strong>0,00 €</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <h4>Zusammenfassung</h4>
+                <ul>
+                    <li><strong>Einmalige Kosten:</strong> Kosten: <strong id="paySummaryOneTimeNetto">0,00 €</strong>, MwSt.: <strong id="paySummaryOneTimeMwSt">0,00 €</strong>, Gesamtbetrag: <strong id="paySummaryOneTimeBrutto">0,00 €</strong></li>
+                    <li><strong>Monatliche Kosten:</strong> Kosten: <strong id="paySummaryMonthlyNetto">0,00 €</strong>, MwSt.: <strong id="paySummaryMonthlyMwSt">0,00 €</strong>, Gesamtbetrag: <strong id="paySummaryMonthlyBrutto">0,00 €</strong></li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!-- POS Rechner -->
-    <div id="POS" class="tab-content">
+    <div id="POS" class="calculator-section">
         <h3>POS Rechner - Kostenberechnung</h3>
 
-        <!-- POS Rechner Felder hier einfügen -->
-        <!-- Beispiel: Hardware, Lizenzen, Services, Zusatzlizenzen, Rabatte, etc. -->
-        <!-- Die Implementierung folgt einem ähnlichen Muster wie der PAY Rechner -->
-
-        <label for="posCustomerName">Kundenname: <span class="required">*</span></label>
-        <input type="text" id="posCustomerName" placeholder="z.B. Max Mustermann" required>
-
         <label for="posHardware">Hardware auswählen: <span class="required">*</span></label>
-        <select id="posHardware">
-            <option value="Sunmi" data-price-once="493.00">Bildschirm Sunmi</option>
-            <option value="TSE" data-price-once="159.00">TSE Hardwarenutzung für 5 Jahre</option>
-            <option value="MenuService" data-price-once="300.00">Menü-Eingabeservice</option>
-            <option value="MobileDevice" data-price-once="220.00" data-quantity="4">Mobiles Handgerät</option>
-            <option value="EpsonPrinter" data-price-once="229.00" data-quantity="4">Epson Drucker</option>
-            <option value="ChargingStation" data-price-once="79.00" data-quantity="4">Ladestation für mobiles Handgerät</option>
-            <option value="AccessPoint" data-price-once="189.00" data-quantity="4">Access Point</option>
-            <option value="POSRouter" data-price-once="55.00">POS Router ER605</option>
-            <option value="Switch" data-price-once="107.00">Switch Lite Ubiquiti UniFi</option>
+        <select id="posHardware" onchange="updatePosCalculation()">
+            <option value="Sunmi" data-price="493.00">Bildschirm Sunmi</option>
+            <option value="TSE" data-price="159.00">TSE für 5 Jahre</option>
+            <option value="MenuService" data-price="300.00">Menü-Eingabeservice</option>
+            <option value="MobileDevice" data-price="220.00" data-quantity="4">Mobiles Handgerät</option>
+            <option value="EpsonPrinter" data-price="229.00" data-quantity="4">Epson Drucker</option>
+            <option value="ChargingStation" data-price="79.00" data-quantity="4">Ladestation für mobiles Handgerät</option>
+            <option value="AccessPoint" data-price="189.00" data-quantity="4">Access Point</option>
+            <option value="POSRouter" data-price="55.00">POS Router ER605</option>
+            <option value="Switch" data-price="107.00">Switch Lite Ubiquiti UniFi</option>
         </select>
 
         <label for="posDiscount">Rabatt Einrichtungsservice (€):</label>
@@ -190,96 +198,99 @@
         <div id="posResult">
             <h3>Ergebnisse:</h3>
             <div class="result-section">
+                <h4>Einmalige Kosten</h4>
                 <table>
-                    <tr>
-                        <th>Beschreibung</th>
-                        <th>Netto (€)</th>
-                        <th>Mehrwertsteuer (19%) (€)</th>
-                        <th>Gesamtbetrag (€)</th>
-                    </tr>
-                    <tr>
-                        <td>Gesamtkosten Hardware</td>
-                        <td id="posTotalHardwareNetto">0,00</td>
-                        <td id="posTotalHardwareMwSt">0,00</td>
-                        <td id="posTotalHardwareBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Gesamtkosten Lizenzen und Services</td>
-                        <td id="posTotalLicenseNetto">0,00</td>
-                        <td id="posTotalLicenseMwSt">0,00</td>
-                        <td id="posTotalLicenseBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Rabattbetrag</td>
-                        <td id="posDiscountNetto">0,00</td>
-                        <td id="posDiscountMwSt">0,00</td>
-                        <td id="posDiscountBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Einmalige Kosten</td>
-                        <td id="posOneTimeCostNetto">0,00</td>
-                        <td id="posOneTimeCostMwSt">0,00</td>
-                        <td id="posOneTimeCostBrutto">0,00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td>Gesamtkosten</td>
-                        <td id="posTotalNetto">0,00 €</td>
-                        <td id="posTotalMwSt">0,00 €</td>
-                        <td id="posTotalBrutto">0,00 €</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Produkt / Service</th>
+                            <th>Menge</th>
+                            <th>Preis pro Stück (€)</th>
+                            <th>Gesamtkosten (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch generierte Zeilen -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Gesamt einmalige Kosten</strong></td>
+                            <td id="posTotalOneTimeBrutto"><strong>0,00 €</strong></td>
+                        </tr>
+                    </tfoot>
                 </table>
+
+                <h4>Monatliche Kosten</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lizenz / Service</th>
+                            <th>Menge</th>
+                            <th>Preis pro Stück (€)</th>
+                            <th>Gesamtkosten (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch generierte Zeilen -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Gesamt monatliche Kosten</strong></td>
+                            <td id="posTotalMonthlyBrutto"><strong>0,00 €</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <h4>Zusammenfassung</h4>
+                <ul>
+                    <li><strong>Einmalige Kosten:</strong> Kosten: <strong id="posSummaryOneTimeNetto">0,00 €</strong>, MwSt.: <strong id="posSummaryOneTimeMwSt">0,00 €</strong>, Gesamtbetrag: <strong id="posSummaryOneTimeBrutto">0,00 €</strong></li>
+                    <li><strong>Monatliche Kosten:</strong> Kosten: <strong id="posSummaryMonthlyNetto">0,00 €</strong>, MwSt.: <strong id="posSummaryMonthlyMwSt">0,00 €</strong>, Gesamtbetrag: <strong id="posSummaryMonthlyBrutto">0,00 €</strong></li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!-- TOOLS Rechner -->
-    <div id="TOOLS" class="tab-content">
+    <div id="TOOLS" class="calculator-section">
         <h3>TOOLS Rechner - Kostenberechnung</h3>
-
-        <!-- TOOLS Rechner Felder hier einfügen -->
-        <!-- Beispiel: DISH-Lösungen auswählen, Vertragslaufzeiten, Rabatte, etc. -->
-
-        <label for="toolsCustomerName">Kundenname: <span class="required">*</span></label>
-        <input type="text" id="toolsCustomerName" placeholder="z.B. Max Mustermann" required>
 
         <label for="toolsSolutions">DISH-Lösungen auswählen:</label>
         <div>
-            <input type="checkbox" id="dishStarter" name="toolsSolutions" value="dishStarter" onchange="toggleDishReservationDuration()">
-            <label for="dishStarter">DISH Starter</label>
+            <input type="checkbox" id="toolsDishStarter" name="toolsSolutions" value="dishStarter" onchange="updateToolsCalculation()">
+            <label for="toolsDishStarter">DISH Starter</label>
         </div>
         <div>
-            <input type="checkbox" id="dishReservation" name="toolsSolutions" value="dishReservation" onchange="toggleDishOrderDuration()">
-            <label for="dishReservation">DISH Reservation</label>
+            <input type="checkbox" id="toolsDishReservation" name="toolsSolutions" value="dishReservation" onchange="updateToolsCalculation()">
+            <label for="toolsDishReservation">DISH Reservation</label>
         </div>
         <div>
-            <input type="checkbox" id="dishOrder" name="toolsSolutions" value="dishOrder" onchange="toggleDishPremiumDuration()">
-            <label for="dishOrder">DISH Order</label>
+            <input type="checkbox" id="toolsDishOrder" name="toolsSolutions" value="dishOrder" onchange="updateToolsCalculation()">
+            <label for="toolsDishOrder">DISH Order</label>
         </div>
         <div>
-            <input type="checkbox" id="dishPremium" name="toolsSolutions" value="dishPremium" onchange="toggleDishPremiumDuration()">
-            <label for="dishPremium">DISH Premium</label>
+            <input type="checkbox" id="toolsDishPremium" name="toolsSolutions" value="dishPremium" onchange="updateToolsCalculation()">
+            <label for="toolsDishPremium">DISH Premium</label>
         </div>
 
-        <div id="dishReservationDuration" class="hidden">
-            <label for="dishReservationDurationSelect">Vertragslaufzeit für DISH Reservation:</label>
-            <select id="dishReservationDurationSelect">
+        <div id="toolsDishReservationDuration" class="hidden">
+            <label for="toolsDishReservationDurationSelect">Vertragslaufzeit für DISH Reservation:</label>
+            <select id="toolsDishReservationDurationSelect" onchange="updateToolsCalculation()">
                 <option value="36">36 Monate - 34,90 €/Monat</option>
                 <option value="12">12 Monate - 44,00 €/Monat</option>
                 <option value="3">3 Monate - 49,00 €/Monat</option>
             </select>
         </div>
 
-        <div id="dishOrderDuration" class="hidden">
-            <label for="dishOrderDurationSelect">Vertragslaufzeit für DISH Order:</label>
-            <select id="dishOrderDurationSelect">
+        <div id="toolsDishOrderDuration" class="hidden">
+            <label for="toolsDishOrderDurationSelect">Vertragslaufzeit für DISH Order:</label>
+            <select id="toolsDishOrderDurationSelect" onchange="updateToolsCalculation()">
                 <option value="12">12 Monate - 49,90 €/Monat</option>
                 <option value="3">3 Monate - 59,90 €/Monat</option>
             </select>
         </div>
 
-        <div id="dishPremiumDuration" class="hidden">
-            <label for="dishPremiumDurationSelect">Vertragslaufzeit für DISH Premium:</label>
-            <select id="dishPremiumDurationSelect">
+        <div id="toolsDishPremiumDuration" class="hidden">
+            <label for="toolsDishPremiumDurationSelect">Vertragslaufzeit für DISH Premium:</label>
+            <select id="toolsDishPremiumDurationSelect" onchange="updateToolsCalculation()">
                 <option value="12">12 Monate - 69,90 €/Monat</option>
                 <option value="3">3 Monate - 79,90 €/Monat</option>
             </select>
@@ -297,56 +308,58 @@
         <div id="toolsResult">
             <h3>Ergebnisse:</h3>
             <div class="result-section">
+                <h4>Einmalige Kosten</h4>
                 <table>
-                    <tr>
-                        <th>Beschreibung</th>
-                        <th>Netto (€)</th>
-                        <th>Mehrwertsteuer (19%) (€)</th>
-                        <th>Gesamtbetrag (€)</th>
-                    </tr>
-                    <tr>
-                        <td>Monatliche Kosten</td>
-                        <td id="toolsMonthlyCostNetto">0,00</td>
-                        <td id="toolsMonthlyCostMwSt">0,00</td>
-                        <td id="toolsMonthlyCostBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Aktivierungskosten</td>
-                        <td id="toolsActivationCostNetto">0,00</td>
-                        <td id="toolsActivationCostMwSt">0,00</td>
-                        <td id="toolsActivationCostBrutto">0,00</td>
-                    </tr>
-                    <tr>
-                        <td>Rabattbetrag</td>
-                        <td id="toolsDiscountNetto">0,00</td>
-                        <td id="toolsDiscountMwSt">0,00</td>
-                        <td id="toolsDiscountBrutto">0,00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td>Gesamtkosten</td>
-                        <td id="toolsTotalNetto">0,00 €</td>
-                        <td id="toolsTotalMwSt">0,00 €</td>
-                        <td id="toolsTotalBrutto">0,00 €</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Produkt / Service</th>
+                            <th>Menge</th>
+                            <th>Preis pro Stück (€)</th>
+                            <th>Gesamtkosten (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch generierte Zeilen -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Gesamt einmalige Kosten</strong></td>
+                            <td id="toolsTotalOneTimeBrutto"><strong>0,00 €</strong></td>
+                        </tr>
+                    </tfoot>
                 </table>
+
+                <h4>Monatliche Kosten</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lizenz / Service</th>
+                            <th>Menge</th>
+                            <th>Preis pro Stück (€)</th>
+                            <th>Gesamtkosten (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch generierte Zeilen -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Gesamt monatliche Kosten</strong></td>
+                            <td id="toolsTotalMonthlyBrutto"><strong>0,00 €</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <h4>Zusammenfassung</h4>
+                <ul>
+                    <li><strong>Einmalige Kosten:</strong> Kosten: <strong id="toolsSummaryOneTimeNetto">0,00 €</strong>, MwSt.: <strong id="toolsSummaryOneTimeMwSt">0,00 €</strong>, Gesamtbetrag: <strong id="toolsSummaryOneTimeBrutto">0,00 €</strong></li>
+                    <li><strong>Monatliche Kosten:</strong> Kosten: <strong id="toolsSummaryMonthlyNetto">0,00 €</strong>, MwSt.: <strong id="toolsSummaryMonthlyMwSt">0,00 €</strong>, Gesamtbetrag: <strong id="toolsSummaryMonthlyBrutto">0,00 €</strong></li>
+                </ul>
             </div>
         </div>
     </div>
 
-    <!-- Modal für Angebotstext (optional, falls benötigt) -->
-    <div id="emailContentContainer" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeEmailContent()">&times;</span>
-            <div id="emailContent">
-                <!-- Angebotstext wird hier eingefügt -->
-            </div>
-            <button onclick="closeEmailContent()">Schließen</button>
-        </div>
-    </div>
-
-</div>
-
-<!-- JavaScript-Datei -->
-<script src="script.js"></script>
+    <!-- JavaScript-Datei -->
+    <script src="script.js"></script>
 </body>
 </html>
