@@ -19,7 +19,7 @@
             <h1>DISH - Digitale Lösungen für die Gastronomie</h1>
             <div class="top-bar">
                 <div class="language-selector">
-                    <label for="languageSelect">Sprache:</label>
+                    <label for="languageSelect" data-lang="languageLabel">Sprache:</label>
                     <select id="languageSelect" onchange="changeLanguage()">
                         <option value="de">Deutsch</option>
                         <option value="en">English</option>
@@ -78,22 +78,43 @@
                     <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen:</label>
                     <input type="number" id="transactions" min="0">
                 </div>
-                <!-- Kartenarten Prozentangaben -->
+                <!-- Kartenarten Prozentangaben (nur Schnell) -->
+                <div class="form-group quick-field">
+                    <label for="girocardQuick" data-lang="girocardLabel">Girocard (%):</label>
+                    <input type="number" id="girocardQuick" min="0" max="100">
+                </div>
+                <div class="form-group quick-field">
+                    <label for="mastercardVisaQuick" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
+                    <input type="number" id="mastercardVisaQuick" min="0" max="100">
+                </div>
+                <!-- Kartenarten Prozentangaben (ausführlich) -->
                 <div class="form-group detailed-field">
-                    <label for="girocard" data-lang="girocardLabel">Girocard (%):</label>
-                    <input type="number" id="girocard" min="0" max="100">
+                    <label for="girocardDetailed" data-lang="girocardLabel">Girocard (%):</label>
+                    <input type="number" id="girocardDetailed" min="0" max="100">
                 </div>
                 <div class="form-group detailed-field">
-                    <label for="mastercardVisa" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
-                    <input type="number" id="mastercardVisa" min="0" max="100">
+                    <label for="mastercardVisaDetailed" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
+                    <input type="number" id="mastercardVisaDetailed" min="0" max="100">
                 </div>
                 <div class="form-group detailed-field">
-                    <label for="maestro" data-lang="maestroLabel">Maestro / VPAY (%):</label>
-                    <input type="number" id="maestro" min="0" max="100">
+                    <label for="maestroDetailed" data-lang="maestroLabel">Maestro / VPAY (%):</label>
+                    <input type="number" id="maestroDetailed" min="0" max="100">
                 </div>
                 <div class="form-group detailed-field">
-                    <label for="businessCard" data-lang="businessCardLabel">Business Card (%):</label>
-                    <input type="number" id="businessCard" min="0" max="100">
+                    <label for="businessCardDetailed" data-lang="businessCardLabel">Business Card (%):</label>
+                    <input type="number" id="businessCardDetailed" min="0" max="100">
+                </div>
+                <!-- Wettbewerbergebühren (nur ausführlich) -->
+                <div class="competitor-section detailed-field">
+                    <h3 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h3>
+                    <div class="form-group">
+                        <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
+                        <input type="number" id="competitorGirocardFee" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
+                        <input type="number" id="competitorMastercardVisaFee" min="0" max="100">
+                    </div>
                 </div>
                 <!-- Kauf oder Miete -->
                 <div class="form-group">
@@ -242,6 +263,11 @@
                 <div class="form-group">
                     <label for="tapToPayLicense">4. Tap to Pay Lizenz (7,50 €):</label>
                     <input type="checkbox" id="tapToPayLicense">
+                </div>
+                <!-- Zusatzlizenz für Handgeräte -->
+                <div class="form-group">
+                    <label for="handDeviceLicense">5. Zusatzlizenz für Handgeräte (29,00 €):</label>
+                    <input type="number" id="handDeviceLicense" min="0" value="0">
                 </div>
                 <!-- Rabattfelder -->
                 <div class="input-group">
