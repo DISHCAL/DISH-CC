@@ -80,19 +80,19 @@
         <div id="payHardwareOptions">
             <label for="payHardware">Hardware auswählen: <span class="required">*</span></label>
             <select id="payHardware" onchange="updatePayRentalPrices()">
-                <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-                <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-                <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
-                <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz</option>
+                <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">Dish Terminal S1F2 (499,00 €)</option>
+                <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">Dish Terminal V400C (399,00 €)</option>
+                <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal (119,00 €)</option>
+                <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz (0,00 €)</option>
             </select>
         </div>
 
         <div id="payRentalOptions">
             <label for="payRentalPeriod">Mietdauer: <span class="required">*</span></label>
             <select id="payRentalPeriod">
-                <option value="12">12 Monate</option>
-                <option value="36">36 Monate</option>
-                <option value="60">60 Monate</option>
+                <option value="12">12 Monate - 44,90 €/Monat</option>
+                <option value="36">36 Monate - 18,90 €/Monat</option>
+                <option value="60">60 Monate - 14,90 €/Monat</option>
             </select>
         </div>
 
@@ -176,24 +176,99 @@
     <div id="POS" class="calculator-section">
         <h3>POS Rechner - Kostenberechnung</h3>
 
-        <label for="posHardware">Hardware auswählen: <span class="required">*</span></label>
-        <select id="posHardware" onchange="updatePosCalculation()">
-            <option value="Sunmi" data-price="493.00">Bildschirm Sunmi</option>
-            <option value="TSE" data-price="159.00">TSE für 5 Jahre</option>
-            <option value="MenuService" data-price="300.00">Menü-Eingabeservice</option>
-            <option value="MobileDevice" data-price="220.00" data-quantity="4">Mobiles Handgerät</option>
-            <option value="EpsonPrinter" data-price="229.00" data-quantity="4">Epson Drucker</option>
-            <option value="ChargingStation" data-price="79.00" data-quantity="4">Ladestation für mobiles Handgerät</option>
-            <option value="AccessPoint" data-price="189.00" data-quantity="4">Access Point</option>
-            <option value="POSRouter" data-price="55.00">POS Router ER605</option>
-            <option value="Switch" data-price="107.00">Switch Lite Ubiquiti UniFi</option>
-        </select>
+        <!-- Hardware-Komponenten -->
+        <h4>Hardware-Komponenten:</h4>
+        <div class="component-section">
+            <div class="component-item">
+                <label for="posSunmi">Bildschirm Sunmi (493,00 €):</label>
+                <input type="number" id="posSunmi" name="posHardwareSunmi" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posTSE">TSE Hardwarenutzung für 5 Jahre (159,00 €):</label>
+                <input type="number" id="posTSE" name="posHardwareTSE" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posMenuService">Menü-Eingabeservice (300,00 €):</label>
+                <input type="number" id="posMenuService" name="posHardwareMenuService" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posEinrichtung">Einrichtungsservice vor Ort (599,00 €):</label>
+                <input type="number" id="posEinrichtung" name="posHardwareEinrichtung" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posMobileDevice">Mobiles Handgerät (220,00 €):</label>
+                <input type="number" id="posMobileDevice" name="posHardwareMobileDevice" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posEpsonPrinter">Epson Drucker (229,00 €):</label>
+                <input type="number" id="posEpsonPrinter" name="posHardwareEpsonPrinter" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posChargingStation">Ladestation für mobiles Handgerät (79,00 €):</label>
+                <input type="number" id="posChargingStation" name="posHardwareChargingStation" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posAccessPoint">Access Point (189,00 €):</label>
+                <input type="number" id="posAccessPoint" name="posHardwareAccessPoint" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posRouter">POS Router ER605 (55,00 €):</label>
+                <input type="number" id="posRouter" name="posHardwareRouter" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posSwitch">Switch Lite Ubiquiti UniFi (107,00 €):</label>
+                <input type="number" id="posSwitch" name="posHardwareSwitch" value="0" min="0" placeholder="Anzahl">
+            </div>
+        </div>
 
-        <label for="posDiscount">Rabatt Einrichtungsservice (€):</label>
-        <input type="number" id="posDiscount" placeholder="z.B. -599.00" step="0.01" min="-10000" max="0">
+        <!-- Optionales Zubehör -->
+        <h4>Optionales Zubehör:</h4>
+        <div class="component-section">
+            <div class="component-item">
+                <label for="posCashDrawer">Kassenschublade (69,00 €):</label>
+                <input type="number" id="posCashDrawer" name="posAccessoriesCashDrawer" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posQROrdering">QR Ordering (49,00 €):</label>
+                <input type="number" id="posQROrdering" name="posAccessoriesQROrdering" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posDISHAggregator">DISH Aggregator (59,00 €):</label>
+                <input type="number" id="posDISHAggregator" name="posAccessoriesDISHAggregator" value="0" min="0" placeholder="Anzahl">
+            </div>
+        </div>
+
+        <!-- Monatliche Lizenzen und Services -->
+        <h4>Monatliche Lizenzen und Services:</h4>
+        <div class="component-section">
+            <div class="component-item">
+                <label for="posMainLicense">Hauptlizenz Software (69,00 €):</label>
+                <input type="number" id="posMainLicense" name="posLicensesMain" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posDATEVAPI">DATEV „MeinFiskal“ API (25,00 €):</label>
+                <input type="number" id="posDATEVAPI" name="posLicensesDATEVAPI" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posVoucherFunction">Gutschein Funktion (10,00 €):</label>
+                <input type="number" id="posVoucherFunction" name="posLicensesVoucher" value="0" min="0" placeholder="Anzahl">
+            </div>
+            <div class="component-item">
+                <label for="posAdditionalLicense">Zusätzliche Lizenz für Handgeräte (29,00 €):</label>
+                <input type="number" id="posAdditionalLicense" name="posLicensesAdditional" value="0" min="0" placeholder="Anzahl">
+            </div>
+        </div>
+
+        <!-- Rabatt -->
+        <h4>Rabatt:</h4>
+        <label for="posDiscountAmount">Rabattbetrag (€):</label>
+        <input type="number" id="posDiscountAmount" placeholder="z.B. -599.00" step="0.01" min="-10000" max="0">
+
+        <label for="posFreeMonths">Anzahl kostenloser Monate:</label>
+        <input type="number" id="posFreeMonths" placeholder="z.B. 2" step="1" min="0">
 
         <button onclick="calculatePosCosts()">Berechnen</button>
-        <button onclick="sendEmail('POS')">Angebot per E-Mail senden</button>
+        <button onclick="sendEmail('POS')">Angebot per E-Mail anzeigen</button>
 
         <div id="posResult">
             <h3>Ergebnisse:</h3>
@@ -253,57 +328,63 @@
     <div id="TOOLS" class="calculator-section">
         <h3>TOOLS Rechner - Kostenberechnung</h3>
 
-        <label for="toolsSolutions">DISH-Lösungen auswählen:</label>
-        <div>
-            <input type="checkbox" id="toolsDishStarter" name="toolsSolutions" value="dishStarter" onchange="updateToolsCalculation()">
-            <label for="toolsDishStarter">DISH Starter</label>
-        </div>
-        <div>
-            <input type="checkbox" id="toolsDishReservation" name="toolsSolutions" value="dishReservation" onchange="updateToolsCalculation()">
-            <label for="toolsDishReservation">DISH Reservation</label>
-        </div>
-        <div>
-            <input type="checkbox" id="toolsDishOrder" name="toolsSolutions" value="dishOrder" onchange="updateToolsCalculation()">
-            <label for="toolsDishOrder">DISH Order</label>
-        </div>
-        <div>
-            <input type="checkbox" id="toolsDishPremium" name="toolsSolutions" value="dishPremium" onchange="updateToolsCalculation()">
-            <label for="toolsDishPremium">DISH Premium</label>
+        <!-- DISH Lösungen -->
+        <h4>DISH Lösungen:</h4>
+        <div class="tools-solution-section">
+            <div class="tools-solution-item">
+                <input type="checkbox" id="toolsDishStarter" name="toolsSolutions" value="DISH STARTER" onchange="toggleToolsDishStarterFields()">
+                <label for="toolsDishStarter">DISH STARTER</label>
+                <div class="tools-solution-details hidden">
+                    <p>10,00 € monatlich + 69,00 € einmalige Aktivierungsgebühr</p>
+                    <p>Mindestvertragslaufzeit: 12 Monate</p>
+                </div>
+            </div>
+            <div class="tools-solution-item">
+                <input type="checkbox" id="toolsDishReservation" name="toolsSolutions" value="DISH RESERVATION" onchange="toggleToolsDishReservationFields()">
+                <label for="toolsDishReservation">DISH RESERVATION</label>
+                <div class="tools-solution-details hidden">
+                    <label for="toolsDishReservationDurationSelect">Vertragslaufzeit für DISH RESERVATION:</label>
+                    <select id="toolsDishReservationDurationSelect" onchange="updateToolsCalculation()">
+                        <option value="36">36 Monate - 34,90 €/Monat</option>
+                        <option value="12">12 Monate - 44,00 €/Monat</option>
+                        <option value="3">3 Monate - 49,00 €/Monat</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tools-solution-item">
+                <input type="checkbox" id="toolsDishOrder" name="toolsSolutions" value="DISH ORDER" onchange="toggleToolsDishOrderFields()">
+                <label for="toolsDishOrder">DISH ORDER</label>
+                <div class="tools-solution-details hidden">
+                    <label for="toolsDishOrderDurationSelect">Vertragslaufzeit für DISH ORDER:</label>
+                    <select id="toolsDishOrderDurationSelect" onchange="updateToolsCalculation()">
+                        <option value="12">12 Monate - 49,90 €/Monat</option>
+                        <option value="3">3 Monate - 59,90 €/Monat</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tools-solution-item">
+                <input type="checkbox" id="toolsDishPremium" name="toolsSolutions" value="DISH PREMIUM" onchange="toggleToolsDishPremiumFields()">
+                <label for="toolsDishPremium">DISH PREMIUM</label>
+                <div class="tools-solution-details hidden">
+                    <label for="toolsDishPremiumDurationSelect">Vertragslaufzeit für DISH PREMIUM:</label>
+                    <select id="toolsDishPremiumDurationSelect" onchange="updateToolsCalculation()">
+                        <option value="12">12 Monate - 69,90 €/Monat</option>
+                        <option value="3">3 Monate - 79,90 €/Monat</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div id="toolsDishReservationDuration" class="hidden">
-            <label for="toolsDishReservationDurationSelect">Vertragslaufzeit für DISH Reservation:</label>
-            <select id="toolsDishReservationDurationSelect" onchange="updateToolsCalculation()">
-                <option value="36">36 Monate - 34,90 €/Monat</option>
-                <option value="12">12 Monate - 44,00 €/Monat</option>
-                <option value="3">3 Monate - 49,00 €/Monat</option>
-            </select>
-        </div>
-
-        <div id="toolsDishOrderDuration" class="hidden">
-            <label for="toolsDishOrderDurationSelect">Vertragslaufzeit für DISH Order:</label>
-            <select id="toolsDishOrderDurationSelect" onchange="updateToolsCalculation()">
-                <option value="12">12 Monate - 49,90 €/Monat</option>
-                <option value="3">3 Monate - 59,90 €/Monat</option>
-            </select>
-        </div>
-
-        <div id="toolsDishPremiumDuration" class="hidden">
-            <label for="toolsDishPremiumDurationSelect">Vertragslaufzeit für DISH Premium:</label>
-            <select id="toolsDishPremiumDurationSelect" onchange="updateToolsCalculation()">
-                <option value="12">12 Monate - 69,90 €/Monat</option>
-                <option value="3">3 Monate - 79,90 €/Monat</option>
-            </select>
-        </div>
-
+        <!-- Rabatt -->
+        <h4>Rabatt:</h4>
         <label for="toolsDiscountAmount">Rabattbetrag (€):</label>
         <input type="number" id="toolsDiscountAmount" placeholder="z.B. 100" step="0.01" min="0">
 
-        <label for="toolsFreeMonths">Kostenlose Monate:</label>
+        <label for="toolsFreeMonths">Anzahl kostenloser Monate:</label>
         <input type="number" id="toolsFreeMonths" placeholder="z.B. 2" step="1" min="0">
 
         <button onclick="calculateToolsCosts()">Berechnen</button>
-        <button onclick="sendEmail('TOOLS')">Angebot per E-Mail senden</button>
+        <button onclick="sendEmail('TOOLS')">Angebot per E-Mail anzeigen</button>
 
         <div id="toolsResult">
             <h3>Ergebnisse:</h3>
