@@ -1,289 +1,104 @@
 // script.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Tooltips initialisieren (optional, falls benötigt)
-    tippy('[data-tippy-content]', {
-        placement: 'right',
-    });
-
-    // Spracheinstellung
-    document.getElementById('languageSelect')
-        .addEventListener('change', changeLanguage);
-
-    // Initiale Sprachübersetzung
-    translatePage();
-
-    // Berechnungsfelder initialisieren
-    toggleCalculationFields();
-    toggleRentalOptions();
-
-    // Event Listener für die Formularelemente hinzufügen
-    document.getElementById('calculationType').addEventListener('change', toggleCalculationFields);
-    document.getElementById('purchaseOption').addEventListener('change', toggleRentalOptions);
-    document.getElementById('hardware').addEventListener('change', () => {
-        updateRentalPrices();
-        updateHardwareCosts();
-    });
-    document.getElementById('rentalPeriod').addEventListener('change', updateHardwareCosts);
-
-    // Event Listener für die DISH Tools Rechner
-    document.getElementById('dishReservation').addEventListener('change', toggleDishReservationDuration);
-    document.getElementById('dishOrder').addEventListener('change', toggleDishOrderDuration);
-    document.getElementById('dishPremium').addEventListener('change', toggleDishPremiumDuration);
+    togglePayCalculationFields();
+    togglePayRentalOptions();
+    updatePayRentalPrices();
+    openTab(null, 'PAY'); // Standardmäßig PAY Rechner öffnen
 });
 
-/* Tab-Umschaltung */
-function openCalculator(evt, calculatorName) {
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => {
-        content.classList.add('hidden');
+/* Allgemeine Tab-Funktion */
+function openTab(evt, tabName) {
+    // Verstecke alle Tab-Inhalte
+    const tabContents = document.getElementsByClassName('tab-content');
+    for (let content of tabContents) {
         content.classList.remove('active');
-    });
-
-    const tabLinks = document.querySelectorAll('.tab-link');
-    tabLinks.forEach(link => {
-        link.classList.remove('active');
-    });
-
-    const activeContent = document.getElementById(calculatorName);
-    activeContent.classList.remove('hidden');
-    activeContent.classList.add('active');
-
-    evt.currentTarget.classList.add('active');
-}
-
-/* Sprachumschaltung */
-let currentLanguage = 'de';
-
-function changeLanguage() {
-    currentLanguage = document.getElementById('languageSelect').value;
-    translatePage();
-}
-
-function translatePage() {
-    const elements = document.querySelectorAll('[data-lang]');
-    elements.forEach(element => {
-        const key = element.getAttribute('data-lang');
-        if (translations[currentLanguage][key]) {
-            element.textContent = translations[currentLanguage][key];
-        }
-    });
-}
-
-const translations = {
-    de: {
-        // Deutsche Übersetzungen
-        languageLabel: "Sprache:",
-        customerNameLabel: "Anrede und Name:",
-        calculateButton: "Berechnen",
-        showEmailButton: "Angebot per E-Mail anzeigen",
-        closeButton: "Schließen",
-        calculationTypeLabel: "Berechnungsart:",
-        quickCalculation: "Schnelle Berechnung",
-        detailedCalculation: "Ausführliche Berechnung",
-        monthlyVolumeLabel: "Geplanter Kartenumsatz pro Monat (€):",
-        transactionsLabel: "Erwartete Anzahl an monatlichen Transaktionen:",
-        girocardLabel: "Girocard (%):",
-        mastercardVisaLabel: "Mastercard / VISA (%):",
-        maestroLabel: "Maestro / VPAY (%):",
-        businessCardLabel: "Business Card (%):",
-        purchaseOptionLabel: "Kauf oder Miete:",
-        rentOption: "Mieten",
-        buyOption: "Kaufen",
-        hardwareLabel: "Hardware auswählen:",
-        rentalPeriodLabel: "Mietdauer:",
-        competitorFeesHeading: "Wettbewerber Gebühren:",
-        competitorGirocardFeeLabel: "Girocard Gebühr (%):",
-        competitorMastercardVisaFeeLabel: "Mastercard / VISA Gebühr (%):",
-        feesNoteHeading: "Hinweis zu den Gebühren:",
-        transactionFeeInfo: "Transaktionspreis: 0,06 € pro Transaktion",
-        girocardFeeInfoBelow: "Girocard-Gebühr bis 10.000 € monatlich: 0,39%",
-        girocardFeeInfoAbove: "Girocard-Gebühr über 10.000 € monatlich: 0,29%",
-        maestroFeeInfo: "Disagio Maestro / VPAY: 0,89%",
-        mastercardVisaFeeInfo: "Disagio Mastercard/VISA Privatkunden: 0,89%",
-        businessCardFeeInfo: "Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%",
-        payHeadline: "Kostenberechnung PAY",
-        posHeadline: "POS Kostenberechnung",
-        posHardwareLabel: "Hardware-Komponenten:",
-        posMonthlyLicenses: "Monatliche Lizenzen und Services:",
-        toolsHeadline: "TOOLS Kostenberechnung",
-        toolsOptions: "DISH Lösungen:",
-        noResults: "Keine Ergebnisse verfügbar."
-        // Weitere Übersetzungen können hier hinzugefügt werden...
-    },
-    en: {
-        // Englische Übersetzungen
-        languageLabel: "Language:",
-        customerNameLabel: "Salutation and Name:",
-        calculateButton: "Calculate",
-        showEmailButton: "Show Offer via Email",
-        closeButton: "Close",
-        calculationTypeLabel: "Calculation Type:",
-        quickCalculation: "Quick Calculation",
-        detailedCalculation: "Detailed Calculation",
-        monthlyVolumeLabel: "Planned Card Revenue per Month (€):",
-        transactionsLabel: "Expected Number of Monthly Transactions:",
-        girocardLabel: "Girocard (%):",
-        mastercardVisaLabel: "Mastercard / VISA (%):",
-        maestroLabel: "Maestro / VPAY (%):",
-        businessCardLabel: "Business Card (%):",
-        purchaseOptionLabel: "Purchase or Rent:",
-        rentOption: "Rent",
-        buyOption: "Purchase",
-        hardwareLabel: "Select Hardware:",
-        rentalPeriodLabel: "Rental Period:",
-        competitorFeesHeading: "Competitor Fees:",
-        competitorGirocardFeeLabel: "Girocard Fee (%):",
-        competitorMastercardVisaFeeLabel: "Mastercard / VISA Fee (%):",
-        feesNoteHeading: "Note on Fees:",
-        transactionFeeInfo: "Transaction Price: €0.06 per transaction",
-        girocardFeeInfoBelow: "Girocard Fee up to €10,000 monthly: 0.39%",
-        girocardFeeInfoAbove: "Girocard Fee over €10,000 monthly: 0.29%",
-        maestroFeeInfo: "Maestro / VPAY Disagio: 0.89%",
-        mastercardVisaFeeInfo: "Mastercard/VISA Consumer Disagio: 0.89%",
-        businessCardFeeInfo: "Mastercard/VISA Business and Non-EU: 2.89%",
-        payHeadline: "PAY Cost Calculation",
-        posHeadline: "POS Cost Calculation",
-        posHardwareLabel: "Hardware Components:",
-        posMonthlyLicenses: "Monthly Licenses and Services:",
-        toolsHeadline: "TOOLS Cost Calculation",
-        toolsOptions: "DISH Solutions:",
-        noResults: "No results available."
-        // Weitere Übersetzungen können hier hinzugefügt werden...
     }
-};
 
-/* PAY-Rechner-Funktionen */
-function toggleCalculationFields() {
-    const calculationType = document.getElementById('calculationType').value;
-    const quickFields = document.querySelectorAll('.quick-field');
-    const detailedFields = document.querySelectorAll('.detailed-field');
+    // Entferne die aktive Klasse von allen Tabs
+    const tabLinks = document.getElementsByClassName('tab-link');
+    for (let tab of tabLinks) {
+        tab.classList.remove('active');
+    }
 
-    if (calculationType === 'detailliert') {
-        quickFields.forEach(field => {
-            field.style.display = 'none';
-        });
-        detailedFields.forEach(field => {
-            field.style.display = 'block';
-        });
-    } else {
-        quickFields.forEach(field => {
-            field.style.display = 'block';
-        });
-        detailedFields.forEach(field => {
-            field.style.display = 'none';
-        });
+    // Zeige den ausgewählten Tab-Inhalt
+    document.getElementById(tabName).classList.add('active');
+
+    // Füge die aktive Klasse zum geklickten Tab hinzu
+    if (evt) {
+        evt.currentTarget.classList.add('active');
     }
 }
 
-function toggleRentalOptions() {
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const rentalOptions = document.getElementById('rentalOptions');
-    rentalOptions.style.display = (purchaseOption === "mieten") ? 'block' : 'none';
-}
+/* PAY Rechner Funktionen */
 
-function updateRentalPrices() {
-    const hardwareSelect = document.getElementById('hardware');
-    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-    const rentalPeriodSelect = document.getElementById('rentalPeriod');
-
-    // Update Mietdauer Dropdown basierend auf ausgewählter Hardware
-    if (selectedHardware.value === "MotoG14" || selectedHardware.value === "TapToPay") {
-        rentalPeriodSelect.innerHTML = `
-            <option value="12">12 Monate</option>
-        `;
-    } else {
-        rentalPeriodSelect.innerHTML = `
-            <option value="12">12 Monate</option>
-            <option value="36">36 Monate</option>
-            <option value="60">60 Monate</option>
-        `;
-    }
-}
-
-function updateHardwareCosts() {
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const hardwareSelect = document.getElementById('hardware');
-    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-
-    const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
-    let monthlyCost = 0;
-
-    if (purchaseOption === "mieten") {
-        const rentalPeriod = document.getElementById('rentalPeriod').value;
-        if (rentalPeriod === "12") {
-            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
-        } else if (rentalPeriod === "36") {
-            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
-        } else if (rentalPeriod === "60") {
-            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
-        }
-    } else {
-        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
-    }
-
-    return { onceCost: priceOnce, monthlyCost };
-}
-
-function validatePercentages() {
-    const calculationType = document.getElementById('calculationType').value;
-    let totalPercentage = 0;
+/* Funktion zum Umschalten der Berechnungsfelder (schnell/ausfuehrlich) */
+function togglePayCalculationFields() {
+    const calculationType = document.getElementById('payCalculationType').value;
+    const maestroField = document.getElementById('payMaestroField');
+    const businessCardField = document.getElementById('payBusinessCardField');
+    const competitorMaestroField = document.getElementById('payCompetitorMaestroField');
+    const competitorBusinessCardField = document.getElementById('payCompetitorBusinessCardField');
+    const competitorSection = document.getElementById('payCompetitorSection');
 
     if (calculationType === 'schnell') {
-        const girocard = parseFloat(document.getElementById('girocardQuick').value) || 0;
-        const mastercardVisa = parseFloat(document.getElementById('mastercardVisaQuick').value) || 0;
-        totalPercentage = girocard + mastercardVisa;
+        maestroField.classList.add('hidden');
+        businessCardField.classList.add('hidden');
+        competitorMaestroField.classList.add('hidden');
+        competitorBusinessCardField.classList.add('hidden');
+        competitorSection.classList.add('hidden');
     } else {
-        const girocard = parseFloat(document.getElementById('girocardDetailed').value) || 0;
-        const mastercardVisa = parseFloat(document.getElementById('mastercardVisaDetailed').value) || 0;
-        const maestro = parseFloat(document.getElementById('maestroDetailed').value) || 0;
-        const businessCard = parseFloat(document.getElementById('businessCardDetailed').value) || 0;
-        totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+        maestroField.classList.remove('hidden');
+        businessCardField.classList.remove('hidden');
+        competitorMaestroField.classList.remove('hidden');
+        competitorBusinessCardField.classList.remove('hidden');
+        competitorSection.classList.remove('hidden');
     }
-
-    if (totalPercentage !== 100) {
-        alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
-        return false;
-    }
-    return true;
 }
 
-function calculatePay() {
-    if (!validatePercentages()) {
-        return;
-    }
+/* Funktion zum Umschalten der Mietoptionen im PAY Rechner */
+function togglePayRentalOptions() {
+    const purchaseOption = document.getElementById('payPurchaseOption').value;
+    const rentalOptions = document.getElementById('payRentalOptions');
+    rentalOptions.style.display = purchaseOption === "mieten" ? 'block' : 'none';
+}
 
-    // Kundendaten abrufen
-    const salutation = document.getElementById('salutation').value;
-    const customerName = document.getElementById('customerName').value.trim();
-    const customerNameError = document.getElementById('customerNameError');
+/* Funktion zum Aktualisieren der Mietpreise basierend auf ausgewählter Hardware und Mietdauer */
+function updatePayRentalPrices() {
+    const hardwareSelect = document.getElementById('payHardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    const rentalPeriodSelect = document.getElementById('payRentalPeriod');
 
+    // Aktualisieren der Mietdauer-Texte
+    rentalPeriodSelect.options[0].text = `12 Monate - ${selectedHardware.getAttribute('data-price-12')} €/Monat`;
+    rentalPeriodSelect.options[1].text = `36 Monate - ${selectedHardware.getAttribute('data-price-36')} €/Monat`;
+    rentalPeriodSelect.options[2].text = `60 Monate - ${selectedHardware.getAttribute('data-price-60')} €/Monat`;
+}
+
+/* Funktion zur Berechnung der PAY Kosten */
+function calculatePayCosts() {
+    // Kundennamen erfassen
+    const customerName = document.getElementById('payCustomerName').value.trim();
     if (!customerName) {
-        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
+        alert("Bitte geben Sie den Kundennamen ein.");
         return;
-    } else {
-        customerNameError.textContent = '';
     }
 
-    const calculationType = document.getElementById('calculationType').value;
-    const purchaseOption = document.getElementById('purchaseOption').value;
-    const monthlyVolume = parseFloat(document.getElementById('monthlyVolume').value) || 0;
-    const transactions = parseFloat(document.getElementById('transactions').value) || 0;
-
-    let girocardFeePercentage, mastercardVisaFeePercentage, maestroFeePercentage, businessCardFeePercentage;
-    if (calculationType === 'schnell') {
-        girocardFeePercentage = parseFloat(document.getElementById('girocardQuick').value) || 0;
-        mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisaQuick').value) || 0;
-        maestroFeePercentage = 0;
-        businessCardFeePercentage = 0;
-    } else {
-        girocardFeePercentage = parseFloat(document.getElementById('girocardDetailed').value) || 0;
-        mastercardVisaFeePercentage = parseFloat(document.getElementById('mastercardVisaDetailed').value) || 0;
-        maestroFeePercentage = parseFloat(document.getElementById('maestroDetailed').value) || 0;
-        businessCardFeePercentage = parseFloat(document.getElementById('businessCardDetailed').value) || 0;
+    if (!validatePayPercentages()) {
+        return;
     }
 
-    const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
+    const calculationType = document.getElementById('payCalculationType').value;
+    const purchaseOption = document.getElementById('payPurchaseOption').value;
+    const monthlyVolume = parseFloat(document.getElementById('payMonthlyVolume').value) || 0;
+    const transactions = parseFloat(document.getElementById('payTransactions').value) || 0;
+
+    const girocardFeePercentage = parseFloat(document.getElementById('payGirocard').value) || 0;
+    const mastercardVisaFeePercentage = parseFloat(document.getElementById('payMastercardVisa').value) || 0;
+    const maestroFeePercentage = calculationType === 'ausfuehrlich' ? (parseFloat(document.getElementById('payMaestro').value) || 0) : 0;
+    const businessCardFeePercentage = calculationType === 'ausfuehrlich' ? (parseFloat(document.getElementById('payBusinessCard').value) || 0) : 0;
+
+    const { onceCost, monthlyCost: hardwareMonthlyCost } = updatePayHardwareCosts();
 
     // Einnahmen basierend auf Prozentsätzen
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
@@ -304,467 +119,510 @@ function calculatePay() {
     const maestroFee = maestroRevenue * 0.0089;
     const businessCardFee = businessCardRevenue * 0.0289;
 
-    const totalDisagioFees = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
-    const transactionFee = transactions * 0.06;
+    const totalDisagioFeesNetto = girocardFee + mastercardVisaFee + maestroFee + businessCardFee;
+    const transactionFeeNetto = transactions * 0.06;
 
-    let simServiceFee = 0;
-    const hardwareSelectValue = document.getElementById('hardware').value;
+    let simServiceFeeNetto = 0;
+    const hardwareSelectValue = document.getElementById('payHardware').value;
     if (purchaseOption === "kaufen" && (hardwareSelectValue === "S1F2" || hardwareSelectValue === "V400C")) {
-        simServiceFee = 3.90;
+        simServiceFeeNetto = 3.90;
     }
 
-    const totalMonthlyCostBeforeDiscount = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
+    const totalMonthlyCostNetto = totalDisagioFeesNetto + transactionFeeNetto + hardwareMonthlyCost + simServiceFeeNetto;
 
-    // Rabatt einlesen
-    const discountAmount = parseFloat(document.getElementById('payDiscountAmount').value) || 0;
+    // Rabatt einlesen (optional, kann hier hinzugefügt werden, falls benötigt)
 
-    // Rabatt anwenden
-    let totalMonthlyCost = totalMonthlyCostBeforeDiscount - discountAmount;
-    if (totalMonthlyCost < 0) totalMonthlyCost = 0;
-
-    // MwSt berechnen
+    // Mehrwertsteuer berechnen
     const mwstRate = 0.19;
-    const totalDisagioFeesMwst = totalDisagioFees * mwstRate;
-    const transactionFeeMwst = transactionFee * mwstRate;
-    const hardwareMonthlyCostMwst = hardwareMonthlyCost * mwstRate;
-    const simServiceFeeMwst = simServiceFee * mwstRate;
-    const totalMonthlyCostMwst = totalMonthlyCost * mwstRate;
+    const totalDisagioFeesMwSt = totalDisagioFeesNetto * mwstRate;
+    const transactionFeeMwSt = transactionFeeNetto * mwstRate;
+    const hardwareMonthlyCostMwSt = hardwareMonthlyCost * mwstRate;
+    const simServiceFeeMwSt = simServiceFeeNetto * mwstRate;
+    const totalMonthlyCostMwSt = totalMonthlyCostNetto * mwstRate;
 
-    const totalMonthlyCostBrutto = totalMonthlyCost + totalMonthlyCostMwst;
-    const totalMonthlyCostNetto = totalMonthlyCost;
-
-    const totalMonthlyCostGesamt = totalMonthlyCostBrutto;
+    const totalMonthlyCostBrutto = totalMonthlyCostNetto + totalMonthlyCostMwSt;
 
     // Einmalige Kosten
-    let einmaligeKosten = 0;
+    let einmaligeKostenNetto = 0;
+    let einmaligeKostenMwSt = 0;
     let einmaligeKostenBrutto = 0;
     if (purchaseOption === "kaufen") {
-        einmaligeKosten = onceCost;
-        einmaligeKostenBrutto = einmaligeKosten * (1 + mwstRate);
+        einmaligeKostenNetto = onceCost;
+        einmaligeKostenMwSt = einmaligeKostenNetto * mwstRate;
+        einmaligeKostenBrutto = einmaligeKostenNetto + einmaligeKostenMwSt;
     }
+
+    // Gesamtkosten
+    const totalNetto = totalMonthlyCostNetto + einmaligeKostenNetto;
+    const totalMwSt = totalMonthlyCostMwSt + einmaligeKostenMwSt;
+    const totalBrutto = totalNetto + totalMwSt;
 
     // Ergebnis anzeigen
-    let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['payHeadline']}</h3>
-        <div class="result-section">
-            <table>
-                <tr>
-                    <th>Gebühr</th>
-                    <th>Netto (€)</th>
-                    <th>Brutto (€)</th>
-                </tr>
-                <tr>
-                    <td>Disagio und Transaktionsgebühren</td>
-                    <td>${totalDisagioFees.toFixed(2)}</td>
-                    <td>${(totalDisagioFees + totalDisagioFeesMwst).toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Transaktionsgebühren</td>
-                    <td>${transactionFee.toFixed(2)}</td>
-                    <td>${transactionFeeMwst.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Monatliche Hardwarekosten</td>
-                    <td>${hardwareMonthlyCost.toFixed(2)}</td>
-                    <td>${hardwareMonthlyCostMwst.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>SIM/Servicegebühr</td>
-                    <td>${simServiceFee.toFixed(2)}</td>
-                    <td>${simServiceFeeMwst.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Rabattbetrag</td>
-                    <td>-${discountAmount.toFixed(2)}</td>
-                    <td>-${(discountAmount * (1 + mwstRate)).toFixed(2)}</td>
-                </tr>
-                ${purchaseOption === "kaufen" ? `
-                <tr>
-                    <td>Einmalige Kosten (bei Kauf)</td>
-                    <td>${einmaligeKosten.toFixed(2)}</td>
-                    <td>${einmaligeKostenBrutto.toFixed(2)}</td>
-                </tr>` : ''}
-                <tr class="total-row">
-                    <td>Gesamte monatliche Kosten</td>
-                    <td>${totalMonthlyCostNetto.toFixed(2)} € (Netto)</td>
-                    <td>${totalMonthlyCostBrutto.toFixed(2)} € (Brutto)</td>
-                </tr>
-            </table>
-        </div>
-    `;
+    document.getElementById('payDisagioFeesNetto').innerText = totalDisagioFeesNetto.toFixed(2);
+    document.getElementById('payDisagioFeesMwSt').innerText = totalDisagioFeesMwSt.toFixed(2);
+    document.getElementById('payDisagioFeesBrutto').innerText = (totalDisagioFeesNetto + totalDisagioFeesMwSt).toFixed(2);
 
-    const resultArea = document.getElementById('result');
-    resultArea.innerHTML = resultHtml;
+    document.getElementById('payMonthlyCostNetto').innerText = hardwareMonthlyCost.toFixed(2);
+    document.getElementById('payMonthlyCostMwSt').innerText = hardwareMonthlyCostMwSt.toFixed(2);
+    document.getElementById('payMonthlyCostBrutto').innerText = (hardwareMonthlyCost + hardwareMonthlyCostMwSt).toFixed(2);
+
+    document.getElementById('paySimServiceFeeNetto').innerText = simServiceFeeNetto.toFixed(2);
+    document.getElementById('paySimServiceFeeMwSt').innerText = simServiceFeeMwSt.toFixed(2);
+    document.getElementById('paySimServiceFeeBrutto').innerText = (simServiceFeeNetto + simServiceFeeMwSt).toFixed(2);
+
+    document.getElementById('payOneTimeCostNetto').innerText = einmaligeKostenNetto.toFixed(2);
+    document.getElementById('payOneTimeCostMwSt').innerText = einmaligeKostenMwSt.toFixed(2);
+    document.getElementById('payOneTimeCostBrutto').innerText = einmaligeKostenBrutto.toFixed(2);
+
+    document.getElementById('payTotalNetto').innerText = `${totalNetto.toFixed(2)} €`;
+    document.getElementById('payTotalMwSt').innerText = `${totalMwSt.toFixed(2)} €`;
+    document.getElementById('payTotalBrutto').innerText = `${totalBrutto.toFixed(2)} €`;
 }
 
-/* POS-Rechner-Funktionen */
-function calculatePos() {
-    // Kundendaten abrufen
-    const salutation = document.getElementById('salutation').value;
-    const customerName = document.getElementById('customerName').value.trim();
-    const customerNameError = document.getElementById('customerNameError');
+/* Funktion zur Aktualisierung der Hardwarekosten im PAY Rechner */
+function updatePayHardwareCosts() {
+    const purchaseOption = document.getElementById('payPurchaseOption').value;
+    const hardwareSelect = document.getElementById('payHardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    
+    const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
+    let monthlyCost = 0;
 
-    if (!customerName) {
-        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
-        return;
+    if (purchaseOption === "mieten") {
+        const rentalPeriod = document.getElementById('payRentalPeriod').value;
+        if (rentalPeriod === "12") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
+        } else if (rentalPeriod === "36") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
+        } else if (rentalPeriod === "60") {
+            monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
+        }
     } else {
-        customerNameError.textContent = '';
+        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
     }
 
-    // Preise definieren
-    const prices = {
-        hardware: {
-            screenSunmi: 493.00,
-            tseHardware: 159.00,
-            menuService: 300.00,
-            setupService: 599.00,
-            mobileDevice: 220.00,
-            epsonPrinter: 229.00,
-            chargingStation: 79.00,
-            accessPoint: 189.00,
-            routerER605: 55.00,
-            switchLite: 107.00
-        },
-        optionalAccessories: {
-            cashDrawer: 69.00,
-            qrOrdering: 49.00,
-            dishAggregator: 59.00
-        },
-        licenses: {
-            mainLicense: 69.00,
-            datevApi: 25.00,
-            voucherFunction: 10.00,
-            tapToPayLicense: 7.50,
-            handDeviceLicense: 29.00
+    return { onceCost: priceOnce, monthlyCost };
+}
+
+/* Funktion zur Validierung der PAY Prozentangaben */
+function validatePayPercentages() {
+    const calculationType = document.getElementById('payCalculationType').value;
+    let totalPercentage = 0;
+
+    const girocard = parseFloat(document.getElementById('payGirocard').value) || 0;
+    const mastercardVisa = parseFloat(document.getElementById('payMastercardVisa').value) || 0;
+    const maestro = calculationType === 'ausfuehrlich' ? (parseFloat(document.getElementById('payMaestro').value) || 0) : 0;
+    const businessCard = calculationType === 'ausfuehrlich' ? (parseFloat(document.getElementById('payBusinessCard').value) || 0) : 0;
+
+    totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+
+    if (totalPercentage !== 100) {
+        alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
+        return false;
+    }
+    return true;
+}
+
+/* Funktion zur Erstellung und Versendung der E-Mail */
+function sendEmail(calculatorType) {
+    let customerName = "";
+    let emailBody = "";
+    let subject = "";
+
+    if (calculatorType === 'PAY') {
+        customerName = document.getElementById('payCustomerName').value.trim();
+        if (!customerName) {
+            alert("Bitte geben Sie den Kundennamen ein.");
+            return;
         }
-    };
 
-    // Eingaben auslesen
-    const quantities = {
-        screenSunmi: parseInt(document.getElementById('screenSunmi').value) || 0,
-        tseHardware: parseInt(document.getElementById('tseHardware').value) || 0,
-        menuService: parseInt(document.getElementById('menuService').value) || 0,
-        setupService: parseInt(document.getElementById('setupService').value) || 0,
-        mobileDevice: parseInt(document.getElementById('mobileDevice').value) || 0,
-        epsonPrinter: parseInt(document.getElementById('epsonPrinter').value) || 0,
-        chargingStation: parseInt(document.getElementById('chargingStation').value) || 0,
-        accessPoint: parseInt(document.getElementById('accessPoint').value) || 0,
-        routerER605: parseInt(document.getElementById('routerER605').value) || 0,
-        switchLite: parseInt(document.getElementById('switchLite').value) || 0,
-        cashDrawer: parseInt(document.getElementById('cashDrawer').value) || 0,
-        qrOrdering: parseInt(document.getElementById('qrOrdering').value) || 0,
-        dishAggregator: parseInt(document.getElementById('dishAggregator').value) || 0
-    };
+        // Sammeln der Kosten aus den Ergebnissen
+        const oneTimeCostNetto = document.getElementById('payOneTimeCostNetto').innerText;
+        const oneTimeCostMwSt = document.getElementById('payOneTimeCostMwSt').innerText;
+        const oneTimeCostBrutto = document.getElementById('payOneTimeCostBrutto').innerText;
 
-    const licenses = {
-        mainLicense: document.getElementById('mainLicense').checked,
-        datevApi: document.getElementById('datevApi').checked,
-        voucherFunction: document.getElementById('voucherFunction').checked,
-        tapToPayLicense: document.getElementById('tapToPayLicense').checked,
-        handDeviceLicense: parseInt(document.getElementById('handDeviceLicense').value) || 0
-    };
+        const monthlyCostNetto = document.getElementById('payMonthlyCostNetto').innerText;
+        const monthlyCostMwSt = document.getElementById('payMonthlyCostMwSt').innerText;
+        const monthlyCostBrutto = document.getElementById('payMonthlyCostBrutto').innerText;
 
-    // Rabatte einlesen
-    const discountAmount = parseFloat(document.getElementById('posDiscountAmount').value) || 0;
-    const freeMonths = parseInt(document.getElementById('posFreeMonths').value) || 0;
+        const simServiceFeeNetto = document.getElementById('paySimServiceFeeNetto').innerText;
+        const simServiceFeeMwSt = document.getElementById('paySimServiceFeeMwSt').innerText;
+        const simServiceFeeBrutto = document.getElementById('paySimServiceFeeBrutto').innerText;
 
-    // Berechnungen durchführen
-    let totalHardwareCost = 0;
-    for (let item in quantities) {
-        if (prices.hardware[item] !== undefined) {
-            totalHardwareCost += quantities[item] * prices.hardware[item];
-        } else if (prices.optionalAccessories[item] !== undefined) {
-            totalHardwareCost += quantities[item] * prices.optionalAccessories[item];
+        const totalNetto = document.getElementById('payTotalNetto').innerText;
+        const totalMwSt = document.getElementById('payTotalMwSt').innerText;
+        const totalBrutto = document.getElementById('payTotalBrutto').innerText;
+
+        // Erstellen des Angebotsinhalts basierend auf den Ergebnissen
+        emailBody = `
+Sehr geehrte/r ${customerName},
+
+vielen Dank für Ihr Interesse an unserem Kassensystem DISH PAY. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+---
+#### **Einmalige Kosten**
+
+| **Produkt / Service** | **Betrag (€)** |
+|-----------------------|-----------------|
+| **Einmalige Kosten (Kauf)** | ${oneTimeCostNetto} € |
+| **Mehrwertsteuer (19%)** | ${oneTimeCostMwSt} € |
+| **Gesamtbetrag (€)** | ${oneTimeCostBrutto} € |
+
+---
+#### **Monatliche Kosten**
+
+| **Lizenz / Service** | **Betrag (€)** |
+|----------------------|-----------------|
+| **Monatliche Hardwarekosten** | ${monthlyCostNetto} € |
+| **SIM/Servicegebühr** | ${simServiceFeeNetto} € |
+| **Mehrwertsteuer (19%)** | ${monthlyCostMwSt} €, ${simServiceFeeMwSt} € |
+| **Gesamtbetrag (€)** | ${monthlyCostBrutto} €, ${simServiceFeeBrutto} € |
+
+---
+#### **Zusammenfassung**
+
+- **Einmalige Kosten**: **Netto: ${oneTimeCostNetto} €**, **MwSt: ${oneTimeCostMwSt} €**, **Gesamtbetrag: ${oneTimeCostBrutto} €**
+- **Monatliche Kosten**: **Netto: ${monthlyCostNetto} €**, **MwSt: ${monthlyCostMwSt} €**, **Gesamtbetrag: ${monthlyCostBrutto} €**
+
+---
+**Hinweis:**  
+
+*Die Kosten für die Access Points sind nicht mehr in der Kostenübersicht enthalten.*
+
+**Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.**
+
+**Mit freundlichen Grüßen,  
+Ihr DISH Team**
+
+Rechtlicher Hinweis:  
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
+        `;
+        subject = 'Ihr DISH PAY Angebot';
+
+    } else if (calculatorType === 'POS') {
+        // POS Rechner E-Mail Inhalt erstellen
+        const customerName = document.getElementById('posCustomerName').value.trim();
+        if (!customerName) {
+            alert("Bitte geben Sie den Kundennamen ein.");
+            return;
         }
+
+        const totalHardwareNetto = document.getElementById('posTotalHardwareNetto').innerText;
+        const totalHardwareMwSt = document.getElementById('posTotalHardwareMwSt').innerText;
+        const totalHardwareBrutto = document.getElementById('posTotalHardwareBrutto').innerText;
+
+        const totalLicenseNetto = document.getElementById('posTotalLicenseNetto').innerText;
+        const totalLicenseMwSt = document.getElementById('posTotalLicenseMwSt').innerText;
+        const totalLicenseBrutto = document.getElementById('posTotalLicenseBrutto').innerText;
+
+        const discountNetto = document.getElementById('posDiscountNetto').innerText;
+        const discountMwSt = document.getElementById('posDiscountMwSt').innerText;
+        const discountBrutto = document.getElementById('posDiscountBrutto').innerText;
+
+        const oneTimeCostNetto = document.getElementById('posOneTimeCostNetto').innerText;
+        const oneTimeCostMwSt = document.getElementById('posOneTimeCostMwSt').innerText;
+        const oneTimeCostBrutto = document.getElementById('posOneTimeCostBrutto').innerText;
+
+        const totalNetto = document.getElementById('posTotalNetto').innerText;
+        const totalMwSt = document.getElementById('posTotalMwSt').innerText;
+        const totalBrutto = document.getElementById('posTotalBrutto').innerText;
+
+        emailBody = `
+Sehr geehrte/r ${customerName},
+
+vielen Dank für Ihr Interesse an unserem Kassensystem DISH POS. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+---
+#### **Einmalige Kosten**
+
+| **Produkt / Service** | **Betrag (€)** |
+|-----------------------|-----------------|
+| **Gesamtkosten Hardware** | ${totalHardwareNetto} € |
+| **Mehrwertsteuer (19%)** | ${totalHardwareMwSt} € |
+| **Gesamtbetrag (€)** | ${totalHardwareBrutto} € |
+
+| **Produkt / Service** | **Betrag (€)** |
+|-----------------------|-----------------|
+| **Gesamtkosten Lizenzen und Services** | ${totalLicenseNetto} € |
+| **Mehrwertsteuer (19%)** | ${totalLicenseMwSt} € |
+| **Gesamtbetrag (€)** | ${totalLicenseBrutto} € |
+
+| **Produkt / Service** | **Betrag (€)** |
+|-----------------------|-----------------|
+| **Rabattbetrag** | ${discountNetto} € |
+| **Mehrwertsteuer (19%)** | ${discountMwSt} € |
+| **Gesamtbetrag (€)** | ${discountBrutto} € |
+
+| **Produkt / Service** | **Betrag (€)** |
+|-----------------------|-----------------|
+| **Einmalige Kosten (Kauf)** | ${oneTimeCostNetto} € |
+| **Mehrwertsteuer (19%)** | ${oneTimeCostMwSt} € |
+| **Gesamtbetrag (€)** | ${oneTimeCostBrutto} € |
+
+---
+#### **Gesamtkosten**
+
+- **Gesamtkosten**: **Netto: ${totalNetto} €**, **MwSt: ${totalMwSt} €**, **Gesamtbetrag: ${totalBrutto} €**
+
+---
+**Hinweis:**  
+
+
+**Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.**
+
+**Mit freundlichen Grüßen,  
+Ihr DISH Team**
+
+Rechtlicher Hinweis:  
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
+        `;
+        subject = 'Ihr DISH POS Angebot';
+
+    } else if (calculatorType === 'TOOLS') {
+        // TOOLS Rechner E-Mail Inhalt erstellen
+        const customerName = document.getElementById('toolsCustomerName').value.trim();
+        if (!customerName) {
+            alert("Bitte geben Sie den Kundennamen ein.");
+            return;
+        }
+
+        const monthlyCostNetto = document.getElementById('toolsMonthlyCostNetto').innerText;
+        const monthlyCostMwSt = document.getElementById('toolsMonthlyCostMwSt').innerText;
+        const monthlyCostBrutto = document.getElementById('toolsMonthlyCostBrutto').innerText;
+
+        const activationCostNetto = document.getElementById('toolsActivationCostNetto').innerText;
+        const activationCostMwSt = document.getElementById('toolsActivationCostMwSt').innerText;
+        const activationCostBrutto = document.getElementById('toolsActivationCostBrutto').innerText;
+
+        const discountNetto = document.getElementById('toolsDiscountNetto').innerText;
+        const discountMwSt = document.getElementById('toolsDiscountMwSt').innerText;
+        const discountBrutto = document.getElementById('toolsDiscountBrutto').innerText;
+
+        const totalNetto = document.getElementById('toolsTotalNetto').innerText;
+        const totalMwSt = document.getElementById('toolsTotalMwSt').innerText;
+        const totalBrutto = document.getElementById('toolsTotalBrutto').innerText;
+
+        emailBody = `
+Sehr geehrte/r ${customerName},
+
+vielen Dank für Ihr Interesse an unseren DISH-Lösungen. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+---
+#### **Einmalige Kosten**
+
+| **Produkt / Service** | **Betrag (€)** |
+|-----------------------|-----------------|
+| **Einmalige Kosten (Kauf)** | ${activationCostNetto} € |
+| **Mehrwertsteuer (19%)** | ${activationCostMwSt} € |
+| **Gesamtbetrag (€)** | ${activationCostBrutto} € |
+
+---
+#### **Monatliche Kosten**
+
+| **Lizenz / Service** | **Betrag (€)** |
+|----------------------|-----------------|
+| **Monatliche Kosten** | ${monthlyCostNetto} € |
+| **Mehrwertsteuer (19%)** | ${monthlyCostMwSt} € |
+| **Gesamtbetrag (€)** | ${monthlyCostBrutto} € |
+
+---
+#### **Zusammenfassung**
+
+- **Einmalige Kosten**: **Netto: ${activationCostNetto} €**, **MwSt: ${activationCostMwSt} €**, **Gesamtbetrag: ${activationCostBrutto} €**
+- **Monatliche Kosten**: **Netto: ${monthlyCostNetto} €**, **MwSt: ${monthlyCostMwSt} €**, **Gesamtbetrag: ${monthlyCostBrutto} €**
+
+---
+**Hinweis:**  
+
+
+
+**Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unseren DISH-Lösungen einen echten Mehrwert bieten zu dürfen.**
+
+**Mit freundlichen Grüßen,  
+Ihr DISH Team**
+
+Rechtlicher Hinweis:  
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
+        `;
+        subject = 'Ihr DISH TOOLS Angebot';
     }
 
-    let totalLicenseCost = 0;
-    for (let license in licenses) {
-        if (license === 'handDeviceLicense') {
-            totalLicenseCost += licenses[license] * prices.licenses[license];
-        } else if (licenses[license]) {
-            totalLicenseCost += prices.licenses[license];
-        }
+    // Öffnen des E-Mail-Clients mit vorgefertigtem Inhalt
+    const body = encodeURIComponent(emailBody);
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
+}
+
+/* POS Rechner Funktionen */
+
+/* Funktion zur Berechnung der POS Kosten */
+function calculatePosCosts() {
+    // Kundennamen erfassen
+    const customerName = document.getElementById('posCustomerName').value.trim();
+    if (!customerName) {
+        alert("Bitte geben Sie den Kundennamen ein.");
+        return;
     }
+
+    const hardwareSelect = document.getElementById('posHardware');
+    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
+    const quantity = parseInt(selectedHardware.getAttribute('data-quantity')) || 1;
+
+    const priceOnce = parseFloat(selectedHardware.getAttribute('data-price-once')) || 0;
+    const price12 = parseFloat(selectedHardware.getAttribute('data-price-12')) || 0;
+    const price36 = parseFloat(selectedHardware.getAttribute('data-price-36')) || 0;
+    const price60 = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
+
+    const discount = parseFloat(document.getElementById('posDiscount').value) || 0;
+
+    // Berechnung der einmaligen Kosten
+    const einmaligeKostenNetto = priceOnce * quantity;
+    const einmaligeKostenMwSt = einmaligeKostenNetto * 0.19;
+    const einmaligeKostenBrutto = einmaligeKostenNetto + einmaligeKostenMwSt;
+
+    // Berechnung der Lizenzen und Services (Beispielwerte, anpassen nach Bedarf)
+    const totalLicenseNetto = 69.00 + (29.00 * 4) + 25.00 + 10.00 + 34.90;
+    const totalLicenseMwSt = totalLicenseNetto * 0.19;
+    const totalLicenseBrutto = totalLicenseNetto + totalLicenseMwSt;
 
     // Rabatt anwenden
-    totalHardwareCost -= discountAmount;
-    if (totalHardwareCost < 0) totalHardwareCost = 0;
+    const discountNetto = discount;
+    const discountMwSt = discountNetto * 0.19;
+    const discountBrutto = discountNetto + discountMwSt;
 
-    if (freeMonths > 0) {
-        totalLicenseCost = totalLicenseCost * ((12 - freeMonths) / 12);
-    }
-
-    // MwSt berechnen
-    const mwstRate = 0.19;
-    const totalHardwareMwst = totalHardwareCost * mwstRate;
-    const totalLicenseMwst = totalLicenseCost * mwstRate;
-
-    const totalHardwareBrutto = totalHardwareCost + totalHardwareMwst;
-    const totalLicenseBrutto = totalLicenseCost + totalLicenseMwst;
-
-    const totalBrutto = totalHardwareBrutto + totalLicenseBrutto;
-
-    // Einmalige Kosten (falls vorhanden)
-    let einmaligeKosten = 0;
-    let einmaligeKostenBrutto = 0;
+    // Gesamtkosten berechnen
+    const totalNetto = einmaligeKostenNetto + totalLicenseNetto - discountNetto;
+    const totalMwSt = einmaligeKostenMwSt + totalLicenseMwSt - discountMwSt;
+    const totalBrutto = einmaligeKostenBrutto + totalLicenseBrutto - discountBrutto;
 
     // Ergebnis anzeigen
-    let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['posHeadline']}</h3>
-        <div class="result-section">
-            <table>
-                <tr>
-                    <th>Beschreibung</th>
-                    <th>Netto (€)</th>
-                    <th>Brutto (€)</th>
-                </tr>
-                <tr>
-                    <td>Gesamtkosten Hardware</td>
-                    <td>${totalHardwareCost.toFixed(2)}</td>
-                    <td>${totalHardwareBrutto.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Gesamtkosten Lizenzen und Services</td>
-                    <td>${totalLicenseCost.toFixed(2)}</td>
-                    <td>${totalLicenseBrutto.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Rabattbetrag</td>
-                    <td>-${discountAmount.toFixed(2)}</td>
-                    <td>-${(discountAmount * (1 + mwstRate)).toFixed(2)}</td>
-                </tr>
-                ${einmaligeKosten > 0 ? `
-                <tr>
-                    <td>Einmalige Kosten</td>
-                    <td>${einmaligeKosten.toFixed(2)}</td>
-                    <td>${einmaligeKostenBrutto.toFixed(2)}</td>
-                </tr>` : ''}
-                <tr class="total-row">
-                    <td>Gesamtkosten (Netto)</td>
-                    <td>${(totalHardwareCost + totalLicenseCost).toFixed(2)} €</td>
-                    <td>${totalBrutto.toFixed(2)} €</td>
-                </tr>
-            </table>
-        </div>
-    `;
+    document.getElementById('posTotalHardwareNetto').innerText = einmaligeKostenNetto.toFixed(2);
+    document.getElementById('posTotalHardwareMwSt').innerText = einmaligeKostenMwSt.toFixed(2);
+    document.getElementById('posTotalHardwareBrutto').innerText = einmaligeKostenBrutto.toFixed(2);
 
-    const resultArea = document.getElementById('posResult');
-    resultArea.innerHTML = resultHtml;
+    document.getElementById('posTotalLicenseNetto').innerText = totalLicenseNetto.toFixed(2);
+    document.getElementById('posTotalLicenseMwSt').innerText = totalLicenseMwSt.toFixed(2);
+    document.getElementById('posTotalLicenseBrutto').innerText = totalLicenseBrutto.toFixed(2);
+
+    document.getElementById('posDiscountNetto').innerText = `-${discountNetto.toFixed(2)}`;
+    document.getElementById('posDiscountMwSt').innerText = `-${discountMwSt.toFixed(2)}`;
+    document.getElementById('posDiscountBrutto').innerText = `-${discountBrutto.toFixed(2)}`;
+
+    document.getElementById('posTotalNetto').innerText = `${totalNetto.toFixed(2)} €`;
+    document.getElementById('posTotalMwSt').innerText = `${totalMwSt.toFixed(2)} €`;
+    document.getElementById('posTotalBrutto').innerText = `${totalBrutto.toFixed(2)} €`;
 }
 
-/* TOOLS-Rechner-Funktionen */
+/* TOOLS Rechner Funktionen */
+
+/* Funktion zum Umschalten der DISH Reservation Dauer */
 function toggleDishReservationDuration() {
     const dishReservation = document.getElementById('dishReservation').checked;
     const dishReservationDuration = document.getElementById('dishReservationDuration');
-    dishReservationDuration.disabled = !dishReservation;
+    dishReservationDuration.classList.toggle('hidden', !dishReservation);
 }
 
+/* Funktion zum Umschalten der DISH Order Dauer */
 function toggleDishOrderDuration() {
     const dishOrder = document.getElementById('dishOrder').checked;
     const dishOrderDuration = document.getElementById('dishOrderDuration');
-    dishOrderDuration.disabled = !dishOrder;
+    dishOrderDuration.classList.toggle('hidden', !dishOrder);
 }
 
+/* Funktion zum Umschalten der DISH Premium Dauer */
 function toggleDishPremiumDuration() {
     const dishPremium = document.getElementById('dishPremium').checked;
     const dishPremiumDuration = document.getElementById('dishPremiumDuration');
-    dishPremiumDuration.disabled = !dishPremium;
+    dishPremiumDuration.classList.toggle('hidden', !dishPremium);
 }
 
-function calculateTools() {
-    // Kundendaten abrufen
-    const salutation = document.getElementById('salutation').value;
-    const customerName = document.getElementById('customerName').value.trim();
-    const customerNameError = document.getElementById('customerNameError');
-
+/* Funktion zur Berechnung der TOOLS Kosten */
+function calculateToolsCosts() {
+    // Kundennamen erfassen
+    const customerName = document.getElementById('toolsCustomerName').value.trim();
     if (!customerName) {
-        customerNameError.textContent = 'Bitte geben Sie den Kundennamen ein.';
+        alert("Bitte geben Sie den Kundennamen ein.");
         return;
-    } else {
-        customerNameError.textContent = '';
     }
 
-    // Preise definieren
-    const prices = {
-        dishStarter: {
-            monthly: 10.00,
-            activation: 69.00
-        },
-        dishReservation: {
-            monthly36: 34.90,
-            monthly12: 44.00,
-            monthly3: 49.00,
-            activation: 69.00
-        },
-        dishOrder: {
-            monthly12: 49.90,
-            monthly3: 59.90,
-            activation: 299.00
-        },
-        dishPremium: {
-            monthly12: 69.90,
-            monthly3: 79.90,
-            activation: 279.00
+    // Auswahl der Lösungen und Vertragslaufzeiten
+    let monthlyCostNetto = 0;
+    let activationCostNetto = 0;
+
+    if (document.getElementById('dishStarter').checked) {
+        // Beispielwerte, anpassen nach Bedarf
+        monthlyCostNetto += 10.00; // DISH Starter monatlich
+    }
+
+    if (document.getElementById('dishReservation').checked) {
+        const duration = document.getElementById('dishReservationDurationSelect').value;
+        if (duration === "36") {
+            monthlyCostNetto += 34.90;
+        } else if (duration === "12") {
+            monthlyCostNetto += 44.00;
+        } else if (duration === "3") {
+            monthlyCostNetto += 49.00;
         }
-    };
+    }
 
-    // Eingaben auslesen
-    const selections = {
-        dishStarter: document.getElementById('dishStarter').checked,
-        dishReservation: document.getElementById('dishReservation').checked,
-        dishOrder: document.getElementById('dishOrder').checked,
-        dishPremium: document.getElementById('dishPremium').checked
-    };
+    if (document.getElementById('dishOrder').checked) {
+        const duration = document.getElementById('dishOrderDurationSelect').value;
+        if (duration === "12") {
+            monthlyCostNetto += 49.90;
+        } else if (duration === "3") {
+            monthlyCostNetto += 59.90;
+        }
+    }
 
-    const durations = {
-        dishReservation: document.getElementById('dishReservationDuration').value,
-        dishOrder: document.getElementById('dishOrderDuration').value,
-        dishPremium: document.getElementById('dishPremiumDuration').value
-    };
+    if (document.getElementById('dishPremium').checked) {
+        const duration = document.getElementById('dishPremiumDurationSelect').value;
+        if (duration === "12") {
+            monthlyCostNetto += 69.90;
+        } else if (duration === "3") {
+            monthlyCostNetto += 79.90;
+        }
+    }
 
-    // Rabatte einlesen
+    // Aktivierungskosten (Beispielwert, anpassen nach Bedarf)
+    activationCostNetto += 0.00; // Falls es Aktivierungskosten gibt
+
+    // Rabatt und kostenlose Monate
     const discountAmount = parseFloat(document.getElementById('toolsDiscountAmount').value) || 0;
     const freeMonths = parseInt(document.getElementById('toolsFreeMonths').value) || 0;
 
-    // Berechnungen durchführen
-    let totalMonthlyCost = 0;
-    let totalActivationCost = 0;
-
-    if (selections.dishStarter) {
-        totalMonthlyCost += prices.dishStarter.monthly;
-        totalActivationCost += prices.dishStarter.activation;
-    }
-
-    if (selections.dishReservation) {
-        totalActivationCost += prices.dishReservation.activation;
-        const contractDuration = parseInt(durations.dishReservation);
-        if (contractDuration === 36) {
-            totalMonthlyCost += prices.dishReservation.monthly36;
-        } else if (contractDuration === 12) {
-            totalMonthlyCost += prices.dishReservation.monthly12;
-        } else if (contractDuration === 3) {
-            totalMonthlyCost += prices.dishReservation.monthly3;
-        }
-    }
-
-    if (selections.dishOrder) {
-        totalActivationCost += prices.dishOrder.activation;
-        const contractDuration = parseInt(durations.dishOrder);
-        if (contractDuration === 12) {
-            totalMonthlyCost += prices.dishOrder.monthly12;
-        } else if (contractDuration === 3) {
-            totalMonthlyCost += prices.dishOrder.monthly3;
-        }
-    }
-
-    if (selections.dishPremium) {
-        totalActivationCost += prices.dishPremium.activation;
-        const contractDuration = parseInt(durations.dishPremium);
-        if (contractDuration === 12) {
-            totalMonthlyCost += prices.dishPremium.monthly12;
-        } else if (contractDuration === 3) {
-            totalMonthlyCost += prices.dishPremium.monthly3;
-        }
-    }
-
     // Rabatt anwenden
-    totalActivationCost -= discountAmount;
-    if (totalActivationCost < 0) totalActivationCost = 0;
+    const discountedActivationCostNetto = activationCostNetto - discountAmount;
+    const discountedActivationCostMwSt = discountedActivationCostNetto * 0.19;
+    const discountedActivationCostBrutto = discountedActivationCostNetto + discountedActivationCostMwSt;
 
+    // Kostenlose Monate anwenden
+    let adjustedMonthlyCostNetto = monthlyCostNetto;
     if (freeMonths > 0) {
-        totalMonthlyCost = totalMonthlyCost * ((12 - freeMonths) / 12);
+        adjustedMonthlyCostNetto = monthlyCostNetto * ((12 - freeMonths) / 12);
     }
 
-    // MwSt berechnen
-    const mwstRate = 0.19;
-    const totalMonthlyMwst = totalMonthlyCost * mwstRate;
-    const totalActivationMwst = totalActivationCost * mwstRate;
+    const adjustedMonthlyCostMwSt = adjustedMonthlyCostNetto * 0.19;
+    const adjustedMonthlyCostBrutto = adjustedMonthlyCostNetto + adjustedMonthlyCostMwSt;
 
-    const totalMonthlyBrutto = totalMonthlyCost + totalMonthlyMwst;
-    const totalActivationBrutto = totalActivationCost + totalActivationMwst;
-
-    const totalBrutto = totalMonthlyBrutto + totalActivationBrutto;
+    // Gesamtkosten berechnen
+    const totalNetto = adjustedMonthlyCostNetto + discountedActivationCostNetto;
+    const totalMwSt = adjustedMonthlyCostMwSt + discountedActivationCostMwSt;
+    const totalBrutto = adjustedMonthlyCostBrutto + discountedActivationCostBrutto;
 
     // Ergebnis anzeigen
-    let resultHtml = `
-        <h3>${salutation} ${customerName}, ${translations[currentLanguage]['toolsHeadline']}</h3>
-        <div class="result-section">
-            <table>
-                <tr>
-                    <th>Beschreibung</th>
-                    <th>Netto (€)</th>
-                    <th>Brutto (€)</th>
-                </tr>
-                <tr>
-                    <td>Monatliche Kosten</td>
-                    <td>${totalMonthlyCost.toFixed(2)}</td>
-                    <td>${totalMonthlyBrutto.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Aktivierungskosten</td>
-                    <td>${totalActivationCost.toFixed(2)}</td>
-                    <td>${totalActivationBrutto.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Rabattbetrag</td>
-                    <td>-${discountAmount.toFixed(2)}</td>
-                    <td>-${(discountAmount * (1 + mwstRate)).toFixed(2)}</td>
-                </tr>
-                <tr class="total-row">
-                    <td>Gesamtkosten</td>
-                    <td>${(totalMonthlyCost + totalActivationCost).toFixed(2)} € (Netto)</td>
-                    <td>${totalBrutto.toFixed(2)} € (Brutto)</td>
-                </tr>
-            </table>
-        </div>
-    `;
+    document.getElementById('toolsMonthlyCostNetto').innerText = adjustedMonthlyCostNetto.toFixed(2);
+    document.getElementById('toolsMonthlyCostMwSt').innerText = adjustedMonthlyCostMwSt.toFixed(2);
+    document.getElementById('toolsMonthlyCostBrutto').innerText = adjustedMonthlyCostBrutto.toFixed(2);
 
-    const resultArea = document.getElementById('toolsResult');
-    resultArea.innerHTML = resultHtml;
+    document.getElementById('toolsActivationCostNetto').innerText = discountedActivationCostNetto.toFixed(2);
+    document.getElementById('toolsActivationCostMwSt').innerText = discountedActivationCostMwSt.toFixed(2);
+    document.getElementById('toolsActivationCostBrutto').innerText = discountedActivationCostBrutto.toFixed(2);
+
+    document.getElementById('toolsDiscountNetto').innerText = `-${discountAmount.toFixed(2)}`;
+    document.getElementById('toolsDiscountMwSt').innerText = `-${(discountAmount * 0.19).toFixed(2)}`;
+    document.getElementById('toolsDiscountBrutto').innerText = `-${(discountAmount * 1.19).toFixed(2)}`;
+
+    document.getElementById('toolsTotalNetto').innerText = `${totalNetto.toFixed(2)} €`;
+    document.getElementById('toolsTotalMwSt').innerText = `${totalMwSt.toFixed(2)} €`;
+    document.getElementById('toolsTotalBrutto').innerText = `${totalBrutto.toFixed(2)} €`;
 }
 
-/* Modal-Funktionen */
-function showEmailContent(calculatorType) {
-    const emailContentContainer = document.getElementById('emailContentContainer');
-    const emailContent = document.getElementById('emailContent');
-
-    let content = '';
-
-    if (calculatorType === 'pay') {
-        content = document.getElementById('result').innerHTML;
-    } else if (calculatorType === 'pos') {
-        content = document.getElementById('posResult').innerHTML;
-    } else if (calculatorType === 'tools') {
-        content = document.getElementById('toolsResult').innerHTML;
-    }
-
-    emailContent.innerHTML = content;
-    emailContentContainer.classList.remove('hidden');
-}
-
-function closeEmailContent() {
-    const emailContentContainer = document.getElementById('emailContentContainer');
-    emailContentContainer.classList.add('hidden');
-}
-
-/* Email Versand Funktion */
-function sendEmail(calculatorType) {
-    const salutation = document.getElementById('salutation').value;
-    const customerName = document.getElementById('customerName').value.trim();
-    let subject = '';
-    let body = '';
-
-    if (calculatorType === 'pay') {
-        subject = 'Ihr PAY Angebot';
-        body = encodeURIComponent(document.getElementById('result').innerText);
-    } else if (calculatorType === 'pos') {
-        subject = 'Ihr POS Angebot';
-        body = encodeURIComponent(document.getElementById('posResult').innerText);
-    } else if (calculatorType === 'tools') {
-        subject = 'Ihr TOOLS Angebot';
-        body = encodeURIComponent(document.getElementById('toolsResult').innerText);
-    }
-
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-}
