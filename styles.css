@@ -16,36 +16,14 @@ body {
 }
 
 header {
-    border-bottom: 1px solid #ccc;
+    text-align: center;
     padding-bottom: 20px;
+    border-bottom: 2px solid #e67e22;
     margin-bottom: 20px;
 }
 
-.top-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.language-selector, .customer-input {
-    display: flex;
-    align-items: center;
-    margin: 10px 0;
-}
-
-.language-selector label, .customer-input label {
-    margin-right: 10px;
-}
-
-.name-group {
-    display: flex;
-    align-items: center;
-}
-
-.name-group select {
-    margin-right: 10px;
-    padding: 5px;
+h1, h3 {
+    color: #e67e22; /* Orange Farbe */
 }
 
 .required {
@@ -53,15 +31,9 @@ header {
     margin-left: 2px;
 }
 
-.error-message {
-    color: red;
-    font-size: 0.9em;
-    display: block;
-    margin-top: 5px;
-}
-
 .tabs {
     display: flex;
+    justify-content: center;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
@@ -69,119 +41,72 @@ header {
 .tab-link {
     padding: 10px 20px;
     border: none;
-    background-color: #e0e0e0;
+    background-color: #e67e22;
+    color: #fff;
     cursor: pointer;
-    margin-right: 5px;
+    margin: 5px;
     font-weight: bold;
     transition: background-color 0.3s;
+    border-radius: 5px 5px 0 0;
 }
 
-.tab-link:hover {
-    background-color: #d5d5d5;
-}
-
-.tab-link.active {
-    background-color: #FF9800; /* Orange Akzent */
-    color: #fff;
+.tab-link.active, .tab-link:hover {
+    background-color: #d35400; /* Dunkleres Orange */
 }
 
 .tab-content {
     display: none;
+    padding: 20px;
+    border: 1px solid #e67e22;
+    border-top: none;
+    border-radius: 0 5px 5px 5px;
+    background-color: #fff;
 }
 
 .tab-content.active {
     display: block;
 }
 
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
+label {
     display: block;
-    margin-bottom: 5px;
+    margin-top: 15px;
+    font-weight: bold;
 }
 
-.form-group input[type="number"],
-.form-group select {
+input[type="number"],
+input[type="text"],
+select {
     width: 100%;
     padding: 8px;
+    margin-top: 5px;
     box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-.quick-field {
-    display: block; /* Standardmäßig anzeigen für schnelle Berechnung */
-}
-
-.detailed-field {
-    display: none; /* Standardmäßig verstecken für ausführliche Berechnung */
-}
-
-.competitor-section {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-left: 4px solid #FF9800;
-    margin-bottom: 15px;
-}
-
-.notes {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-left: 4px solid #FF9800;
-    margin-bottom: 20px;
-}
-
-.notes h3 {
-    margin-top: 0;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.discount-item {
-    margin-bottom: 10px;
-}
-
-.discount-item label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.discount-item input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.button-group {
-    margin-top: 20px;
-}
-
-.button-group button {
+button {
     padding: 10px 20px;
+    margin-top: 20px;
     margin-right: 10px;
     border: none;
-    background-color: #FF9800; /* Orange Akzent */
+    background-color: #e67e22; /* Orange Farbe */
     color: #fff;
     cursor: pointer;
     font-size: 1em;
     transition: background-color 0.3s;
-}
-
-.button-group button:hover {
-    background-color: #e68900;
-}
-
-.result-section {
-    background-color: #FFF3E0; /* Hellorange Hintergrund */
-    padding: 15px;
-    margin-top: 20px;
     border-radius: 5px;
 }
 
-.result-section h3 {
-    margin-top: 0;
+button:hover {
+    background-color: #d35400; /* Dunkleres Orange */
+}
+
+.result-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #FFF3E0; /* Hellorange Hintergrund */
+    border: 1px solid #e67e22;
+    border-radius: 5px;
 }
 
 .result-section table {
@@ -190,13 +115,14 @@ header {
 }
 
 .result-section th, .result-section td {
-    border: 1px solid #ccc;
+    border: 1px solid #e67e22;
     padding: 10px;
     text-align: left;
 }
 
 .result-section th {
-    background-color: #FFEB3B; /* Gelber Header */
+    background-color: #FF9800; /* Helleres Orange */
+    color: #fff;
 }
 
 .total-row {
@@ -204,70 +130,36 @@ header {
     font-weight: bold;
 }
 
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto; /* 10% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    position: relative;
+.competitor-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f2f2f2;
+    border-left: 4px solid #e67e22;
     border-radius: 5px;
 }
 
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
+.competitor-section h4 {
+    color: #e67e22;
 }
 
 .hidden {
     display: none;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
-    .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .language-selector, .customer-input {
-        width: 100%;
-    }
-
     .tabs {
         flex-direction: column;
+        align-items: center;
     }
 
     .tab-link {
         width: 100%;
-        margin-bottom: 5px;
+        text-align: center;
     }
 
-    .modal-content {
-        width: 95%;
+    button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 }
