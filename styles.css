@@ -1,244 +1,250 @@
-/* Allgemeine Stile */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
+/* styles.css */
 
 body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #f4f4f4;
-    color: #333;
-    line-height: 1.6;
 }
 
 .container {
+    width: 90%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: auto;
     padding: 20px;
+    background-color: #fff;
 }
 
-/* Header */
 header {
-    background-color: #ff8c00; /* Dunkelorange */
-    color: #fff;
-    padding: 20px 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
     margin-bottom: 20px;
-    border-radius: 5px;
-}
-
-header h1 {
-    text-align: center;
-    margin-bottom: 10px;
 }
 
 .top-bar {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
 }
 
 .language-selector, .customer-input {
     display: flex;
     align-items: center;
-    margin: 5px 0;
+    margin: 10px 0;
 }
 
 .language-selector label, .customer-input label {
     margin-right: 10px;
-    font-weight: bold;
 }
 
-.language-selector select, .customer-input input {
+.name-group {
+    display: flex;
+    align-items: center;
+}
+
+.name-group select {
+    margin-right: 10px;
     padding: 5px;
-    border: none;
-    border-radius: 3px;
 }
 
-/* Tabs */
+.required {
+    color: red;
+    margin-left: 2px;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    display: block;
+    margin-top: 5px;
+}
+
 .tabs {
     display: flex;
-    justify-content: center;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
 .tab-link {
-    background-color: #ff8c00; /* Dunkelorange */
-    color: #fff;
     padding: 10px 20px;
-    margin: 5px;
     border: none;
-    border-radius: 3px;
+    background-color: #e0e0e0;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    margin-right: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
 
 .tab-link:hover {
-    background-color: #e07b00;
+    background-color: #d5d5d5;
 }
 
 .tab-link.active {
-    background-color: #e07b00;
+    background-color: #FF9800; /* Orange Akzent */
+    color: #fff;
 }
 
-/* Tab Content */
 .tab-content {
     display: none;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
 }
 
 .tab-content.active {
     display: block;
 }
 
-/* Formulare */
-form {
-    display: flex;
-    flex-direction: column;
+.form-group {
+    margin-bottom: 15px;
 }
 
-form h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: #ff8c00;
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
 }
 
-label {
-    margin: 10px 0 5px;
-    font-weight: bold;
-}
-
-input[type="number"],
-input[type="text"],
-select {
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+    box-sizing: border-box;
 }
 
-input[type="checkbox"] {
-    margin-right: 10px;
+.quick-field {
+    display: block; /* Standardmäßig anzeigen für schnelle Berechnung */
 }
 
-/* Lizenz-Abschnitte */
-.license-section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+.detailed-field {
+    display: none; /* Standardmäßig verstecken für ausführliche Berechnung */
 }
 
-.license-section label {
-    flex: 1;
+.competitor-section {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-left: 4px solid #FF9800;
+    margin-bottom: 15px;
 }
 
-.license-section input[type="number"] {
-    width: 60px;
-}
-
-/* Buttons im Footer */
-footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-footer button {
-    background-color: #ff8c00; /* Dunkelorange */
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-footer button:hover {
-    background-color: #e07b00;
-}
-
-/* Modal Fenster */
-.modal {
-    display: none; /* Versteckt standardmäßig */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5); /* Schwarzer Hintergrund mit Transparenz */
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 5px;
-    width: 90%;
-    max-width: 800px;
-    position: relative;
-}
-
-.close {
-    color: #aaa;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-}
-
-/* Tabellen */
-.result-section {
-    margin-top: 20px;
-}
-
-.result-section h4 {
-    margin-bottom: 10px;
-    color: #ff8c00;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
+.notes {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-left: 4px solid #FF9800;
     margin-bottom: 20px;
 }
 
-table th,
-table td {
-    border: 1px solid #ccc;
+.notes h3 {
+    margin-top: 0;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.discount-item {
+    margin-bottom: 10px;
+}
+
+.discount-item label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.discount-item input {
+    width: 100%;
     padding: 8px;
-    text-align: center;
+    box-sizing: border-box;
 }
 
-table th {
-    background-color: #ff8c00;
+.button-group {
+    margin-top: 20px;
+}
+
+.button-group button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    background-color: #FF9800; /* Orange Akzent */
     color: #fff;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
 }
 
-table tfoot td {
+.button-group button:hover {
+    background-color: #e68900;
+}
+
+.result-section {
+    background-color: #FFF3E0; /* Hellorange Hintergrund */
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.result-section h3 {
+    margin-top: 0;
+}
+
+.result-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.result-section th, .result-section td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.result-section th {
+    background-color: #FFEB3B; /* Gelber Header */
+}
+
+.total-row {
+    background-color: #FFE0B2; /* Hellorange für Gesamtsumme */
     font-weight: bold;
 }
 
-ul {
-    list-style-type: none;
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
 }
 
-ul li {
-    margin-bottom: 5px;
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    position: relative;
+    border-radius: 5px;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.hidden {
+    display: none;
 }
 
 /* Responsive Design */
@@ -248,32 +254,20 @@ ul li {
         align-items: flex-start;
     }
 
-    .language-selector,
-    .customer-input {
+    .language-selector, .customer-input {
         width: 100%;
-    }
-
-    .license-section {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .license-section input[type="number"] {
-        width: 100%;
-        margin-top: 5px;
     }
 
     .tabs {
         flex-direction: column;
-        align-items: center;
     }
 
     .tab-link {
         width: 100%;
-        text-align: center;
+        margin-bottom: 5px;
     }
 
     .modal-content {
-        margin: 20% auto;
+        width: 95%;
     }
 }
