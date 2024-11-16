@@ -1,36 +1,62 @@
-/* styles.css */
-
-body {
-    font-family: 'Roboto', sans-serif;
+/* Allgemeine Stile */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
     background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
 }
 
 .container {
-    width: 90%;
     max-width: 1200px;
-    margin: auto;
+    margin: 0 auto;
     padding: 20px;
-    background-color: #fff;
 }
 
+/* Header */
 header {
-    text-align: center;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #e67e22;
+    background-color: #ff8c00; /* Dunkelorange */
+    color: #fff;
+    padding: 20px 0;
     margin-bottom: 20px;
+    border-radius: 5px;
 }
 
-h1, h3 {
-    color: #e67e22; /* Orange Farbe */
+header h1 {
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-.required {
-    color: red;
-    margin-left: 2px;
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
+.language-selector, .customer-input {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.language-selector label, .customer-input label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.language-selector select, .customer-input input {
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+}
+
+/* Tabs */
 .tabs {
     display: flex;
     justify-content: center;
@@ -39,114 +65,204 @@ h1, h3 {
 }
 
 .tab-link {
-    padding: 10px 20px;
-    border: none;
-    background-color: #e67e22;
+    background-color: #ff8c00; /* Dunkelorange */
     color: #fff;
-    cursor: pointer;
+    padding: 10px 20px;
     margin: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    border-radius: 5px 5px 0 0;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.tab-link.active, .tab-link:hover {
-    background-color: #d35400; /* Dunkleres Orange */
+.tab-link:hover {
+    background-color: #e07b00;
 }
 
+.tab-link.active {
+    background-color: #e07b00;
+}
+
+/* Tab Content */
 .tab-content {
     display: none;
-    padding: 20px;
-    border: 1px solid #e67e22;
-    border-top: none;
-    border-radius: 0 5px 5px 5px;
     background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
 }
 
 .tab-content.active {
     display: block;
 }
 
+/* Formulare */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #ff8c00;
+}
+
 label {
-    display: block;
-    margin-top: 15px;
+    margin: 10px 0 5px;
     font-weight: bold;
 }
 
 input[type="number"],
 input[type="text"],
 select {
-    width: 100%;
     padding: 8px;
-    margin-top: 5px;
-    box-sizing: border-box;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
-button {
-    padding: 10px 20px;
-    margin-top: 20px;
+input[type="checkbox"] {
     margin-right: 10px;
-    border: none;
-    background-color: #e67e22; /* Orange Farbe */
+}
+
+/* Lizenz-Abschnitte */
+.license-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.license-section label {
+    flex: 1;
+}
+
+.license-section input[type="number"] {
+    width: 60px;
+}
+
+/* Buttons im Footer */
+footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+footer button {
+    background-color: #ff8c00; /* Dunkelorange */
     color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+footer button:hover {
+    background-color: #e07b00;
+}
+
+/* Modal Fenster */
+.modal {
+    display: none; /* Versteckt standardmäßig */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Schwarzer Hintergrund mit Transparenz */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
     border-radius: 5px;
+    width: 90%;
+    max-width: 800px;
+    position: relative;
 }
 
-button:hover {
-    background-color: #d35400; /* Dunkleres Orange */
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+/* Tabellen */
 .result-section {
     margin-top: 20px;
-    padding: 15px;
-    background-color: #FFF3E0; /* Hellorange Hintergrund */
-    border: 1px solid #e67e22;
-    border-radius: 5px;
 }
 
-.result-section table {
+.result-section h4 {
+    margin-bottom: 10px;
+    color: #ff8c00;
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
-.result-section th, .result-section td {
-    border: 1px solid #e67e22;
-    padding: 10px;
-    text-align: left;
+table th,
+table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
 }
 
-.result-section th {
-    background-color: #FF9800; /* Helleres Orange */
+table th {
+    background-color: #ff8c00;
     color: #fff;
 }
 
-.total-row {
-    background-color: #FFE0B2; /* Hellorange für Gesamtsumme */
+table tfoot td {
     font-weight: bold;
 }
 
-.competitor-section {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f2f2f2;
-    border-left: 4px solid #e67e22;
-    border-radius: 5px;
+ul {
+    list-style-type: none;
 }
 
-.competitor-section h4 {
-    color: #e67e22;
+ul li {
+    margin-bottom: 5px;
 }
 
-.hidden {
-    display: none;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .language-selector,
+    .customer-input {
+        width: 100%;
+    }
+
+    .license-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .license-section input[type="number"] {
+        width: 100%;
+        margin-top: 5px;
+    }
+
     .tabs {
         flex-direction: column;
         align-items: center;
@@ -157,9 +273,7 @@ button:hover {
         text-align: center;
     }
 
-    button {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
+    .modal-content {
+        margin: 20% auto;
     }
 }
