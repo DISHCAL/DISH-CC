@@ -1,47 +1,63 @@
 /* styles.css */
 
-/* Allgemeine Stile */
-body {
-    font-family: 'Roboto', sans-serif;
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    color: #333;
 }
 
 .container {
-    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
 header {
-    background-color: #e67e22;
-    color: #fff;
+    background-color: #ffffff;
     padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 header h1 {
-    margin: 0;
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #e67e22;
 }
 
 .top-bar {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 10px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .language-selector,
 .customer-input {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .language-selector label,
 .customer-input label {
     margin-right: 10px;
+    font-weight: 500;
+}
+
+.language-selector select,
+.customer-input select,
+.customer-input input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .name-group {
@@ -49,53 +65,51 @@ header h1 {
     align-items: center;
 }
 
-.name-group select,
-.name-group input {
+.name-group select {
     margin-right: 10px;
-    padding: 5px;
 }
 
 .error-message {
     color: red;
-    font-size: 12px;
-}
-
-main {
-    margin-top: 20px;
+    font-size: 0.9em;
+    margin-top: 5px;
 }
 
 .tabs {
     display: flex;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
 .tab-link {
-    background-color: #ddd;
-    color: #333;
+    background-color: #e67e22;
+    color: #fff;
     padding: 10px 20px;
+    margin: 0 5px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-    flex: 1;
-    text-align: center;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
+    font-size: 1em;
 }
 
 .tab-link:hover {
-    background-color: #ccc;
+    background-color: #cf6a1a;
 }
 
 .tab-link.active {
-    background-color: #e67e22;
-    color: #fff;
+    background-color: #cf6a1a;
 }
 
 .tab-content {
-    display: none;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.tab-content.active {
-    display: block;
+.hidden {
+    display: none;
 }
 
 .form-group {
@@ -104,52 +118,69 @@ main {
 
 .form-group label {
     display: block;
+    font-weight: 500;
     margin-bottom: 5px;
 }
 
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.hidden {
-    display: none;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .discount-item {
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.discount-item label {
+    margin-right: 10px;
+    flex: 1;
+}
+
+.discount-item input {
+    flex: 2;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .button-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
     margin-top: 20px;
 }
 
 .button-group button {
     background-color: #e67e22;
     color: #fff;
-    border: none;
     padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    margin-right: 10px;
-    transition: background-color 0.3s;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
 }
 
 .button-group button:hover {
-    background-color: #cf6d1e;
+    background-color: #cf6a1a;
 }
 
 .result-section {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .result-section h3 {
     margin-bottom: 15px;
+    color: #e67e22;
 }
 
 .result-section table {
@@ -159,9 +190,9 @@ main {
 
 .result-section th,
 .result-section td {
-    border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
 .result-section th {
@@ -169,164 +200,144 @@ main {
     color: #fff;
 }
 
-.total-row {
+.result-section .total-row {
     background-color: #ffe5cc;
     font-weight: bold;
 }
 
-.savings {
+.result-section .savings {
     color: red;
     font-weight: bold;
 }
 
 .info-section {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .info-section h4 {
     margin-bottom: 10px;
+    color: #e67e22;
 }
 
 .info-section ul {
     list-style-type: disc;
-    margin-left: 20px;
+    padding-left: 20px;
+}
+
+.info-section li {
+    margin-bottom: 5px;
 }
 
 footer {
     text-align: center;
     margin-top: 40px;
-    padding: 20px;
-    background-color: #333;
-    color: #fff;
+    padding: 10px 0;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
 }
 
-/* Modal-Stile */
 .modal {
-    display: none;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+    left: 0;
+    right:0;
+    bottom:0;
     background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    z-index: 1000;
 }
 
 .modal-content {
     background-color: #fff;
-    margin: 5% auto;
     padding: 20px;
+    border-radius:8px;
+    max-width: 600px;
     width: 90%;
-    max-width: 800px;
     position: relative;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+    position: absolute;
+    top:10px;
+    right:10px;
+    font-size:1.5em;
     cursor: pointer;
+    color: #999;
 }
 
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+.close-button:hover {
+    color: #333;
 }
 
-.modal button {
-    background-color: #e67e22;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 20px;
-    margin-right: 10px;
-    transition: background-color 0.3s;
-}
-
-.modal button:hover {
-    background-color: #cf6d1e;
-}
-
-.modal p {
-    margin-top: 20px;
-}
-
-/* Responsive Design */
-@media screen and (min-width: 768px) {
-    .top-bar {
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .form-group {
-        display: flex;
-        align-items: center;
-    }
-
-    .form-group label {
-        flex: 1;
-        margin-bottom: 0;
-    }
-
-    .form-group input,
-    .form-group select {
-        flex: 2;
-        margin-left: 10px;
-    }
-
-    .discount-item {
-        display: flex;
-        align-items: center;
-    }
-
-    .discount-item label {
-        flex: 1;
-        margin-bottom: 0;
-    }
-
-    .discount-item input {
-        flex: 1;
-        margin-left: 10px;
-    }
-}
-
-/* Spezifische Stile für die Tabelle im E-Mail-Template */
-#emailContent table {
+.modal-content table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
-#emailContent th,
-#emailContent td {
-    border: 1px solid #ddd;
+.modal-content th,
+.modal-content td {
     padding: 10px;
-    text-align: left;
+    border: 1px solid #ddd;
 }
 
-#emailContent th {
+.modal-content th {
     background-color: #e67e22;
     color: #fff;
 }
 
-#emailContent tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-#emailContent tr:hover {
-    background-color: #f1f1f1;
-}
-
-#emailContent .total-row {
+.modal-content .total-row {
     background-color: #ffe5cc;
     font-weight: bold;
 }
 
-#emailContent .savings {
+.modal-content .savings {
     color: red;
     font-weight: bold;
+}
+
+.modal-content button {
+    background-color: #e67e22;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius:4px;
+    cursor: pointer;
+    font-size:1em;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.modal-content button:hover {
+    background-color: #cf6a1a;
+}
+
+.modal-content p {
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+
+    .modal-content {
+        max-width: 90%;
+    }
 }
