@@ -49,8 +49,6 @@ function toggleCalculationFields() {
     const maestroField = document.getElementById('maestroField');
     const businessCardField = document.getElementById('businessCardField');
     const competitorSection = document.getElementById('competitorSection');
-    const competitorMaestroField = document.getElementById('competitorMaestroField');
-    const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
 
     if (calculationType === 'schnell') {
         maestroField.classList.add('hidden');
@@ -69,9 +67,9 @@ function toggleRentalOptions() {
     const rentalOptions = document.getElementById('rentalOptions');
 
     if (purchaseOption === "mieten") {
-        rentalOptions.style.display = 'block';
+        rentalOptions.classList.remove('hidden');
     } else {
-        rentalOptions.style.display = 'none';
+        rentalOptions.classList.add('hidden');
     }
 }
 
@@ -83,9 +81,14 @@ function updateRentalPrices() {
 
     // Aktualisieren der Mietdauer-Texte
     const rentalPeriod = rentalPeriodSelect.value;
-    rentalPeriodSelect.options[0].text = `12 Monate - ${selectedHardware.getAttribute('data-price-12')} €/Monat`;
-    rentalPeriodSelect.options[1].text = `36 Monate - ${selectedHardware.getAttribute('data-price-36')} €/Monat`;
-    rentalPeriodSelect.options[2].text = `60 Monate - ${selectedHardware.getAttribute('data-price-60')} €/Monat`;
+    const price12 = selectedHardware.getAttribute('data-price-12');
+    const price36 = selectedHardware.getAttribute('data-price-36');
+    const price60 = selectedHardware.getAttribute('data-price-60');
+
+    // Update options with current prices
+    rentalPeriodSelect.options[0].text = `12 Monate - ${price12} €/Monat`;
+    rentalPeriodSelect.options[1].text = `36 Monate - ${price36} €/Monat`;
+    rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
 /* Funktion zur Aktualisierung der Hardware-Kosten */
@@ -222,6 +225,10 @@ function calculatePayCosts() {
     document.getElementById('payTotalNetto').innerText = totalNetto.toFixed(2);
     document.getElementById('payTotalMwSt').innerText = totalMwSt.toFixed(2);
     document.getElementById('payTotalBrutto').innerText = totalBrutto.toFixed(2);
+    document.getElementById('competitorTotalNetto').innerText = (competitorTotalMonthlyCost / 1.19).toFixed(2);
+    document.getElementById('competitorTotalMwSt').innerText = (competitorTotalMonthlyCost - (competitorTotalMonthlyCost / 1.19)).toFixed(2);
+    document.getElementById('competitorTotalBrutto').innerText = competitorTotalMonthlyCost.toFixed(2);
+    document.getElementById('savingsBrutto').innerText = savingsBrutto.toFixed(2);
 
     // Ergebnisbereich anzeigen
     const payResult = document.getElementById('payResult');
@@ -235,153 +242,8 @@ function calculatePayCosts() {
     payResult.dataset.totalMwSt = totalMwSt.toFixed(2);
     payResult.dataset.totalBrutto = totalBrutto.toFixed(2);
     payResult.dataset.competitorTotalMonthlyCost = competitorTotalMonthlyCost.toFixed(2);
-    payResult.dataset.savingsNetto = savingsNetto.toFixed(2);
     payResult.dataset.savingsBrutto = savingsBrutto.toFixed(2);
 }
-
-/* Funktion zur Erstellung und Anzeige der E-Mail */
-function sendEmail(calculatorType) {
-    const customerName = document.getElementById('customerName').value.trim();
-    const salutation = document.getElementById('salutation').value;
-
-    if (customerName === "") {
-        alert("Bitte geben Sie Ihren Namen ein.");
-        return;
-    }
-
-    let emailSubject = "";
-    let emailBodyHTML = "";
-
-    if (calculatorType === 'PAY') {
-        emailSubject = "Ihr DISH PAY Angebot";
-        const payResult = document.getElementById('payResult');
-        const oneTimeNetto = payResult.dataset.oneTimeCostNetto;
-        const oneTimeMwSt = payResult.dataset.oneTimeCostMwSt;
-        const oneTimeBrutto = payResult.dataset.oneTimeCostBrutto;
-        const totalNetto = payResult.dataset.totalNetto;
-        const totalMwSt = payResult.dataset.totalMwSt;
-        const totalBrutto = payResult.dataset.totalBrutto;
-        const competitorTotalMonthlyCost = payResult.dataset.competitorTotalMonthlyCost;
-        const savingsNetto = payResult.dataset.savingsNetto;
-        const savingsBrutto = payResult.dataset.savingsBrutto;
-
-        emailBodyHTML = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>DISH PAY Angebot</title>
-    <style>
-        body { font-family: Arial, sans-serif; color: #333; }
-        h2 { color: #e67e22; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background-color: #e67e22; color: white; }
-        .total { background-color: #ffe5cc; font-weight: bold; }
-        ul { list-style-type: disc; padding-left: 20px; }
-    </style>
-</head>
-<body>
-    <h2>Ihr DISH PAY Angebot</h2>
-    <p>Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},</p>
-    <p>vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.</p>
-    
-    <h3>Einmalige Kosten</h3>
-    <table>
-        <tr>
-            <th>Beschreibung</th>
-            <th>Betrag (€)</th>
-        </tr>
-        <tr>
-            <td>Gesamte Einmalige Kosten Netto</td>
-            <td>${oneTimeNetto}</td>
-        </tr>
-        <tr>
-            <td>Mehrwertsteuer (19%)</td>
-            <td>${oneTimeMwSt}</td>
-        </tr>
-        <tr class="total">
-            <td>Gesamtbetrag</td>
-            <td>${oneTimeBrutto}</td>
-        </tr>
-    </table>
-    
-    <h3>Monatliche Kosten</h3>
-    <table>
-        <tr>
-            <th>Beschreibung</th>
-            <th>Betrag (€)</th>
-        </tr>
-        <tr>
-            <td>Gesamte Monatliche Kosten Netto</td>
-            <td>${totalNetto}</td>
-        </tr>
-        <tr>
-            <td>Mehrwertsteuer (19%)</td>
-            <td>${totalMwSt}</td>
-        </tr>
-        <tr class="total">
-            <td>Gesamtbetrag</td>
-            <td>${totalBrutto}</td>
-        </tr>
-    </table>
-    
-    <h3>Wettbewerber Gebühren</h3>
-    <table>
-        <tr>
-            <th>Beschreibung</th>
-            <th>Betrag (€)</th>
-        </tr>
-        <tr>
-            <td>Gesamte Monatliche Kosten Netto (Wettbewerber)</td>
-            <td>${competitorTotalMonthlyCost}</td>
-        </tr>
-        <tr>
-            <td>Ihre Ersparnis Netto</td>
-            <td>${savingsNetto}</td>
-        </tr>
-        <tr>
-            <td>Ihre Ersparnis Brutto</td>
-            <td>${savingsBrutto}</td>
-        </tr>
-    </table>
-    
-    <h3>Details</h3>
-    <ul>
-        <li>Transaktionsgebühr: 0,06 € pro Transaktion</li>
-        <li>SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)</li>
-    </ul>
-    
-    <p>---
-    </p>
-    <p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.</p>
-    
-    <p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>
-</body>
-</html>
-        `;
-    }
-
-    // Weitere Berechnungsarten (POS, TOOLS) können hier hinzugefügt werden
-
-    // Hinweis: Das `mailto:`-Protokoll unterstützt keine HTML-E-Mails.
-    // Daher zeigen wir eine HTML-Vorschau im Modal-Fenster an, die der Benutzer kopieren und in seine E-Mail-Anwendung einfügen kann.
-
-    // Füge den HTML-Inhalt in das Modal ein und zeige es an
-    const emailContentContainer = document.getElementById('emailContentContainer');
-    const emailContent = document.getElementById('emailContent');
-
-    emailContent.innerHTML = emailBodyHTML;
-    emailContentContainer.classList.remove('hidden');
-}
-
-/* Funktion zum Schließen des Modals */
-function closeEmailContent() {
-    const modal = document.getElementById('emailContentContainer');
-    modal.classList.add('hidden');
-}
-
-/* POS Rechner Funktionen */
 
 /* Funktion zur Berechnung der POS-Kosten */
 function calculatePosCosts() {
@@ -421,7 +283,7 @@ function calculatePosCosts() {
     const posDiscountAmount = parseFloat(document.getElementById('posDiscountAmount').value) || 0;
     const posFreeMonths = parseInt(document.getElementById('posFreeMonths').value) || 0;
 
-    // Rabattlogik: Rabattbetrag direkt von den Bruttokosten abziehen
+    // Rabattlogik: Rabattbetrag wird von den Bruttokosten abgezogen
     const discountedOneTimeBrutto = oneTimeBrutto - posDiscountAmount;
     const discountedMonthlyBrutto = monthlyBrutto - posDiscountAmount; // Anpassung je nach Rabattlogik
 
@@ -529,10 +391,6 @@ function calculateToolsCosts() {
         monthlyCostNetto += monthly;
     }
 
-    // Rabatt
-    const toolsDiscountAmount = parseFloat(document.getElementById('toolsDiscountAmount').value) || 0;
-    const toolsFreeMonths = parseInt(document.getElementById('toolsFreeMonths').value) || 0;
-
     // Mehrwertsteuerberechnung
     oneTimeCostMwSt = oneTimeCostNetto * 0.19;
     oneTimeCostBrutto = oneTimeCostNetto + oneTimeCostMwSt;
@@ -540,17 +398,21 @@ function calculateToolsCosts() {
     monthlyCostMwSt = monthlyCostNetto * 0.19;
     monthlyCostBrutto = monthlyCostNetto + monthlyCostMwSt;
 
-    // Rabatt anwenden
-    oneTimeCostBrutto -= toolsDiscountAmount;
-    monthlyCostBrutto -= toolsDiscountAmount; // Anpassung je nach Rabattlogik
+    // Rabatt
+    const toolsDiscountAmount = parseFloat(document.getElementById('toolsDiscountAmount').value) || 0;
+    const toolsFreeMonths = parseInt(document.getElementById('toolsFreeMonths').value) || 0;
+
+    // Rabattlogik: Rabattbetrag wird von den Bruttokosten abgezogen
+    const discountedOneTimeBrutto = oneTimeBrutto - toolsDiscountAmount;
+    const discountedMonthlyBrutto = monthlyBrutto - toolsDiscountAmount; // Anpassung je nach Rabattlogik
 
     // Ergebnisse anzeigen
     document.getElementById('toolsOneTimeCostNetto').innerText = oneTimeCostNetto.toFixed(2);
     document.getElementById('toolsOneTimeCostMwSt').innerText = oneTimeCostMwSt.toFixed(2);
-    document.getElementById('toolsOneTimeCostBrutto').innerText = oneTimeCostBrutto.toFixed(2);
+    document.getElementById('toolsOneTimeCostBrutto').innerText = oneTimeBrutto.toFixed(2);
     document.getElementById('toolsTotalNetto').innerText = monthlyCostNetto.toFixed(2);
     document.getElementById('toolsTotalMwSt').innerText = monthlyCostMwSt.toFixed(2);
-    document.getElementById('toolsTotalBrutto').innerText = monthlyCostBrutto.toFixed(2);
+    document.getElementById('toolsTotalBrutto').innerText = monthlyBrutto.toFixed(2);
 
     // Ergebnisbereich anzeigen
     const toolsResult = document.getElementById('toolsResult');
@@ -559,13 +421,13 @@ function calculateToolsCosts() {
     // Speichere die Ergebnisse für den Email-Versand
     toolsResult.dataset.oneTimeCostNetto = oneTimeCostNetto.toFixed(2);
     toolsResult.dataset.oneTimeCostMwSt = oneTimeCostMwSt.toFixed(2);
-    toolsResult.dataset.oneTimeCostBrutto = oneTimeCostBrutto.toFixed(2);
+    toolsResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
     toolsResult.dataset.totalNetto = monthlyCostNetto.toFixed(2);
     toolsResult.dataset.totalMwSt = monthlyCostMwSt.toFixed(2);
-    toolsResult.dataset.totalBrutto = monthlyCostBrutto.toFixed(2);
+    toolsResult.dataset.totalBrutto = monthlyBrutto.toFixed(2);
 }
 
-/* Funktion zum Erstellen und Anzeigen des Angebots per E-Mail */
+/* Funktion zur Erstellung und Anzeige des HTML-E-Mail-Templates */
 function sendEmail(calculatorType) {
     const customerName = document.getElementById('customerName').value.trim();
     const salutation = document.getElementById('salutation').value;
@@ -578,8 +440,15 @@ function sendEmail(calculatorType) {
     let emailSubject = "";
     let emailBodyHTML = "";
 
+    // Allgemeine Basis für die E-Mail
+    const baseGreeting = `<p>Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},</p>`;
+    const baseIntroduction = `<p>vielen Dank für Ihr Interesse an unserem DISH ${calculatorType} Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.</p>`;
+
+    let tableHTML = "";
+
     if (calculatorType === 'PAY') {
         emailSubject = "Ihr DISH PAY Angebot";
+
         const payResult = document.getElementById('payResult');
         const oneTimeNetto = payResult.dataset.oneTimeCostNetto;
         const oneTimeMwSt = payResult.dataset.oneTimeCostMwSt;
@@ -588,36 +457,18 @@ function sendEmail(calculatorType) {
         const totalMwSt = payResult.dataset.totalMwSt;
         const totalBrutto = payResult.dataset.totalBrutto;
         const competitorTotalMonthlyCost = payResult.dataset.competitorTotalMonthlyCost;
-        const savingsNetto = payResult.dataset.savingsNetto;
         const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        emailBodyHTML = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>DISH PAY Angebot</title>
-    <style>
-        body { font-family: Arial, sans-serif; color: #333; }
-        h2 { color: #e67e22; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background-color: #e67e22; color: white; }
-        .total { background-color: #ffe5cc; font-weight: bold; }
-        ul { list-style-type: disc; padding-left: 20px; }
-    </style>
-</head>
-<body>
-    <h2>Ihr DISH PAY Angebot</h2>
-    <p>Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},</p>
-    <p>vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.</p>
-    
-    <h3>Einmalige Kosten</h3>
-    <table>
-        <tr>
+        // Formatierte Tabelle als HTML
+        tableHTML = `
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+        <tr style="background-color: #e67e22; color: #fff;">
             <th>Beschreibung</th>
             <th>Betrag (€)</th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td>Gesamte Einmalige Kosten Netto</td>
             <td>${oneTimeNetto}</td>
@@ -626,17 +477,9 @@ function sendEmail(calculatorType) {
             <td>Mehrwertsteuer (19%)</td>
             <td>${oneTimeMwSt}</td>
         </tr>
-        <tr class="total">
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
             <td>${oneTimeBrutto}</td>
-        </tr>
-    </table>
-    
-    <h3>Monatliche Kosten</h3>
-    <table>
-        <tr>
-            <th>Beschreibung</th>
-            <th>Betrag (€)</th>
         </tr>
         <tr>
             <td>Gesamte Monatliche Kosten Netto</td>
@@ -646,57 +489,172 @@ function sendEmail(calculatorType) {
             <td>Mehrwertsteuer (19%)</td>
             <td>${totalMwSt}</td>
         </tr>
-        <tr class="total">
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
             <td>${totalBrutto}</td>
         </tr>
-    </table>
-    
-    <h3>Wettbewerber Gebühren</h3>
-    <table>
         <tr>
-            <th>Beschreibung</th>
-            <th>Betrag (€)</th>
+            <td>Wettbewerber Gesamte Monatliche Kosten Netto</td>
+            <td>${(competitorTotalMonthlyCost / 1.19).toFixed(2)}</td>
         </tr>
         <tr>
-            <td>Gesamte Monatliche Kosten Netto (Wettbewerber)</td>
+            <td>Wettbewerber Mehrwertsteuer (19%)</td>
+            <td>${(competitorTotalMonthlyCost - (competitorTotalMonthlyCost / 1.19)).toFixed(2)}</td>
+        </tr>
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
+            <td>Wettbewerber Gesamtbetrag</td>
             <td>${competitorTotalMonthlyCost}</td>
         </tr>
         <tr>
-            <td>Ihre Ersparnis Netto</td>
-            <td>${savingsNetto}</td>
+            <td style="color: red; font-weight: bold;">Ersparnis Brutto</td>
+            <td style="color: red; font-weight: bold;">${savingsBrutto}</td>
         </tr>
-        <tr>
-            <td>Ihre Ersparnis Brutto</td>
-            <td>${savingsBrutto}</td>
-        </tr>
-    </table>
-    
-    <h3>Details</h3>
-    <ul>
-        <li>Transaktionsgebühr: 0,06 € pro Transaktion</li>
-        <li>SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)</li>
-    </ul>
-    
-    <p>---
-    </p>
-    <p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.</p>
-    
-    <p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>
-</body>
-</html>
-    `;
+    </tbody>
+</table>
+`;
+
     }
 
-    // Weitere Berechnungsarten (POS, TOOLS) können hier hinzugefügt werden
+    if (calculatorType === 'POS') {
+        emailSubject = "Ihr DISH POS Angebot";
 
-    // Hinweis: Das `mailto:`-Protokoll unterstützt keine HTML-E-Mails.
-    // Daher zeigen wir eine HTML-Vorschau im Modal-Fenster an, die der Benutzer kopieren und in seine E-Mail-Anwendung einfügen kann.
+        const posResult = document.getElementById('posResult');
+        const oneTimeNetto = posResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = posResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = posResult.dataset.oneTimeCostBrutto;
+        const totalNetto = posResult.dataset.totalNetto;
+        const totalMwSt = posResult.dataset.totalMwSt;
+        const totalBrutto = posResult.dataset.totalBrutto;
 
-    // Füge den HTML-Inhalt in das Modal ein und zeige es an
-    const emailContentContainer = document.getElementById('emailContentContainer');
+        // Formatierte Tabelle als HTML
+        tableHTML = `
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+        <tr style="background-color: #e67e22; color: #fff;">
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Gesamte Einmalige Kosten Netto</td>
+            <td>${oneTimeNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${oneTimeMwSt}</td>
+        </tr>
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
+            <td>Gesamtbetrag</td>
+            <td>${oneTimeBrutto}</td>
+        </tr>
+        <tr>
+            <td>Gesamte Monatliche Kosten Netto</td>
+            <td>${totalNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${totalMwSt}</td>
+        </tr>
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
+            <td>Gesamtbetrag</td>
+            <td>${totalBrutto}</td>
+        </tr>
+    </tbody>
+</table>
+`;
+    }
+
+    if (calculatorType === 'TOOLS') {
+        emailSubject = "Ihr DISH TOOLS Angebot";
+
+        const toolsResult = document.getElementById('toolsResult');
+        const oneTimeNetto = toolsResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = toolsResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = toolsResult.dataset.oneTimeCostBrutto;
+        const totalNetto = toolsResult.dataset.totalNetto;
+        const totalMwSt = toolsResult.dataset.totalMwSt;
+        const totalBrutto = toolsResult.dataset.totalBrutto;
+
+        // Formatierte Tabelle als HTML
+        tableHTML = `
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+        <tr style="background-color: #e67e22; color: #fff;">
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Gesamte Einmalige Kosten Netto</td>
+            <td>${oneTimeNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${oneTimeMwSt}</td>
+        </tr>
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
+            <td>Gesamtbetrag</td>
+            <td>${oneTimeBrutto}</td>
+        </tr>
+        <tr>
+            <td>Gesamte Monatliche Kosten Netto</td>
+            <td>${totalNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${totalMwSt}</td>
+        </tr>
+        <tr style="background-color: #ffe5cc; font-weight: bold;">
+            <td>Gesamtbetrag</td>
+            <td>${totalBrutto}</td>
+        </tr>
+    </tbody>
+</table>
+`;
+    }
+
+    const baseConclusion = `<p>---</p>
+<p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH ${calculatorType} einen echten Mehrwert bieten zu dürfen.</p>
+<p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>`;
+
+    emailBodyHTML = baseGreeting + baseIntroduction + tableHTML + baseConclusion;
+
+    // Füge den HTML-Inhalt in das Modal ein
+    document.getElementById('emailContent').innerHTML = emailBodyHTML;
+
+    // Zeige das Modal an
+    const modal = document.getElementById('emailContentContainer');
+    modal.classList.remove('hidden');
+}
+
+/* Funktion zum Kopieren des E-Mail-Inhalts in die Zwischenablage */
+function copyEmailContent() {
     const emailContent = document.getElementById('emailContent');
 
-    emailContent.innerHTML = emailBodyHTML;
-    emailContentContainer.classList.remove('hidden');
+    // Erstelle ein temporäres Element zum Kopieren
+    const tempElement = document.createElement('textarea');
+    tempElement.value = emailContent.innerHTML;
+    document.body.appendChild(tempElement);
+
+    // Wähle den Inhalt aus und kopiere ihn
+    tempElement.select();
+    tempElement.setSelectionRange(0, 99999); // Für mobile Geräte
+
+    try {
+        document.execCommand('copy');
+        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert. Fügen Sie ihn nun in Ihr E-Mail-Programm ein.');
+    } catch (err) {
+        alert('Kopieren fehlgeschlagen. Bitte versuchen Sie es manuell.');
+    }
+
+    // Entferne das temporäre Element
+    document.body.removeChild(tempElement);
+}
+
+/* Funktion zum Schließen des Modals */
+function closeEmailContent() {
+    const modal = document.getElementById('emailContentContainer');
+    modal.classList.add('hidden');
 }
