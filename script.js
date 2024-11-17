@@ -1,49 +1,49 @@
 // script.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initiale Einstellungen für PAY-Rechner
+    // Initial setup for PAY calculator
     toggleCalculationFields();
     toggleRentalOptions();
     updateRentalPrices();
-    openTab(null, 'pay'); // Standardmäßig PAY-Rechner öffnen
+    openTab(null, 'pay'); // Open PAY tab by default
 
-    // Initiale Einstellungen für TOOLS-Rechner
+    // Initial setup for TOOLS calculator
     toggleDishReservationDuration();
     toggleDishOrderDuration();
     toggleDishPremiumDuration();
 });
 
-/* Allgemeine Tab-Funktion */
+/* Function to open the selected tab */
 function openTab(evt, tabName) {
-    // Verstecke alle Tab-Inhalte
+    // Hide all tab contents
     const tabContents = document.getElementsByClassName('tab-content');
     for (let content of tabContents) {
-        content.classList.remove('active');
         content.classList.add('hidden');
+        content.classList.remove('active');
     }
 
-    // Entferne die aktive Klasse von allen Tabs
+    // Remove 'active' class from all tab links
     const tabLinks = document.getElementsByClassName('tab-link');
     for (let tab of tabLinks) {
         tab.classList.remove('active');
     }
 
-    // Zeige den ausgewählten Tab-Inhalt
+    // Show the selected tab content
     const activeTab = document.getElementById(tabName);
     if (activeTab) {
-        activeTab.classList.add('active');
         activeTab.classList.remove('hidden');
+        activeTab.classList.add('active');
     }
 
-    // Füge die aktive Klasse zum geklickten Tab hinzu
-    if (evt) {
+    // Add 'active' class to the clicked tab link
+    if (evt && evt.currentTarget) {
         evt.currentTarget.classList.add('active');
     }
 }
 
-/* PAY Rechner Funktionen */
+/* PAY Calculator Functions */
 
-/* Funktion zum Umschalten der Berechnungsfelder (schnell/ausführlich) */
+/* Toggle additional fields based on calculation type */
 function toggleCalculationFields() {
     const calculationType = document.getElementById('calculationType').value;
     const maestroField = document.getElementById('maestroField');
@@ -61,7 +61,7 @@ function toggleCalculationFields() {
     }
 }
 
-/* Funktion zum Umschalten der Mietoptionen im PAY-Rechner */
+/* Toggle rental options based on purchase or rent */
 function toggleRentalOptions() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const rentalOptions = document.getElementById('rentalOptions');
@@ -73,13 +73,12 @@ function toggleRentalOptions() {
     }
 }
 
-/* Funktion zum Aktualisieren der Mietpreise basierend auf ausgewählter Hardware und Mietdauer */
+/* Update rental prices based on selected hardware and rental period */
 function updateRentalPrices() {
     const hardwareSelect = document.getElementById('hardware');
     const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
     const rentalPeriodSelect = document.getElementById('rentalPeriod');
 
-    // Aktualisieren der Mietdauer-Texte
     const rentalPeriod = rentalPeriodSelect.value;
     const price12 = selectedHardware.getAttribute('data-price-12');
     const price36 = selectedHardware.getAttribute('data-price-36');
@@ -91,7 +90,7 @@ function updateRentalPrices() {
     rentalPeriodSelect.options[2].text = `60 Monate - ${price60} €/Monat`;
 }
 
-/* Funktion zur Aktualisierung der Hardware-Kosten */
+/* Update hardware costs based on purchase or rent */
 function updateHardwareCosts() {
     const purchaseOption = document.getElementById('purchaseOption').value;
     const hardwareSelect = document.getElementById('hardware');
@@ -110,13 +109,13 @@ function updateHardwareCosts() {
             monthlyCost = parseFloat(selectedHardware.getAttribute('data-price-60')) || 0;
         }
     } else {
-        monthlyCost = 0;  // Keine monatlichen Hardwarekosten bei Kauf
+        monthlyCost = 0;  // No monthly cost when purchasing
     }
 
     return { onceCost: priceOnce, monthlyCost };
 }
 
-/* Funktion zur Validierung der Prozentwerte im PAY-Rechner */
+/* Validate percentage inputs */
 function validatePayPercentages() {
     const calculationType = document.getElementById('calculationType').value;
     const girocard = parseFloat(document.getElementById('girocard').value) || 0;
@@ -136,7 +135,7 @@ function validatePayPercentages() {
     return true;
 }
 
-/* Funktion zur Berechnung der PAY-Kosten */
+/* Calculate PAY costs */
 function calculatePayCosts() {
     if (!validatePayPercentages()) {
         return;
@@ -159,7 +158,7 @@ function calculatePayCosts() {
 
     const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
-    // Unsere Gebühren
+    // Our fees
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
     const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
     const maestroRevenue = calculationType === 'ausführlich' ? (monthlyVolume * (maestroFeePercentage / 100)) : 0;
@@ -186,10 +185,10 @@ function calculatePayCosts() {
 
     const totalMonthlyCost = totalDisagioFees + transactionFee + hardwareMonthlyCost + simServiceFee;
 
-    // Einmalige Kosten
+    // One-time costs
     const oneTimeCost = purchaseOption === "kaufen" ? onceCost : 0;
 
-    // Mehrwertsteuerberechnung
+    // VAT calculations
     const oneTimeMwSt = oneTimeCost * 0.19;
     const oneTimeBrutto = oneTimeCost + oneTimeMwSt;
 
@@ -197,7 +196,7 @@ function calculatePayCosts() {
     const totalMwSt = totalNetto * 0.19;
     const totalBrutto = totalNetto + totalMwSt;
 
-    // Wettbewerber Gebühren
+    // Competitor fees
     const competitorGirocardFee = monthlyVolume * (competitorGirocardFeePercentage / 100);
     const competitorMastercardVisaFee = monthlyVolume * (competitorMastercardVisaFeePercentage / 100);
     const competitorMaestroFee = calculationType === 'ausführlich' ? (monthlyVolume * (competitorMaestroFeePercentage / 100)) : 0;
@@ -210,15 +209,15 @@ function calculatePayCosts() {
         competitorTotalFee = competitorGirocardFee * 0.0039 + competitorMastercardVisaFee * 0.0089 + competitorMaestroFee * 0.0089 + competitorBusinessCardFee * 0.0289;
     }
 
-    const competitorTransactionFee = transactions * 0.06; // Angenommen, gleiche Transaktionsgebühr
+    const competitorTransactionFee = transactions * 0.06; // Assuming same transaction fee
 
     const competitorTotalMonthlyCost = competitorTotalFee + competitorTransactionFee;
 
-    // Ersparnis berechnen
+    // Savings calculation
     const savingsNetto = competitorTotalMonthlyCost - totalMonthlyCost;
-    const savingsBrutto = savingsNetto * 1.19; // Inklusive Mehrwertsteuer
+    const savingsBrutto = savingsNetto * 1.19; // Including VAT
 
-    // Ergebnisse anzeigen
+    // Display results
     document.getElementById('payOneTimeCostNetto').innerText = oneTimeCost.toFixed(2);
     document.getElementById('payOneTimeCostMwSt').innerText = oneTimeMwSt.toFixed(2);
     document.getElementById('payOneTimeCostBrutto').innerText = oneTimeBrutto.toFixed(2);
@@ -230,11 +229,11 @@ function calculatePayCosts() {
     document.getElementById('competitorTotalBrutto').innerText = competitorTotalMonthlyCost.toFixed(2);
     document.getElementById('savingsBrutto').innerText = savingsBrutto.toFixed(2);
 
-    // Ergebnisbereich anzeigen
+    // Show results
     const payResult = document.getElementById('payResult');
     payResult.classList.remove('hidden');
 
-    // Speichere die Ergebnisse für den Email-Versand
+    // Store results in dataset for email
     payResult.dataset.oneTimeCostNetto = oneTimeCost.toFixed(2);
     payResult.dataset.oneTimeCostMwSt = oneTimeMwSt.toFixed(2);
     payResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
@@ -245,9 +244,11 @@ function calculatePayCosts() {
     payResult.dataset.savingsBrutto = savingsBrutto.toFixed(2);
 }
 
-/* Funktion zur Berechnung der POS-Kosten */
+/* POS Calculator Functions */
+
+/* Calculate POS costs */
 function calculatePosCosts() {
-    // Einmalige Kosten
+    // One-time costs
     const screenSunmi = parseFloat(document.getElementById('screenSunmi').value) || 0;
     const tseHardware = parseFloat(document.getElementById('tseHardware').value) || 0;
     const menuService = parseFloat(document.getElementById('menuService').value) || 0;
@@ -266,28 +267,28 @@ function calculatePosCosts() {
     const oneTimeMwSt = totalOneTimeNetto * 0.19;
     const oneTimeBrutto = totalOneTimeNetto + oneTimeMwSt;
 
-    // Monatliche Kosten
+    // Monthly costs
     const mainLicense = document.getElementById('mainLicense').checked ? 69.00 : 0;
     const datevApi = document.getElementById('datevApi').checked ? 25.00 : 0;
     const voucherFunction = document.getElementById('voucherFunction').checked ? 10.00 : 0;
     const tapToPayLicense = document.getElementById('tapToPayLicense').checked ? 7.50 : 0;
 
     const handDeviceLicense = parseInt(document.getElementById('handDeviceLicense').value) || 0;
-    const handDeviceLicenseCost = handDeviceLicense * 10.00; // Beispielpreis pro Lizenz
+    const handDeviceLicenseCost = handDeviceLicense * 10.00; // Example price per license
 
     const totalMonthlyNetto = mainLicense + datevApi + voucherFunction + tapToPayLicense + handDeviceLicenseCost;
     const monthlyMwSt = totalMonthlyNetto * 0.19;
     const monthlyBrutto = totalMonthlyNetto + monthlyMwSt;
 
-    // Rabatt
+    // Discount
     const posDiscountAmount = parseFloat(document.getElementById('posDiscountAmount').value) || 0;
     const posFreeMonths = parseInt(document.getElementById('posFreeMonths').value) || 0;
 
-    // Rabattlogik: Rabattbetrag wird von den Bruttokosten abgezogen
+    // Discount logic: subtract discount amount from Brutto
     const discountedOneTimeBrutto = oneTimeBrutto - posDiscountAmount;
-    const discountedMonthlyBrutto = monthlyBrutto - posDiscountAmount; // Anpassung je nach Rabattlogik
+    const discountedMonthlyBrutto = monthlyBrutto - posDiscountAmount; // Adjust as per discount logic
 
-    // Ergebnisse anzeigen
+    // Display results
     document.getElementById('posOneTimeCostNetto').innerText = totalOneTimeNetto.toFixed(2);
     document.getElementById('posOneTimeCostMwSt').innerText = oneTimeMwSt.toFixed(2);
     document.getElementById('posOneTimeCostBrutto').innerText = oneTimeBrutto.toFixed(2);
@@ -295,11 +296,11 @@ function calculatePosCosts() {
     document.getElementById('posTotalMwSt').innerText = monthlyMwSt.toFixed(2);
     document.getElementById('posTotalBrutto').innerText = monthlyBrutto.toFixed(2);
 
-    // Ergebnisbereich anzeigen
+    // Show results
     const posResult = document.getElementById('posResult');
     posResult.classList.remove('hidden');
 
-    // Speichere die Ergebnisse für den Email-Versand
+    // Store results in dataset for email
     posResult.dataset.oneTimeCostNetto = totalOneTimeNetto.toFixed(2);
     posResult.dataset.oneTimeCostMwSt = oneTimeMwSt.toFixed(2);
     posResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
@@ -308,35 +309,37 @@ function calculatePosCosts() {
     posResult.dataset.totalBrutto = monthlyBrutto.toFixed(2);
 }
 
-/* TOOLS Rechner Funktionen */
+/* TOOLS Calculator Functions */
 
-/* Funktionen zum Umschalten der Vertragslaufzeiten */
+/* Toggle Dish Reservation Duration */
 function toggleDishReservationDuration() {
     const dishReservation = document.getElementById('dishReservation');
     const durationSelect = document.getElementById('dishReservationDuration');
     durationSelect.disabled = !dishReservation.checked;
 }
 
+/* Toggle Dish Order Duration */
 function toggleDishOrderDuration() {
     const dishOrder = document.getElementById('dishOrder');
     const durationSelect = document.getElementById('dishOrderDuration');
     durationSelect.disabled = !dishOrder.checked;
 }
 
+/* Toggle Dish Premium Duration */
 function toggleDishPremiumDuration() {
     const dishPremium = document.getElementById('dishPremium');
     const durationSelect = document.getElementById('dishPremiumDuration');
     durationSelect.disabled = !dishPremium.checked;
 }
 
-/* Funktion zur Berechnung der TOOLS-Kosten */
+/* Calculate TOOLS costs */
 function calculateToolsCosts() {
-    // Einmalige Kosten
+    // One-time costs
     let oneTimeCostNetto = 0;
     let oneTimeCostMwSt = 0;
     let oneTimeCostBrutto = 0;
 
-    // Monatliche Kosten
+    // Monthly costs
     let monthlyCostNetto = 0;
     let monthlyCostMwSt = 0;
     let monthlyCostBrutto = 0;
@@ -391,22 +394,22 @@ function calculateToolsCosts() {
         monthlyCostNetto += monthly;
     }
 
-    // Mehrwertsteuerberechnung
+    // VAT calculations
     oneTimeCostMwSt = oneTimeCostNetto * 0.19;
     oneTimeCostBrutto = oneTimeCostNetto + oneTimeCostMwSt;
 
     monthlyCostMwSt = monthlyCostNetto * 0.19;
     monthlyCostBrutto = monthlyCostNetto + monthlyCostMwSt;
 
-    // Rabatt
+    // Discount
     const toolsDiscountAmount = parseFloat(document.getElementById('toolsDiscountAmount').value) || 0;
     const toolsFreeMonths = parseInt(document.getElementById('toolsFreeMonths').value) || 0;
 
-    // Rabattlogik: Rabattbetrag wird von den Bruttokosten abgezogen
+    // Discount logic: subtract discount amount from Brutto
     const discountedOneTimeBrutto = oneTimeBrutto - toolsDiscountAmount;
-    const discountedMonthlyBrutto = monthlyBrutto - toolsDiscountAmount; // Anpassung je nach Rabattlogik
+    const discountedMonthlyBrutto = monthlyBrutto - toolsDiscountAmount; // Adjust as per discount logic
 
-    // Ergebnisse anzeigen
+    // Display results
     document.getElementById('toolsOneTimeCostNetto').innerText = oneTimeCostNetto.toFixed(2);
     document.getElementById('toolsOneTimeCostMwSt').innerText = oneTimeCostMwSt.toFixed(2);
     document.getElementById('toolsOneTimeCostBrutto').innerText = oneTimeBrutto.toFixed(2);
@@ -414,11 +417,11 @@ function calculateToolsCosts() {
     document.getElementById('toolsTotalMwSt').innerText = monthlyCostMwSt.toFixed(2);
     document.getElementById('toolsTotalBrutto').innerText = monthlyBrutto.toFixed(2);
 
-    // Ergebnisbereich anzeigen
+    // Show results
     const toolsResult = document.getElementById('toolsResult');
     toolsResult.classList.remove('hidden');
 
-    // Speichere die Ergebnisse für den Email-Versand
+    // Store results in dataset for email
     toolsResult.dataset.oneTimeCostNetto = oneTimeCostNetto.toFixed(2);
     toolsResult.dataset.oneTimeCostMwSt = oneTimeCostMwSt.toFixed(2);
     toolsResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
@@ -427,7 +430,7 @@ function calculateToolsCosts() {
     toolsResult.dataset.totalBrutto = monthlyBrutto.toFixed(2);
 }
 
-/* Funktion zur Erstellung und Anzeige des HTML-E-Mail-Templates */
+/* Function to generate and show email content in modal */
 function sendEmail(calculatorType) {
     const customerName = document.getElementById('customerName').value.trim();
     const salutation = document.getElementById('salutation').value;
@@ -440,8 +443,8 @@ function sendEmail(calculatorType) {
     let emailSubject = "";
     let emailBodyHTML = "";
 
-    // Allgemeine Basis für die E-Mail
-    const baseGreeting = `<p>Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},</p>`;
+    // General greeting
+    const baseGreeting = `<p>Sehr geehrte${salutation === 'Herr' ? 'r Herr' : 'e Frau'} ${customerName},</p>`;
     const baseIntroduction = `<p>vielen Dank für Ihr Interesse an unserem DISH ${calculatorType} Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.</p>`;
 
     let tableHTML = "";
@@ -459,7 +462,7 @@ function sendEmail(calculatorType) {
         const competitorTotalMonthlyCost = payResult.dataset.competitorTotalMonthlyCost;
         const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        // Formatierte Tabelle als HTML
+        // Formatted table as HTML
         tableHTML = `
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -525,7 +528,7 @@ function sendEmail(calculatorType) {
         const totalMwSt = posResult.dataset.totalMwSt;
         const totalBrutto = posResult.dataset.totalBrutto;
 
-        // Formatierte Tabelle als HTML
+        // Formatted table as HTML
         tableHTML = `
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -575,7 +578,7 @@ function sendEmail(calculatorType) {
         const totalMwSt = toolsResult.dataset.totalMwSt;
         const totalBrutto = toolsResult.dataset.totalBrutto;
 
-        // Formatierte Tabelle als HTML
+        // Formatted table as HTML
         tableHTML = `
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -620,51 +623,28 @@ function sendEmail(calculatorType) {
 
     emailBodyHTML = baseGreeting + baseIntroduction + tableHTML + baseConclusion;
 
-    // Füge den HTML-Inhalt in das Modal ein
+    // Insert the email content into the modal
     document.getElementById('emailContent').innerHTML = emailBodyHTML;
 
-    // Zeige das Modal an
+    // Show the modal
     const modal = document.getElementById('emailContentContainer');
     modal.classList.remove('hidden');
-
-    // Ändere den Button-Text und Funktionalität
-    const sendButton = modal.querySelector('.modal-content button');
-    sendButton.textContent = 'Versenden';
-    sendButton.onclick = function() {
-        copyAndSendEmail(emailSubject, emailBodyHTML);
-    };
 }
 
-/* Funktion zum Kopieren und Senden des E-Mail-Inhalts */
-function copyAndSendEmail(subject, body) {
-    // Kopiere den reinen Textinhalt in die Zwischenablage
-    const emailContent = document.getElementById('emailContent').innerText;
+/* Function to copy email content */
+function copyEmailContent() {
+    const emailContentElement = document.getElementById('emailContent');
+    const emailText = emailContentElement.innerText;
 
-    navigator.clipboard.writeText(emailContent).then(function() {
+    navigator.clipboard.writeText(emailText).then(function() {
         alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert.');
-        
-        // Erstelle den Mailto-Link
-        const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailContent)}`;
-
-        // Öffne den Mailto-Link
-        window.location.href = mailtoLink;
-
-        // Schließe das Modal
-        closeEmailContent();
     }, function(err) {
         alert('Kopieren fehlgeschlagen. Bitte versuchen Sie es manuell.');
     });
 }
 
-/* Funktion zum Schließen des Modals */
+/* Function to close the email modal */
 function closeEmailContent() {
     const modal = document.getElementById('emailContentContainer');
     modal.classList.add('hidden');
-
-    // Setze den Button-Text und die Funktionalität zurück
-    const sendButton = modal.querySelector('.modal-content button');
-    sendButton.textContent = 'Versenden'; // Setze den Text zurück, falls benötigt
-    sendButton.onclick = function() {
-        // Leere Funktion oder setze auf ursprüngliche Funktion zurück
-    };
 }
