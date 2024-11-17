@@ -459,34 +459,7 @@ function sendEmail(calculatorType) {
         const competitorTotalMonthlyCost = payResult.dataset.competitorTotalMonthlyCost;
         const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        // Komponenten und Lizenzen auflisten (nur netto)
-        // Für PAY, liste die ausgewählte Hardware und Lizenzen auf
-
-        const hardwareSelect = document.getElementById('hardware');
-        const selectedHardwareOption = hardwareSelect.options[hardwareSelect.selectedIndex];
-        const hardwareName = selectedHardwareOption.text;
-        const hardwareNetto = selectedHardwareOption.getAttribute('data-price-once');
-
-        // Lizenzen
-        const mainLicense = document.getElementById('mainLicense').checked ? "Hauptlizenz Software" : null;
-        const datevApi = document.getElementById('datevApi').checked ? "DATEV „MeinFiskal“ API" : null;
-        const voucherFunction = document.getElementById('voucherFunction').checked ? "Gutschein Funktion" : null;
-        const tapToPayLicense = document.getElementById('tapToPayLicense').checked ? "Tap to Pay Lizenz" : null;
-
-        // Zusätzliche Lizenzen für Handgeräte (falls vorhanden)
-        const handDeviceLicenseCount = parseInt(document.getElementById('handDeviceLicense').value) || 0;
-        const handDeviceLicenseName = handDeviceLicenseCount > 0 ? `Zusatzlizenz für Handgeräte (${handDeviceLicenseCount} Stück)` : null;
-        const handDeviceLicenseNetto = handDeviceLicenseCount > 0 ? (handDeviceLicenseCount * 10.00).toFixed(2) : null;
-
-        // Sammle alle Lizenzen
-        const licenses = [];
-        if (mainLicense) licenses.push({ name: mainLicense, netto: "69.00" });
-        if (datevApi) licenses.push({ name: datevApi, netto: "25.00" });
-        if (voucherFunction) licenses.push({ name: voucherFunction, netto: "10.00" });
-        if (tapToPayLicense) licenses.push({ name: tapToPayLicense, netto: "7.50" });
-        if (handDeviceLicenseName) licenses.push({ name: handDeviceLicenseName, netto: handDeviceLicenseNetto });
-
-        // Beginne mit der Tabelle
+        // Formatierte Tabelle als HTML
         tableHTML = `
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -497,67 +470,48 @@ function sendEmail(calculatorType) {
     </thead>
     <tbody>
         <tr>
-            <td>Hardware</td>
-            <td>${hardwareName} - ${hardwareNetto} €</td>
-        </tr>
-`;
-
-        // Füge Lizenzen hinzu
-        licenses.forEach(license => {
-            tableHTML += `
-        <tr>
-            <td>${license.name}</td>
-            <td>${license.netto} €</td>
-        </tr>
-`;
-        });
-
-        // Füge die Einmaligen Kosten hinzu
-        tableHTML += `
-        <tr>
             <td>Gesamte Einmalige Kosten Netto</td>
-            <td>${oneTimeNetto} €</td>
+            <td>${oneTimeNetto}</td>
         </tr>
         <tr>
             <td>Mehrwertsteuer (19%)</td>
-            <td>${oneTimeMwSt} €</td>
+            <td>${oneTimeMwSt}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
-            <td>${oneTimeBrutto} €</td>
+            <td>${oneTimeBrutto}</td>
         </tr>
         <tr>
             <td>Gesamte Monatliche Kosten Netto</td>
-            <td>${totalNetto} €</td>
+            <td>${totalNetto}</td>
         </tr>
         <tr>
             <td>Mehrwertsteuer (19%)</td>
-            <td>${totalMwSt} €</td>
+            <td>${totalMwSt}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
-            <td>${totalBrutto} €</td>
+            <td>${totalBrutto}</td>
         </tr>
         <tr>
             <td>Wettbewerber Gesamte Monatliche Kosten Netto</td>
-            <td>${(competitorTotalMonthlyCost / 1.19).toFixed(2)} €</td>
+            <td>${(competitorTotalMonthlyCost / 1.19).toFixed(2)}</td>
         </tr>
         <tr>
             <td>Wettbewerber Mehrwertsteuer (19%)</td>
-            <td>${(competitorTotalMonthlyCost - (competitorTotalMonthlyCost / 1.19)).toFixed(2)} €</td>
+            <td>${(competitorTotalMonthlyCost - (competitorTotalMonthlyCost / 1.19)).toFixed(2)}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Wettbewerber Gesamtbetrag</td>
-            <td>${competitorTotalMonthlyCost} €</td>
+            <td>${competitorTotalMonthlyCost}</td>
         </tr>
         <tr>
             <td style="color: red; font-weight: bold;">Ersparnis Brutto</td>
-            <td style="color: red; font-weight: bold;">${savingsBrutto} €</td>
+            <td style="color: red; font-weight: bold;">${savingsBrutto}</td>
         </tr>
     </tbody>
 </table>
 `;
-
     }
 
     if (calculatorType === 'POS') {
@@ -571,42 +525,7 @@ function sendEmail(calculatorType) {
         const totalMwSt = posResult.dataset.totalMwSt;
         const totalBrutto = posResult.dataset.totalBrutto;
 
-        // Für POS, liste alle Komponenten auf
-
-        // Sammle alle ausgewählten Komponenten und deren Kosten (nur netto)
-        const posComponents = [
-            { name: "Bildschirm Sunmi", netto: "493.00", quantity: parseFloat(document.getElementById('screenSunmi').value) || 0 },
-            { name: "TSE Hardwarenutzung für 5 Jahre", netto: "159.00", quantity: parseFloat(document.getElementById('tseHardware').value) || 0 },
-            { name: "Menü-Eingabeservice", netto: "300.00", quantity: parseFloat(document.getElementById('menuService').value) || 0 },
-            { name: "Einrichtungsservice vor Ort", netto: "599.00", quantity: parseFloat(document.getElementById('setupService').value) || 0 },
-            { name: "Mobiles Handgerät", netto: "220.00", quantity: parseFloat(document.getElementById('mobileDevice').value) || 0 },
-            { name: "Epson Drucker", netto: "229.00", quantity: parseFloat(document.getElementById('epsonPrinter').value) || 0 },
-            { name: "Ladestation für mobiles Handgerät", netto: "79.00", quantity: parseFloat(document.getElementById('chargingStation').value) || 0 },
-            { name: "Access Point", netto: "189.00", quantity: parseFloat(document.getElementById('accessPoint').value) || 0 },
-            { name: "POS Router ER605", netto: "55.00", quantity: parseFloat(document.getElementById('routerER605').value) || 0 },
-            { name: "Switch Lite Ubiquiti UniFi", netto: "107.00", quantity: parseFloat(document.getElementById('switchLite').value) || 0 },
-            { name: "Kassenschublade", netto: "69.00", quantity: parseFloat(document.getElementById('cashDrawer').value) || 0 },
-            { name: "QR Ordering", netto: "49.00", quantity: parseFloat(document.getElementById('qrOrdering').value) || 0 },
-            { name: "DISH Aggregator", netto: "59.00", quantity: parseFloat(document.getElementById('dishAggregator').value) || 0 },
-        ];
-
-        // Filtere Komponenten mit Menge > 0
-        const selectedPosComponents = posComponents.filter(component => component.quantity > 0);
-
-        // Monatliche Lizenzen und Services
-        const posLicenses = [];
-        if (document.getElementById('mainLicense').checked) posLicenses.push({ name: "Hauptlizenz Software", netto: "69.00" });
-        if (document.getElementById('datevApi').checked) posLicenses.push({ name: "DATEV „MeinFiskal“ API", netto: "25.00" });
-        if (document.getElementById('voucherFunction').checked) posLicenses.push({ name: "Gutschein Funktion", netto: "10.00" });
-        if (document.getElementById('tapToPayLicense').checked) posLicenses.push({ name: "Tap to Pay Lizenz", netto: "7.50" });
-
-        // Zusatzlizenz für Handgeräte
-        const handDeviceLicenseCount = parseInt(document.getElementById('handDeviceLicense').value) || 0;
-        if (handDeviceLicenseCount > 0) {
-            posLicenses.push({ name: `Zusatzlizenz für Handgeräte (${handDeviceLicenseCount} Stück)`, netto: (handDeviceLicenseCount * 10.00).toFixed(2) });
-        }
-
-        // Beginne mit der Tabelle
+        // Formatierte Tabelle als HTML
         tableHTML = `
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -616,58 +535,33 @@ function sendEmail(calculatorType) {
         </tr>
     </thead>
     <tbody>
-`;
-
-        // Füge ausgewählte Komponenten hinzu
-        selectedPosComponents.forEach(component => {
-            tableHTML += `
-        <tr>
-            <td>${component.name} (${component.quantity} Stück)</td>
-            <td>${(component.netto * component.quantity).toFixed(2)} €</td>
-        </tr>
-`;
-        });
-
-        // Füge ausgewählte Lizenzen hinzu
-        posLicenses.forEach(license => {
-            tableHTML += `
-        <tr>
-            <td>${license.name}</td>
-            <td>${license.netto} €</td>
-        </tr>
-`;
-        });
-
-        // Füge die Einmaligen Kosten hinzu
-        tableHTML += `
         <tr>
             <td>Gesamte Einmalige Kosten Netto</td>
-            <td>${oneTimeNetto} €</td>
+            <td>${oneTimeNetto}</td>
         </tr>
         <tr>
             <td>Mehrwertsteuer (19%)</td>
-            <td>${oneTimeMwSt} €</td>
+            <td>${oneTimeMwSt}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
-            <td>${oneTimeBrutto} €</td>
+            <td>${oneTimeBrutto}</td>
         </tr>
         <tr>
             <td>Gesamte Monatliche Kosten Netto</td>
-            <td>${totalNetto} €</td>
+            <td>${totalNetto}</td>
         </tr>
         <tr>
             <td>Mehrwertsteuer (19%)</td>
-            <td>${totalMwSt} €</td>
+            <td>${totalMwSt}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
-            <td>${totalBrutto} €</td>
+            <td>${totalBrutto}</td>
         </tr>
     </tbody>
 </table>
 `;
-
     }
 
     if (calculatorType === 'TOOLS') {
@@ -681,52 +575,7 @@ function sendEmail(calculatorType) {
         const totalMwSt = toolsResult.dataset.totalMwSt;
         const totalBrutto = toolsResult.dataset.totalBrutto;
 
-        // Für TOOLS, liste alle ausgewählten DISH Lösungen mit ihren Kosten auf
-        const toolsOptions = [];
-
-        if (document.getElementById('dishStarter').checked) {
-            toolsOptions.push({ name: "DISH STARTER", netto: "69.00", monthly: "10.00" });
-        }
-
-        if (document.getElementById('dishReservation').checked) {
-            const duration = document.getElementById('dishReservationDuration').value;
-            let monthly = 0;
-            if (duration === "36") {
-                monthly = "34.90";
-            } else if (duration === "12") {
-                monthly = "44.00";
-            } else if (duration === "3") {
-                monthly = "49.00";
-            }
-            const activationFee = parseFloat(document.getElementById('dishReservationDuration').selectedOptions[0].getAttribute('data-activation-fee')) || 0;
-            toolsOptions.push({ name: "DISH RESERVATION", netto: activationFee.toFixed(2), monthly: monthly });
-        }
-
-        if (document.getElementById('dishOrder').checked) {
-            const duration = document.getElementById('dishOrderDuration').value;
-            let monthly = 0;
-            if (duration === "12") {
-                monthly = "49.90";
-            } else if (duration === "3") {
-                monthly = "59.90";
-            }
-            const activationFee = parseFloat(document.getElementById('dishOrderDuration').selectedOptions[0].getAttribute('data-activation-fee')) || 0;
-            toolsOptions.push({ name: "DISH ORDER", netto: activationFee.toFixed(2), monthly: monthly });
-        }
-
-        if (document.getElementById('dishPremium').checked) {
-            const duration = document.getElementById('dishPremiumDuration').value;
-            let monthly = 0;
-            if (duration === "12") {
-                monthly = "69.90";
-            } else if (duration === "3") {
-                monthly = "79.90";
-            }
-            const activationFee = parseFloat(document.getElementById('dishPremiumDuration').selectedOptions[0].getAttribute('data-activation-fee')) || 0;
-            toolsOptions.push({ name: "DISH PREMIUM", netto: activationFee.toFixed(2), monthly: monthly });
-        }
-
-        // Beginne mit der Tabelle
+        // Formatierte Tabelle als HTML
         tableHTML = `
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -736,48 +585,33 @@ function sendEmail(calculatorType) {
         </tr>
     </thead>
     <tbody>
-`;
-
-        // Füge ausgewählte DISH Lösungen hinzu
-        toolsOptions.forEach(option => {
-            tableHTML += `
-        <tr>
-            <td>${option.name} - Aktivierungsgebühr: ${option.netto} €, Monatlich: ${option.monthly} €</td>
-            <td>${option.netto} € / ${option.monthly} €</td>
-        </tr>
-`;
-        });
-
-        // Füge die Einmaligen Kosten hinzu
-        tableHTML += `
         <tr>
             <td>Gesamte Einmalige Kosten Netto</td>
-            <td>${oneTimeNetto} €</td>
+            <td>${oneTimeNetto}</td>
         </tr>
         <tr>
             <td>Mehrwertsteuer (19%)</td>
-            <td>${oneTimeMwSt} €</td>
+            <td>${oneTimeMwSt}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
-            <td>${oneTimeBrutto} €</td>
+            <td>${oneTimeBrutto}</td>
         </tr>
         <tr>
             <td>Gesamte Monatliche Kosten Netto</td>
-            <td>${totalNetto} €</td>
+            <td>${totalNetto}</td>
         </tr>
         <tr>
             <td>Mehrwertsteuer (19%)</td>
-            <td>${totalMwSt} €</td>
+            <td>${totalMwSt}</td>
         </tr>
         <tr style="background-color: #ffe5cc; font-weight: bold;">
             <td>Gesamtbetrag</td>
-            <td>${totalBrutto} €</td>
+            <td>${totalBrutto}</td>
         </tr>
     </tbody>
 </table>
 `;
-
     }
 
     const baseConclusion = `<p>---</p>
@@ -792,34 +626,49 @@ function sendEmail(calculatorType) {
     // Zeige das Modal an
     const modal = document.getElementById('emailContentContainer');
     modal.classList.remove('hidden');
+
+    // Ändere den Button-Text und Funktionalität
+    const sendButton = modal.querySelector('button');
+    sendButton.textContent = 'Versenden';
+    sendButton.onclick = function() {
+        copyAndSendEmail(emailSubject, emailBodyHTML);
+    };
+}
+
+/* Funktion zum Kopieren und Senden des E-Mail-Inhalts */
+function copyAndSendEmail(subject, body) {
+    // Kopiere den Inhalt in die Zwischenablage
+    copyEmailContent();
+
+    // Erstelle den Mailto-Link
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Öffne den Mailto-Link
+    window.location.href = mailtoLink;
+
+    // Schließe das Modal
+    closeEmailContent();
 }
 
 /* Funktion zum Kopieren des E-Mail-Inhalts in die Zwischenablage */
 function copyEmailContent() {
-    const emailContent = document.getElementById('emailContent').innerHTML;
+    const emailContent = document.getElementById('emailContent').innerText; // Verwende innerText für reinen Text
 
-    // Erstelle ein temporäres Element zum Kopieren
-    const tempElement = document.createElement('textarea');
-    tempElement.value = emailContent;
-    document.body.appendChild(tempElement);
-
-    // Wähle den Inhalt aus und kopiere ihn
-    tempElement.select();
-    tempElement.setSelectionRange(0, 99999); // Für mobile Geräte
-
-    try {
-        document.execCommand('copy');
-        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert. Fügen Sie ihn nun in Ihr E-Mail-Programm ein.');
-    } catch (err) {
+    // Kopiere den Text in die Zwischenablage
+    navigator.clipboard.writeText(emailContent).then(function() {
+        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert. Ihr E-Mail-Client wird jetzt geöffnet.');
+    }, function(err) {
         alert('Kopieren fehlgeschlagen. Bitte versuchen Sie es manuell.');
-    }
-
-    // Entferne das temporäre Element
-    document.body.removeChild(tempElement);
+    });
 }
 
 /* Funktion zum Schließen des Modals */
 function closeEmailContent() {
     const modal = document.getElementById('emailContentContainer');
     modal.classList.add('hidden');
+
+    // Setze den Button-Text und die Funktionalität zurück
+    const sendButton = modal.querySelector('button');
+    sendButton.textContent = 'Kopieren';
+    sendButton.onclick = copyEmailContent;
 }
