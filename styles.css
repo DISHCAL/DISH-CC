@@ -1,23 +1,59 @@
 /* styles.css */
 
-body {
-    font-family: 'Roboto', sans-serif;
+/* Grundlegendes Reset */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
 }
 
+/* Schriftarten */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    color: #e67e22;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 20px;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-top: 20px;
+}
+
+h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Container */
 .container {
     width: 90%;
     max-width: 1200px;
-    margin: auto;
-    padding: 20px;
+    margin: 20px auto;
     background-color: #fff;
+    padding: 20px 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
+/* Header */
 header {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 20px;
     margin-bottom: 20px;
 }
 
@@ -26,26 +62,33 @@ header {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
 }
 
-.language-selector, .customer-input {
+.language-selector,
+.customer-input {
     display: flex;
     align-items: center;
-    margin: 10px 0;
+    margin-top: 10px;
 }
 
-.language-selector label, .customer-input label {
+.language-selector label,
+.customer-input label {
     margin-right: 10px;
+    font-weight: 500;
 }
 
-.name-group {
+.customer-input .name-group {
     display: flex;
     align-items: center;
 }
 
-.name-group select {
+.customer-input select,
+.customer-input input {
+    padding: 8px;
     margin-right: 10px;
-    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .required {
@@ -53,46 +96,53 @@ header {
     margin-left: 2px;
 }
 
-.error-message {
-    color: red;
-    font-size: 0.9em;
-    display: block;
-    margin-top: 5px;
-}
-
+/* Tabs */
 .tabs {
     display: flex;
+    justify-content: center;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
 .tab-link {
-    padding: 10px 20px;
-    border: none;
-    background-color: #e0e0e0;
-    cursor: pointer;
-    margin-right: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.tab-link:hover {
-    background-color: #d5d5d5;
-}
-
-.tab-link.active {
-    background-color: #FF9800; /* Orange Akzent */
+    background-color: #e67e22;
     color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
 }
 
+.tab-link:last-child {
+    margin-right: 0;
+}
+
+.tab-link:hover,
+.tab-link.active {
+    background-color: #cf6619;
+}
+
+/* Tab Content */
 .tab-content {
     display: none;
+    padding: 20px;
+    border-top: none;
 }
 
 .tab-content.active {
     display: block;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Form Groups */
 .form-group {
     margin-bottom: 15px;
 }
@@ -100,174 +150,217 @@ header {
 .form-group label {
     display: block;
     margin-bottom: 5px;
+    font-weight: 500;
 }
 
 .form-group input[type="number"],
 .form-group select {
     width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.quick-field {
-    display: block; /* Standardmäßig anzeigen für schnelle Berechnung */
-}
-
-.detailed-field {
-    display: none; /* Standardmäßig verstecken für ausführliche Berechnung */
-}
-
-.competitor-section {
-    background-color: #f9f9f9;
     padding: 10px;
-    border-left: 4px solid #FF9800;
-    margin-bottom: 15px;
-}
-
-.notes {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-left: 4px solid #FF9800;
-    margin-bottom: 20px;
-}
-
-.notes h3 {
-    margin-top: 0;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.discount-item {
-    margin-bottom: 10px;
-}
-
-.discount-item label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.discount-item input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.button-group {
-    margin-top: 20px;
-}
-
-.button-group button {
-    padding: 10px 20px;
-    margin-right: 10px;
-    border: none;
-    background-color: #FF9800; /* Orange Akzent */
-    color: #fff;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s;
-}
-
-.button-group button:hover {
-    background-color: #e68900;
-}
-
-.result-section {
-    background-color: #FFF3E0; /* Hellorange Hintergrund */
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 5px;
-}
-
-.result-section h3 {
-    margin-top: 0;
-}
-
-.result-section table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.result-section th, .result-section td {
     border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
+    border-radius: 4px;
 }
 
-.result-section th {
-    background-color: #FFEB3B; /* Gelber Header */
-}
-
-.total-row {
-    background-color: #FFE0B2; /* Hellorange für Gesamtsumme */
-    font-weight: bold;
-}
-
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto; /* 10% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    position: relative;
-    border-radius: 5px;
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
+.form-group input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
 }
 
 .hidden {
     display: none;
 }
 
-/* Responsive Design */
+/* Optionales Zubehör und DISH Lösungen */
+.tools-item {
+    margin-bottom: 15px;
+}
+
+.tools-item p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* Rabattfelder */
+.input-group {
+    margin-top: 20px;
+}
+
+.discount-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.discount-item label {
+    flex: 1;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.discount-item input[type="number"] {
+    flex: 2;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Buttons */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button-group button {
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.button-group button:hover {
+    background-color: #cf6619;
+}
+
+/* Ergebnisbereich */
+.result-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #e67e22;
+    border-radius: 4px;
+}
+
+.result-section.hidden {
+    display: none;
+}
+
+.result-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.result-section th,
+.result-section td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.result-section th {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+.total-row td {
+    font-weight: 600;
+    background-color: #ffe5cc;
+}
+
 @media (max-width: 768px) {
     .top-bar {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .language-selector, .customer-input {
-        width: 100%;
-    }
-
     .tabs {
         flex-direction: column;
+        align-items: stretch;
     }
 
     .tab-link {
-        width: 100%;
+        margin-right: 0;
         margin-bottom: 5px;
+        border-radius: 4px;
     }
 
-    .modal-content {
-        width: 95%;
+    .button-group {
+        flex-direction: column;
     }
+
+    .discount-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .discount-item label,
+    .discount-item input {
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom:0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: #e67e22;
+    cursor: pointer;
+}
+
+.modal-content button {
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #cf6619;
+}
+
+/* Tooltips (optional, falls Tippy.js genutzt wird) */
+.tippy-box {
+    font-size: 0.9rem;
 }
