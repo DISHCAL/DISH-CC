@@ -213,9 +213,12 @@ function calculatePayCosts() {
 
     const competitorTotalMonthlyCost = competitorTotalFee + competitorTransactionFee;
 
-    // Savings calculation
-    const savingsNetto = competitorTotalMonthlyCost - totalMonthlyCost;
-    const savingsBrutto = savingsNetto * 1.19; // Including VAT
+    // Savings calculation only for 'ausführlich'
+    let savingsBrutto = 0;
+    if (calculationType === 'ausführlich') {
+        const savingsNetto = competitorTotalMonthlyCost - totalMonthlyCost;
+        savingsBrutto = savingsNetto * 1.19; // Including VAT
+    }
 
     // Display results
     document.getElementById('payOneTimeCostNetto').innerText = oneTimeCost.toFixed(2);
@@ -227,7 +230,25 @@ function calculatePayCosts() {
     document.getElementById('competitorTotalNetto').innerText = (competitorTotalMonthlyCost / 1.19).toFixed(2);
     document.getElementById('competitorTotalMwSt').innerText = (competitorTotalMonthlyCost - (competitorTotalMonthlyCost / 1.19)).toFixed(2);
     document.getElementById('competitorTotalBrutto').innerText = competitorTotalMonthlyCost.toFixed(2);
-    document.getElementById('savingsBrutto').innerText = savingsBrutto.toFixed(2);
+
+    if (calculationType === 'ausführlich') {
+        document.getElementById('savingsBrutto').innerText = savingsBrutto.toFixed(2);
+        document.getElementById('savingsRow').classList.remove('hidden');
+    } else {
+        document.getElementById('savingsBrutto').innerText = '0.00';
+        document.getElementById('savingsRow').classList.add('hidden');
+    }
+
+    // Apply discounts
+    const payDiscountAmount = parseFloat(document.getElementById('payDiscountAmount').value) || 0;
+    const payFreeMonths = parseInt(document.getElementById('payFreeMonths').value) || 0;
+
+    // Adjust one-time and monthly costs based on discounts
+    const discountedOneTimeBrutto = oneTimeBrutto - payDiscountAmount;
+    const discountedTotalBrutto = totalBrutto - (payFreeMonths * 0.06); // Assuming 0.06 €/Monat Rabatt pro freiem Monat
+
+    document.getElementById('payOneTimeCostBrutto').innerText = discountedOneTimeBrutto.toFixed(2);
+    document.getElementById('payTotalBrutto').innerText = discountedTotalBrutto.toFixed(2);
 
     // Show results
     const payResult = document.getElementById('payResult');
@@ -236,10 +257,10 @@ function calculatePayCosts() {
     // Store results in dataset for email
     payResult.dataset.oneTimeCostNetto = oneTimeCost.toFixed(2);
     payResult.dataset.oneTimeCostMwSt = oneTimeMwSt.toFixed(2);
-    payResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
+    payResult.dataset.oneTimeCostBrutto = discountedOneTimeBrutto.toFixed(2);
     payResult.dataset.totalNetto = totalNetto.toFixed(2);
     payResult.dataset.totalMwSt = totalMwSt.toFixed(2);
-    payResult.dataset.totalBrutto = totalBrutto.toFixed(2);
+    payResult.dataset.totalBrutto = discountedTotalBrutto.toFixed(2);
     payResult.dataset.competitorTotalMonthlyCost = competitorTotalMonthlyCost.toFixed(2);
     payResult.dataset.savingsBrutto = savingsBrutto.toFixed(2);
 }
@@ -284,17 +305,17 @@ function calculatePosCosts() {
     const posDiscountAmount = parseFloat(document.getElementById('posDiscountAmount').value) || 0;
     const posFreeMonths = parseInt(document.getElementById('posFreeMonths').value) || 0;
 
-    // Discount logic: subtract discount amount from Brutto
+    // Discount logic: subtract discount amount and apply free months
     const discountedOneTimeBrutto = oneTimeBrutto - posDiscountAmount;
-    const discountedMonthlyBrutto = monthlyBrutto - posDiscountAmount; // Adjust as per discount logic
+    const discountedMonthlyBrutto = monthlyBrutto - (posFreeMonths * 0.06); // Assuming 0.06 €/Monat Rabatt pro freiem Monat
 
     // Display results
     document.getElementById('posOneTimeCostNetto').innerText = totalOneTimeNetto.toFixed(2);
     document.getElementById('posOneTimeCostMwSt').innerText = oneTimeMwSt.toFixed(2);
-    document.getElementById('posOneTimeCostBrutto').innerText = oneTimeBrutto.toFixed(2);
+    document.getElementById('posOneTimeCostBrutto').innerText = discountedOneTimeBrutto.toFixed(2);
     document.getElementById('posTotalNetto').innerText = totalMonthlyNetto.toFixed(2);
     document.getElementById('posTotalMwSt').innerText = monthlyMwSt.toFixed(2);
-    document.getElementById('posTotalBrutto').innerText = monthlyBrutto.toFixed(2);
+    document.getElementById('posTotalBrutto').innerText = discountedMonthlyBrutto.toFixed(2);
 
     // Show results
     const posResult = document.getElementById('posResult');
@@ -303,10 +324,10 @@ function calculatePosCosts() {
     // Store results in dataset for email
     posResult.dataset.oneTimeCostNetto = totalOneTimeNetto.toFixed(2);
     posResult.dataset.oneTimeCostMwSt = oneTimeMwSt.toFixed(2);
-    posResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
+    posResult.dataset.oneTimeCostBrutto = discountedOneTimeBrutto.toFixed(2);
     posResult.dataset.totalNetto = totalMonthlyNetto.toFixed(2);
     posResult.dataset.totalMwSt = monthlyMwSt.toFixed(2);
-    posResult.dataset.totalBrutto = monthlyBrutto.toFixed(2);
+    posResult.dataset.totalBrutto = discountedMonthlyBrutto.toFixed(2);
 }
 
 /* TOOLS Calculator Functions */
@@ -337,7 +358,7 @@ function calculateToolsCosts() {
     // One-time costs
     let oneTimeCostNetto = 0;
     let oneTimeCostMwSt = 0;
-    let oneTimeCostBrutto = 0;
+    let oneTimeBrutto = 0;
 
     // Monthly costs
     let monthlyCostNetto = 0;
@@ -396,7 +417,7 @@ function calculateToolsCosts() {
 
     // VAT calculations
     oneTimeCostMwSt = oneTimeCostNetto * 0.19;
-    oneTimeCostBrutto = oneTimeCostNetto + oneTimeCostMwSt;
+    oneTimeBrutto = oneTimeCostNetto + oneTimeCostMwSt;
 
     monthlyCostMwSt = monthlyCostNetto * 0.19;
     monthlyCostBrutto = monthlyCostNetto + monthlyCostMwSt;
@@ -405,17 +426,17 @@ function calculateToolsCosts() {
     const toolsDiscountAmount = parseFloat(document.getElementById('toolsDiscountAmount').value) || 0;
     const toolsFreeMonths = parseInt(document.getElementById('toolsFreeMonths').value) || 0;
 
-    // Discount logic: subtract discount amount from Brutto
+    // Discount logic: subtract discount amount and apply free months
     const discountedOneTimeBrutto = oneTimeBrutto - toolsDiscountAmount;
-    const discountedMonthlyBrutto = monthlyBrutto - toolsDiscountAmount; // Adjust as per discount logic
+    const discountedMonthlyBrutto = monthlyBrutto - (toolsFreeMonths * 0.06); // Assuming 0.06 €/Monat Rabatt pro freiem Monat
 
     // Display results
     document.getElementById('toolsOneTimeCostNetto').innerText = oneTimeCostNetto.toFixed(2);
     document.getElementById('toolsOneTimeCostMwSt').innerText = oneTimeCostMwSt.toFixed(2);
-    document.getElementById('toolsOneTimeCostBrutto').innerText = oneTimeBrutto.toFixed(2);
+    document.getElementById('toolsOneTimeCostBrutto').innerText = discountedOneTimeBrutto.toFixed(2);
     document.getElementById('toolsTotalNetto').innerText = monthlyCostNetto.toFixed(2);
     document.getElementById('toolsTotalMwSt').innerText = monthlyCostMwSt.toFixed(2);
-    document.getElementById('toolsTotalBrutto').innerText = monthlyBrutto.toFixed(2);
+    document.getElementById('toolsTotalBrutto').innerText = discountedMonthlyBrutto.toFixed(2);
 
     // Show results
     const toolsResult = document.getElementById('toolsResult');
@@ -424,10 +445,10 @@ function calculateToolsCosts() {
     // Store results in dataset for email
     toolsResult.dataset.oneTimeCostNetto = oneTimeCostNetto.toFixed(2);
     toolsResult.dataset.oneTimeCostMwSt = oneTimeCostMwSt.toFixed(2);
-    toolsResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
+    toolsResult.dataset.oneTimeCostBrutto = discountedOneTimeBrutto.toFixed(2);
     toolsResult.dataset.totalNetto = monthlyCostNetto.toFixed(2);
     toolsResult.dataset.totalMwSt = monthlyCostMwSt.toFixed(2);
-    toolsResult.dataset.totalBrutto = monthlyBrutto.toFixed(2);
+    toolsResult.dataset.totalBrutto = discountedMonthlyBrutto.toFixed(2);
 }
 
 /* Function to generate and show email content in modal */
@@ -508,13 +529,14 @@ function sendEmail(calculatorType) {
             <td>Wettbewerber Gesamtbetrag</td>
             <td>${competitorTotalMonthlyCost}</td>
         </tr>
-        <tr>
+        <tr id="emailSavingsRow">
             <td style="color: red; font-weight: bold;">Ersparnis Brutto</td>
             <td style="color: red; font-weight: bold;">${savingsBrutto}</td>
         </tr>
     </tbody>
 </table>
 `;
+
     }
 
     if (calculatorType === 'POS') {
@@ -618,7 +640,7 @@ function sendEmail(calculatorType) {
     }
 
     const baseConclusion = `<p>---</p>
-<p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH ${calculatorType} einen echten Mehrwert bieten zu dürfen.</p>
+<p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem DISH ${calculatorType} einen echten Mehrwert bieten zu dürfen.</p>
 <p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>`;
 
     emailBodyHTML = baseGreeting + baseIntroduction + tableHTML + baseConclusion;
@@ -631,13 +653,25 @@ function sendEmail(calculatorType) {
     modal.classList.remove('hidden');
 }
 
-/* Function to copy email content */
-function copyEmailContent() {
+/* Function to copy and send email */
+function copyAndSendEmail() {
     const emailContentElement = document.getElementById('emailContent');
     const emailText = emailContentElement.innerText;
 
     navigator.clipboard.writeText(emailText).then(function() {
-        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert.');
+        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert und der E-Mail-Client wird geöffnet.');
+
+        // Generate mailto link
+        const emailSubjectElement = document.getElementById('emailContent').innerHTML.match(/<p>Sehr geehrte.*?<\/p>/);
+        const emailSubject = document.title + " Angebot"; // Alternatively, use specific subject based on the calculator
+
+        const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailText)}`;
+
+        // Open the mail client
+        window.location.href = mailtoLink;
+
+        // Close the modal
+        closeEmailContent();
     }, function(err) {
         alert('Kopieren fehlgeschlagen. Bitte versuchen Sie es manuell.');
     });
