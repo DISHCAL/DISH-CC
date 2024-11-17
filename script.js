@@ -628,7 +628,7 @@ function sendEmail(calculatorType) {
     modal.classList.remove('hidden');
 
     // Ändere den Button-Text und Funktionalität
-    const sendButton = modal.querySelector('button');
+    const sendButton = modal.querySelector('.modal-content button');
     sendButton.textContent = 'Versenden';
     sendButton.onclick = function() {
         copyAndSendEmail(emailSubject, emailBodyHTML);
@@ -637,26 +637,20 @@ function sendEmail(calculatorType) {
 
 /* Funktion zum Kopieren und Senden des E-Mail-Inhalts */
 function copyAndSendEmail(subject, body) {
-    // Kopiere den Inhalt in die Zwischenablage
-    copyEmailContent();
+    // Kopiere den reinen Textinhalt in die Zwischenablage
+    const emailContent = document.getElementById('emailContent').innerText;
 
-    // Erstelle den Mailto-Link
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // Öffne den Mailto-Link
-    window.location.href = mailtoLink;
-
-    // Schließe das Modal
-    closeEmailContent();
-}
-
-/* Funktion zum Kopieren des E-Mail-Inhalts in die Zwischenablage */
-function copyEmailContent() {
-    const emailContent = document.getElementById('emailContent').innerText; // Verwende innerText für reinen Text
-
-    // Kopiere den Text in die Zwischenablage
     navigator.clipboard.writeText(emailContent).then(function() {
-        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert. Ihr E-Mail-Client wird jetzt geöffnet.');
+        alert('Der E-Mail-Inhalt wurde in die Zwischenablage kopiert.');
+        
+        // Erstelle den Mailto-Link
+        const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailContent)}`;
+
+        // Öffne den Mailto-Link
+        window.location.href = mailtoLink;
+
+        // Schließe das Modal
+        closeEmailContent();
     }, function(err) {
         alert('Kopieren fehlgeschlagen. Bitte versuchen Sie es manuell.');
     });
@@ -668,7 +662,9 @@ function closeEmailContent() {
     modal.classList.add('hidden');
 
     // Setze den Button-Text und die Funktionalität zurück
-    const sendButton = modal.querySelector('button');
-    sendButton.textContent = 'Kopieren';
-    sendButton.onclick = copyEmailContent;
+    const sendButton = modal.querySelector('.modal-content button');
+    sendButton.textContent = 'Versenden'; // Setze den Text zurück, falls benötigt
+    sendButton.onclick = function() {
+        // Leere Funktion oder setze auf ursprüngliche Funktion zurück
+    };
 }
