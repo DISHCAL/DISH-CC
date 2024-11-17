@@ -112,6 +112,11 @@ header h1 {
     display: none;
 }
 
+/* Sicherstellen, dass .modal.hidden korrekt versteckt */
+.modal.hidden {
+    display: none;
+}
+
 .form-group {
     margin-bottom: 15px;
 }
