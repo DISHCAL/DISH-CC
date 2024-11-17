@@ -250,7 +250,7 @@ function sendEmail(calculatorType) {
     }
 
     let emailSubject = "";
-    let emailBody = "";
+    let emailBodyHTML = "";
 
     if (calculatorType === 'PAY') {
         emailSubject = "Ihr DISH PAY Angebot";
@@ -265,112 +265,114 @@ function sendEmail(calculatorType) {
         const savingsNetto = payResult.dataset.savingsNetto;
         const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        emailBody = `
-Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
-
-vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
-
-**Einmalige Kosten:**
-- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
-- Mehrwertsteuer (19%): ${oneTimeMwSt} €
-- **Gesamtbetrag: ${oneTimeBrutto} €**
-
-**Monatliche Kosten:**
-- Gesamte Monatliche Kosten Netto: ${totalNetto} €
-- Mehrwertsteuer (19%): ${totalMwSt} €
-- **Gesamtbetrag: ${totalBrutto} €**
-
-**Wettbewerber Gebühren:**
-- Gesamte Monatliche Kosten Netto: ${competitorTotalMonthlyCost} €
-- **Ihre Ersparnis Netto:** ${savingsNetto} €
-- **Ihre Ersparnis Brutto:** ${savingsBrutto} €
-
-**Details:**
-- Transaktionsgebühr: 0,06 € pro Transaktion
-- SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)
-
----
-
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.
-
-Mit freundlichen Grüßen,  
-Ihr DISH Team
+        emailBodyHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DISH PAY Angebot</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        h2 { color: #e67e22; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #e67e22; color: white; }
+        .total { background-color: #ffe5cc; font-weight: bold; }
+        ul { list-style-type: disc; padding-left: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Ihr DISH PAY Angebot</h2>
+    <p>Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},</p>
+    <p>vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.</p>
+    
+    <h3>Einmalige Kosten</h3>
+    <table>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+        <tr>
+            <td>Gesamte Einmalige Kosten Netto</td>
+            <td>${oneTimeNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${oneTimeMwSt}</td>
+        </tr>
+        <tr class="total">
+            <td>Gesamtbetrag</td>
+            <td>${oneTimeBrutto}</td>
+        </tr>
+    </table>
+    
+    <h3>Monatliche Kosten</h3>
+    <table>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+        <tr>
+            <td>Gesamte Monatliche Kosten Netto</td>
+            <td>${totalNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${totalMwSt}</td>
+        </tr>
+        <tr class="total">
+            <td>Gesamtbetrag</td>
+            <td>${totalBrutto}</td>
+        </tr>
+    </table>
+    
+    <h3>Wettbewerber Gebühren</h3>
+    <table>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+        <tr>
+            <td>Gesamte Monatliche Kosten Netto (Wettbewerber)</td>
+            <td>${competitorTotalMonthlyCost}</td>
+        </tr>
+        <tr>
+            <td>Ihre Ersparnis Netto</td>
+            <td>${savingsNetto}</td>
+        </tr>
+        <tr>
+            <td>Ihre Ersparnis Brutto</td>
+            <td>${savingsBrutto}</td>
+        </tr>
+    </table>
+    
+    <h3>Details</h3>
+    <ul>
+        <li>Transaktionsgebühr: 0,06 € pro Transaktion</li>
+        <li>SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)</li>
+    </ul>
+    
+    <p>---
+    </p>
+    <p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.</p>
+    
+    <p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>
+</body>
+</html>
         `;
     }
 
-    if (calculatorType === 'POS') {
-        emailSubject = "Ihr DISH POS Angebot";
-        const posResult = document.getElementById('posResult');
-        const oneTimeNetto = posResult.dataset.oneTimeCostNetto;
-        const oneTimeMwSt = posResult.dataset.oneTimeCostMwSt;
-        const oneTimeBrutto = posResult.dataset.oneTimeCostBrutto;
-        const totalNetto = posResult.dataset.totalNetto;
-        const totalMwSt = posResult.dataset.totalMwSt;
-        const totalBrutto = posResult.dataset.totalBrutto;
+    // Weitere Berechnungsarten (POS, TOOLS) können hier hinzugefügt werden
 
-        emailBody = `
-Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
+    // Hinweis: Das `mailto:`-Protokoll unterstützt keine HTML-E-Mails.
+    // Daher zeigen wir eine HTML-Vorschau im Modal-Fenster an, die der Benutzer kopieren und in seine E-Mail-Anwendung einfügen kann.
 
-vielen Dank für Ihr Interesse an unserem DISH POS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+    // Füge den HTML-Inhalt in das Modal ein und zeige es an
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    const emailContent = document.getElementById('emailContent');
 
-**Einmalige Kosten:**
-- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
-- Mehrwertsteuer (19%): ${oneTimeMwSt} €
-- **Gesamtbetrag: ${oneTimeBrutto} €**
-
-**Monatliche Kosten:**
-- Gesamte Monatliche Kosten Netto: ${totalNetto} €
-- Mehrwertsteuer (19%): ${totalMwSt} €
-- **Gesamtbetrag: ${totalBrutto} €**
-
----
-
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.
-
-Mit freundlichen Grüßen,  
-Ihr DISH Team
-        `;
-    }
-
-    if (calculatorType === 'TOOLS') {
-        emailSubject = "Ihr DISH TOOLS Angebot";
-        const toolsResult = document.getElementById('toolsResult');
-        const oneTimeNetto = toolsResult.dataset.oneTimeCostNetto;
-        const oneTimeMwSt = toolsResult.dataset.oneTimeCostMwSt;
-        const oneTimeBrutto = toolsResult.dataset.oneTimeCostBrutto;
-        const totalNetto = toolsResult.dataset.totalNetto;
-        const totalMwSt = toolsResult.dataset.totalMwSt;
-        const totalBrutto = toolsResult.dataset.totalBrutto;
-
-        emailBody = `
-Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
-
-vielen Dank für Ihr Interesse an unserem DISH TOOLS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
-
-**Einmalige Kosten:**
-- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
-- Mehrwertsteuer (19%): ${oneTimeMwSt} €
-- **Gesamtbetrag: ${oneTimeBrutto} €**
-
-**Monatliche Kosten:**
-- Gesamte Monatliche Kosten Netto: ${totalNetto} €
-- Mehrwertsteuer (19%): ${totalMwSt} €
-- **Gesamtbetrag: ${totalBrutto} €**
-
----
-
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unseren DISH TOOLS einen echten Mehrwert bieten zu dürfen.
-
-Mit freundlichen Grüßen,  
-Ihr DISH Team
-        `;
-    }
-
-    // Encoding the email body for mailto
-    const encodedEmailBody = encodeURIComponent(emailBody);
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodedEmailBody}`;
-
-    window.location.href = mailtoLink;
+    emailContent.innerHTML = emailBodyHTML;
+    emailContentContainer.classList.remove('hidden');
 }
 
 /* Funktion zum Schließen des Modals */
@@ -419,6 +421,7 @@ function calculatePosCosts() {
     const posDiscountAmount = parseFloat(document.getElementById('posDiscountAmount').value) || 0;
     const posFreeMonths = parseInt(document.getElementById('posFreeMonths').value) || 0;
 
+    // Rabattlogik: Rabattbetrag direkt von den Bruttokosten abziehen
     const discountedOneTimeBrutto = oneTimeBrutto - posDiscountAmount;
     const discountedMonthlyBrutto = monthlyBrutto - posDiscountAmount; // Anpassung je nach Rabattlogik
 
@@ -573,7 +576,7 @@ function sendEmail(calculatorType) {
     }
 
     let emailSubject = "";
-    let emailBody = "";
+    let emailBodyHTML = "";
 
     if (calculatorType === 'PAY') {
         emailSubject = "Ihr DISH PAY Angebot";
@@ -588,110 +591,112 @@ function sendEmail(calculatorType) {
         const savingsNetto = payResult.dataset.savingsNetto;
         const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        emailBody = `
-Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
-
-vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
-
-**Einmalige Kosten:**
-- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
-- Mehrwertsteuer (19%): ${oneTimeMwSt} €
-- **Gesamtbetrag: ${oneTimeBrutto} €**
-
-**Monatliche Kosten:**
-- Gesamte Monatliche Kosten Netto: ${totalNetto} €
-- Mehrwertsteuer (19%): ${totalMwSt} €
-- **Gesamtbetrag: ${totalBrutto} €**
-
-**Wettbewerber Gebühren:**
-- Gesamte Monatliche Kosten Netto: ${competitorTotalMonthlyCost} €
-- **Ihre Ersparnis Netto:** ${savingsNetto} €
-- **Ihre Ersparnis Brutto:** ${savingsBrutto} €
-
-**Details:**
-- Transaktionsgebühr: 0,06 € pro Transaktion
-- SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)
-
----
-
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.
-
-Mit freundlichen Grüßen,  
-Ihr DISH Team
-        `;
+        emailBodyHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DISH PAY Angebot</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        h2 { color: #e67e22; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #e67e22; color: white; }
+        .total { background-color: #ffe5cc; font-weight: bold; }
+        ul { list-style-type: disc; padding-left: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Ihr DISH PAY Angebot</h2>
+    <p>Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},</p>
+    <p>vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.</p>
+    
+    <h3>Einmalige Kosten</h3>
+    <table>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+        <tr>
+            <td>Gesamte Einmalige Kosten Netto</td>
+            <td>${oneTimeNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${oneTimeMwSt}</td>
+        </tr>
+        <tr class="total">
+            <td>Gesamtbetrag</td>
+            <td>${oneTimeBrutto}</td>
+        </tr>
+    </table>
+    
+    <h3>Monatliche Kosten</h3>
+    <table>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+        <tr>
+            <td>Gesamte Monatliche Kosten Netto</td>
+            <td>${totalNetto}</td>
+        </tr>
+        <tr>
+            <td>Mehrwertsteuer (19%)</td>
+            <td>${totalMwSt}</td>
+        </tr>
+        <tr class="total">
+            <td>Gesamtbetrag</td>
+            <td>${totalBrutto}</td>
+        </tr>
+    </table>
+    
+    <h3>Wettbewerber Gebühren</h3>
+    <table>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag (€)</th>
+        </tr>
+        <tr>
+            <td>Gesamte Monatliche Kosten Netto (Wettbewerber)</td>
+            <td>${competitorTotalMonthlyCost}</td>
+        </tr>
+        <tr>
+            <td>Ihre Ersparnis Netto</td>
+            <td>${savingsNetto}</td>
+        </tr>
+        <tr>
+            <td>Ihre Ersparnis Brutto</td>
+            <td>${savingsBrutto}</td>
+        </tr>
+    </table>
+    
+    <h3>Details</h3>
+    <ul>
+        <li>Transaktionsgebühr: 0,06 € pro Transaktion</li>
+        <li>SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)</li>
+    </ul>
+    
+    <p>---
+    </p>
+    <p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.</p>
+    
+    <p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>
+</body>
+</html>
+    `;
     }
 
-    if (calculatorType === 'POS') {
-        emailSubject = "Ihr DISH POS Angebot";
-        const posResult = document.getElementById('posResult');
-        const oneTimeNetto = posResult.dataset.oneTimeCostNetto;
-        const oneTimeMwSt = posResult.dataset.oneTimeCostMwSt;
-        const oneTimeBrutto = posResult.dataset.oneTimeCostBrutto;
-        const totalNetto = posResult.dataset.totalNetto;
-        const totalMwSt = posResult.dataset.totalMwSt;
-        const totalBrutto = posResult.dataset.totalBrutto;
+    // Weitere Berechnungsarten (POS, TOOLS) können hier hinzugefügt werden
 
-        emailBody = `
-Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
+    // Hinweis: Das `mailto:`-Protokoll unterstützt keine HTML-E-Mails.
+    // Daher zeigen wir eine HTML-Vorschau im Modal-Fenster an, die der Benutzer kopieren und in seine E-Mail-Anwendung einfügen kann.
 
-vielen Dank für Ihr Interesse an unserem DISH POS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+    // Füge den HTML-Inhalt in das Modal ein und zeige es an
+    const emailContentContainer = document.getElementById('emailContentContainer');
+    const emailContent = document.getElementById('emailContent');
 
-**Einmalige Kosten:**
-- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
-- Mehrwertsteuer (19%): ${oneTimeMwSt} €
-- **Gesamtbetrag: ${oneTimeBrutto} €**
-
-**Monatliche Kosten:**
-- Gesamte Monatliche Kosten Netto: ${totalNetto} €
-- Mehrwertsteuer (19%): ${totalMwSt} €
-- **Gesamtbetrag: ${totalBrutto} €**
-
----
-
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.
-
-Mit freundlichen Grüßen,  
-Ihr DISH Team
-        `;
-    }
-
-    if (calculatorType === 'TOOLS') {
-        emailSubject = "Ihr DISH TOOLS Angebot";
-        const toolsResult = document.getElementById('toolsResult');
-        const oneTimeNetto = toolsResult.dataset.oneTimeCostNetto;
-        const oneTimeMwSt = toolsResult.dataset.oneTimeCostMwSt;
-        const oneTimeBrutto = toolsResult.dataset.oneTimeCostBrutto;
-        const totalNetto = toolsResult.dataset.totalNetto;
-        const totalMwSt = toolsResult.dataset.totalMwSt;
-        const totalBrutto = toolsResult.dataset.totalBrutto;
-
-        emailBody = `
-Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
-
-vielen Dank für Ihr Interesse an unserem DISH TOOLS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
-
-**Einmalige Kosten:**
-- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
-- Mehrwertsteuer (19%): ${oneTimeMwSt} €
-- **Gesamtbetrag: ${oneTimeBrutto} €**
-
-**Monatliche Kosten:**
-- Gesamte Monatliche Kosten Netto: ${totalNetto} €
-- Mehrwertsteuer (19%): ${totalMwSt} €
-- **Gesamtbetrag: ${totalBrutto} €**
-
----
-
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unseren DISH TOOLS einen echten Mehrwert bieten zu dürfen.
-
-Mit freundlichen Grüßen,  
-Ihr DISH Team
-        `;
-    }
-
-    // Encoding the email body for mailto
-    const encodedEmailBody = encodeURIComponent(emailBody);
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodedEmailBody}`;
-
-    window.location.href = mailtoLink;
+    emailContent.innerHTML = emailBodyHTML;
+    emailContentContainer.classList.remove('hidden');
 }
