@@ -65,39 +65,45 @@
                     <option value="ausführlich">Ausführliche Berechnung</option>
                 </select>
 
-                <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
-                <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
+                <div class="form-group">
+                    <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
+                    <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
+                </div>
 
-                <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
-                <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
+                <div class="form-group">
+                    <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
+                    <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
+                </div>
 
-                <div id="girocardField">
+                <div class="form-group">
                     <label for="girocard">Girocard (%): <span>*</span></label>
                     <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
                 </div>
 
-                <div id="mastercardVisaField">
+                <div class="form-group">
                     <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
                     <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
                 </div>
 
-                <div id="maestroField" class="hidden">
+                <div id="maestroField" class="form-group hidden">
                     <label for="maestro">Maestro / VPAY (%):</label>
                     <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
                 </div>
 
-                <div id="businessCardField" class="hidden">
+                <div id="businessCardField" class="form-group hidden">
                     <label for="businessCard">Business Card (%):</label>
                     <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
                 </div>
 
-                <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
-                <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
-                    <option value="mieten">Mieten</option>
-                    <option value="kaufen">Kaufen</option>
-                </select>
+                <div class="form-group">
+                    <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
+                    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+                        <option value="mieten">Mieten</option>
+                        <option value="kaufen">Kaufen</option>
+                    </select>
+                </div>
 
-                <div id="hardwareOptions">
+                <div id="hardwareOptions" class="form-group">
                     <label for="hardware">Hardware auswählen: <span>*</span></label>
                     <select id="hardware" onchange="updateRentalPrices()">
                         <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">
@@ -115,7 +121,7 @@
                     </select>
                 </div>
 
-                <div id="rentalOptions" style="display: none;">
+                <div id="rentalOptions" class="form-group hidden">
                     <label for="rentalPeriod">Mietdauer: <span>*</span></label>
                     <select id="rentalPeriod" onchange="updateRentalPrices()">
                         <option value="12">12 Monate</option>
@@ -127,18 +133,22 @@
                 <!-- Wettbewerber Gebühren -->
                 <div id="competitorSection" class="competitor-section hidden">
                     <h4>Wettbewerber Gebühren:</h4>
-                    <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-                    <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+                    <div class="form-group">
+                        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
+                        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+                    </div>
 
-                    <div id="competitorMaestroField" class="hidden">
+                    <div id="competitorMaestroField" class="form-group hidden">
                         <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
                         <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
                     </div>
 
-                    <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
-                    <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                    <div class="form-group">
+                        <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
+                        <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                    </div>
 
-                    <div id="competitorBusinessCardField" class="hidden">
+                    <div id="competitorBusinessCardField" class="form-group hidden">
                         <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
                         <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
                     </div>
@@ -193,6 +203,28 @@
                             <tr class="total-row">
                                 <td>Gesamtbetrag</td>
                                 <td id="payTotalBrutto">0.00</td>
+                            </tr>
+                            <!-- Wettbewerber Gebühren -->
+                            <tr>
+                                <td>Wettbewerber Gesamte Monatliche Kosten Netto</td>
+                                <td id="competitorTotalNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Wettbewerber Mehrwertsteuer (19%)</td>
+                                <td id="competitorTotalMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Wettbewerber Gesamtbetrag</td>
+                                <td id="competitorTotalBrutto">0.00</td>
+                            </tr>
+                            <!-- Ersparnis -->
+                            <tr>
+                                <td>Ersparnis Netto</td>
+                                <td id="savingsNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Ersparnis Brutto</td>
+                                <td id="savingsBrutto">0.00</td>
                             </tr>
                         </tbody>
                     </table>
