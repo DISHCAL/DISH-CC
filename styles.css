@@ -26,8 +26,9 @@ header h1 {
 
 .top-bar {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-top: 10px;
 }
 
@@ -35,6 +36,7 @@ header h1 {
 .customer-input {
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .language-selector label,
@@ -50,6 +52,7 @@ header h1 {
 .name-group select,
 .name-group input {
     margin-right: 10px;
+    padding: 5px;
 }
 
 .error-message {
@@ -75,6 +78,11 @@ main {
     flex: 1;
     text-align: center;
     font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.tab-link:hover {
+    background-color: #ccc;
 }
 
 .tab-link.active {
@@ -106,6 +114,10 @@ main {
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none;
+}
+
 .input-group {
     margin-bottom: 20px;
 }
@@ -125,6 +137,7 @@ main {
     padding: 10px 20px;
     cursor: pointer;
     margin-right: 10px;
+    transition: background-color 0.3s;
 }
 
 .button-group button:hover {
@@ -232,6 +245,7 @@ footer {
     cursor: pointer;
     margin-top: 20px;
     margin-right: 10px;
+    transition: background-color 0.3s;
 }
 
 .modal button:hover {
@@ -246,6 +260,7 @@ footer {
 @media screen and (min-width: 768px) {
     .top-bar {
         flex-direction: row;
+        align-items: center;
     }
 
     .form-group {
