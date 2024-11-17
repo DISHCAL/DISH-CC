@@ -215,6 +215,32 @@ header h1 {
     font-weight: bold;
 }
 
+/* Spezielle Styles für die Ersparnis-Zeile */
+#savingsRow {
+    background-color: #ffe5cc;
+    font-weight: bold;
+}
+
+#savingsBrutto {
+    color: red;
+    font-weight: bold;
+}
+
+/* Wettbewerber Gebühren Abschnitt */
+.competitor-section {
+    border: 2px solid #e67e22;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff8f0;
+}
+
+.competitor-section legend {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #e67e22;
+}
+
+/* Hinweis zu unseren Gebühren */
 .info-section {
     margin-top: 20px;
 }
@@ -233,6 +259,7 @@ header h1 {
     margin-bottom: 5px;
 }
 
+/* Footer */
 footer {
     text-align: center;
     margin-top: 40px;
@@ -243,6 +270,7 @@ footer {
     box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
 }
 
+/* Modal Styles */
 .modal {
     position: fixed;
     top: 0;
@@ -327,6 +355,17 @@ footer {
     font-size: 0.9em;
 }
 
+/* Spezifische Styles für die "Versenden" Schaltfläche */
+#emailContentContainer .modal-content button:first-of-type {
+    /* Style für den "Versenden" Button */
+    background-color: #27ae60;
+}
+
+#emailContentContainer .modal-content button:first-of-type:hover {
+    background-color: #1e8449;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .top-bar {
         flex-direction: column;
