@@ -145,10 +145,11 @@ header {
 /* Form Groups */
 .form-group {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
-    display: block;
     margin-bottom: 5px;
     font-weight: 500;
 }
@@ -300,6 +301,86 @@ header {
     background-color: #ffe5cc;
 }
 
+/* Detaillierte Ergebnisanzeige für PAY-Rechner */
+#payResult table {
+    background-color: #fff;
+}
+
+#payResult th {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+#payResult .total-row td {
+    background-color: #ffe5cc;
+    font-weight: bold;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom:0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: #e67e22;
+    cursor: pointer;
+}
+
+.modal-content button {
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #cf6619;
+}
+
+.email-content {
+    overflow-x: auto;
+}
+
+/* Responsive Design */
+@media (min-width: 769px) {
+    /* PAY Rechner: Vertikale Stapelung der Eingabefelder */
+    #pay .form-group {
+        flex-direction: column;
+    }
+}
+
 @media (max-width: 768px) {
     .top-bar {
         flex-direction: column;
@@ -353,131 +434,30 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right:0;
-    bottom:0;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal.hidden {
-    display: none;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
-    position: relative;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 1.5rem;
-    color: #e67e22;
-    cursor: pointer;
-}
-
-.modal-content button {
-    background-color: #e67e22;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-top: 20px;
-    transition: background-color 0.3s ease;
-}
-
-.modal-content button:hover {
-    background-color: #cf6619;
-}
-
-/* Tooltips (optional, falls Tippy.js genutzt wird) */
+/* Tooltip-Stile (optional, falls Tippy.js genutzt wird) */
 .tippy-box {
     font-size: 0.9rem;
 }
 
-/* Spezifische Anpassungen für PAY-Rechner */
-
-#pay {
-    /* Zusätzliche Abstände und klare Trennung */
+/* Modal-Verbesserungen */
+.email-content table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-#pay .competitor-section {
-    margin-top: 30px;
+.email-content th,
+.email-content td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-#pay .info-section {
-    margin-top: 30px;
-}
-
-/* Detaillierte Ergebnisanzeige für PAY-Rechner */
-#payResult table {
-    background-color: #fff;
-}
-
-#payResult th {
+.email-content th {
     background-color: #e67e22;
-    color: #fff;
+    color: white;
 }
 
-#payResult .total-row td {
+.email-content .total {
     background-color: #ffe5cc;
     font-weight: bold;
-}
-
-/* Detaillierte Ergebnisanzeige für POS-Rechner */
-#posResult table {
-    background-color: #fff;
-}
-
-#posResult th {
-    background-color: #e67e22;
-    color: #fff;
-}
-
-#posResult .total-row td {
-    background-color: #ffe5cc;
-    font-weight: bold;
-}
-
-/* Detaillierte Ergebnisanzeige für TOOLS-Rechner */
-#toolsResult table {
-    background-color: #fff;
-}
-
-#toolsResult th {
-    background-color: #e67e22;
-    color: #fff;
-}
-
-#toolsResult .total-row td {
-    background-color: #ffe5cc;
-    font-weight: bold;
-}
-
-/* Responsive Anpassungen für die E-Mail Modal */
-@media (max-width: 600px) {
-    .modal-content {
-        padding: 15px 20px;
-    }
-
-    .close-button {
-        top: 10px;
-        right: 15px;
-    }
 }
