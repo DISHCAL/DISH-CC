@@ -133,8 +133,8 @@
                 </div>
 
                 <!-- Wettbewerber Gebühren -->
-                <div id="competitorSection" class="competitor-section hidden">
-                    <h4>Wettbewerber Gebühren:</h4>
+                <fieldset id="competitorSection" class="competitor-section hidden">
+                    <legend>Wettbewerber Gebühren:</legend>
                     <div class="form-group">
                         <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
                         <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
@@ -154,7 +154,7 @@
                         <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
                         <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
                     </div>
-                </div>
+                </fieldset>
 
                 <!-- Rabattfelder -->
                 <div class="input-group">
@@ -162,6 +162,10 @@
                     <div class="discount-item">
                         <label for="payDiscountAmount">Rabattbetrag (€):</label>
                         <input type="number" id="payDiscountAmount" min="0" value="0">
+                    </div>
+                    <div class="discount-item">
+                        <label for="payFreeMonths">Anzahl kostenloser Monate:</label>
+                        <input type="number" id="payFreeMonths" min="0" value="0">
                     </div>
                 </div>
 
@@ -220,7 +224,7 @@
                                 <td id="competitorTotalBrutto">0.00</td>
                             </tr>
                             <!-- Ersparnis -->
-                            <tr>
+                            <tr id="savingsRow" class="hidden">
                                 <td>Ersparnis Brutto</td>
                                 <td id="savingsBrutto" class="savings">0.00</td>
                             </tr>
@@ -506,7 +510,7 @@
                 <div id="emailContent">
                     <!-- Angebotstext wird hier eingefügt -->
                 </div>
-                <button onclick="copyEmailContent()">Kopieren</button>
+                <button onclick="copyAndSendEmail()">Versenden</button>
                 <p>Bitte kopieren Sie den obigen Text und fügen Sie ihn in Ihr E-Mail-Programm ein.</p>
                 <button onclick="closeEmailContent()">Schließen</button>
             </div>
