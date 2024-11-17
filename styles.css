@@ -1,15 +1,15 @@
-/* styles.css */
-
+/* Allgemeine Stile */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 body {
-    background-color: #f0f2f5;
+    background-color: #f4f4f4;
     color: #333;
+    line-height: 1.6;
 }
 
 .container {
@@ -18,370 +18,304 @@ body {
     padding: 20px;
 }
 
+/* Header */
 header {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
+    background-color: #ff8c00; /* Dunkelorange */
+    color: #fff;
+    padding: 20px 0;
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 5px;
 }
 
 header h1 {
-    font-size: 2em;
+    text-align: center;
     margin-bottom: 10px;
-    color: #e67e22;
 }
 
 .top-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
 }
 
-.language-selector,
 .customer-input {
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    margin: 5px 0;
 }
 
-.language-selector label,
 .customer-input label {
     margin-right: 10px;
-    font-weight: 500;
+    font-weight: bold;
 }
 
-.language-selector select,
-.customer-input select,
 .customer-input input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
 }
 
-.name-group {
-    display: flex;
-    align-items: center;
-}
-
-.name-group select {
-    margin-right: 10px;
-}
-
-.error-message {
-    color: red;
-    font-size: 0.9em;
-    margin-top: 5px;
-}
-
+/* Tabs */
 .tabs {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .tab-link {
-    background-color: #e67e22;
+    background-color: #ff8c00; /* Dunkelorange */
     color: #fff;
     padding: 10px 20px;
-    margin: 0 5px;
+    margin: 5px;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    font-size: 1em;
 }
 
 .tab-link:hover {
-    background-color: #cf6a1a;
+    background-color: #e07b00;
 }
 
 .tab-link.active {
-    background-color: #cf6a1a;
+    background-color: #e07b00;
 }
 
+/* Tab Content */
 .tab-content {
-    background-color: #ffffff;
+    display: none;
+    background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Formulare */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #ff8c00;
+}
+
+label {
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Lizenz-Abschnitte */
+.license-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.license-section label {
+    flex: 1;
+}
+
+.license-section input[type="number"] {
+    width: 60px;
+}
+
+/* Plus/Minus Buttons im POS-Rechner */
+.license-section button {
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.license-section button:hover {
+    background-color: #d35400;
+}
+
+/* Wettbewerber Felder im PAY-Rechner */
+#competitorFields {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
 }
 
 .hidden {
     display: none;
 }
 
-/* Sicherstellen, dass .modal.hidden korrekt versteckt */
-.modal.hidden {
-    display: none;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 5px;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.discount-item {
+/* Buttons im Footer */
+footer {
     display: flex;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.discount-item label {
-    margin-right: 10px;
-    flex: 1;
-}
-
-.discount-item input {
-    flex: 2;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.button-group {
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
+    justify-content: center;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
-.button-group button {
-    background-color: #e67e22;
+footer button {
+    background-color: #ff8c00; /* Dunkelorange */
     color: #fff;
-    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
-.button-group button:hover {
-    background-color: #cf6a1a;
+footer button:hover {
+    background-color: #e07b00;
 }
 
-.result-section {
-    margin-top: 20px;
-}
-
-.result-section h3 {
-    margin-bottom: 15px;
-    color: #e67e22;
-}
-
-.result-section table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.result-section th,
-.result-section td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.result-section th {
-    background-color: #e67e22;
-    color: #fff;
-}
-
-.result-section .total-row {
-    background-color: #ffe5cc;
-    font-weight: bold;
-}
-
-.result-section .savings {
-    color: red;
-    font-weight: bold;
-}
-
-/* Spezielle Styles für die Ersparnis-Zeile */
-#savingsRow {
-    background-color: #ffe5cc;
-    font-weight: bold;
-}
-
-#savingsBrutto {
-    color: red;
-    font-weight: bold;
-}
-
-/* Wettbewerber Gebühren Abschnitt */
-.competitor-section {
-    border: 2px solid #e67e22;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #fff8f0;
-}
-
-.competitor-section legend {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #e67e22;
-}
-
-/* Hinweis zu unseren Gebühren */
-.info-section {
-    margin-top: 20px;
-}
-
-.info-section h4 {
-    margin-bottom: 10px;
-    color: #e67e22;
-}
-
-.info-section ul {
-    list-style-type: disc;
-    padding-left: 20px;
-}
-
-.info-section li {
-    margin-bottom: 5px;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 10px 0;
-    background-color: #ffffff;
-    border-top: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-}
-
-/* Modal Styles */
+/* Modal Fenster */
 .modal {
+    display: none; /* Versteckt standardmäßig */
     position: fixed;
-    top: 0;
-    left: 0;
-    right:0;
-    bottom:0;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content:center;
-    align-items:center;
     z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Schwarzer Hintergrund mit Transparenz */
 }
 
 .modal-content {
     background-color: #fff;
+    margin: 5% auto;
     padding: 20px;
-    border-radius:8px;
-    max-width: 600px;
+    border-radius: 5px;
     width: 90%;
+    max-width: 800px;
     position: relative;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
-.close-button {
+.close {
+    color: #aaa;
     position: absolute;
-    top:10px;
-    right:10px;
-    font-size:1.5em;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
     cursor: pointer;
-    color: #999;
 }
 
-.close-button:hover {
-    color: #333;
+.close:hover,
+.close:focus {
+    color: #000;
 }
 
-.modal-content table {
+/* Tabellen */
+.result-section {
+    margin-top: 20px;
+}
+
+.result-section h4 {
+    margin-bottom: 10px;
+    color: #ff8c00;
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
 }
 
-.modal-content th,
-.modal-content td {
+table th,
+table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+table th {
+    background-color: #ff8c00;
+    color: #fff;
+}
+
+table tfoot td {
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: none;
+}
+
+ul li {
+    margin-bottom: 5px;
+}
+
+/* Wettbewerber Abschnitt */
+.competitor-section {
+    margin-top: 20px;
     padding: 10px;
+    background-color: #f1f1f1;
     border: 1px solid #ddd;
+    clear: both;
 }
 
-.modal-content th {
-    background-color: #e67e22;
-    color: #fff;
-}
-
-.modal-content .total-row {
-    background-color: #ffe5cc;
-    font-weight: bold;
-}
-
-.modal-content .savings {
-    color: red;
-    font-weight: bold;
-}
-
-.modal-content button {
-    background-color: #e67e22;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius:4px;
-    cursor: pointer;
-    font-size:1em;
-    transition: background-color 0.3s ease;
-    margin-right: 10px;
-}
-
-.modal-content button:hover {
-    background-color: #cf6a1a;
-}
-
-.modal-content p {
-    margin-top: 10px;
-    font-size: 0.9em;
-}
-
-/* Spezifische Styles für die "Versenden" Schaltfläche */
-#emailContentContainer .modal-content button:first-of-type {
-    /* Style für den "Versenden" Button */
-    background-color: #27ae60;
-}
-
-#emailContentContainer .modal-content button:first-of-type:hover {
-    background-color: #1e8449;
+.competitor-section h4 {
+    color: #e67e22;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .top-bar {
         flex-direction: column;
+        align-items: center;
+    }
+
+    .customer-input {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .license-section {
+        flex-direction: column;
         align-items: flex-start;
     }
 
-    .button-group {
-        flex-direction: column;
-        align-items: stretch;
+    .license-section button {
+        margin: 5px 0;
     }
 
-    .button-group button {
+    .tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tab-link {
         width: 100%;
+        text-align: center;
     }
 
     .modal-content {
-        max-width: 90%;
+        margin: 10% auto;
     }
 }
