@@ -49,6 +49,8 @@ function toggleCalculationFields() {
     const maestroField = document.getElementById('maestroField');
     const businessCardField = document.getElementById('businessCardField');
     const competitorSection = document.getElementById('competitorSection');
+    const competitorMaestroField = document.getElementById('competitorMaestroField');
+    const competitorBusinessCardField = document.getElementById('competitorBusinessCardField');
 
     if (calculationType === 'schnell') {
         maestroField.classList.add('hidden');
@@ -113,12 +115,16 @@ function updateHardwareCosts() {
 
 /* Funktion zur Validierung der Prozentwerte im PAY-Rechner */
 function validatePayPercentages() {
+    const calculationType = document.getElementById('calculationType').value;
     const girocard = parseFloat(document.getElementById('girocard').value) || 0;
     const mastercardVisa = parseFloat(document.getElementById('mastercardVisa').value) || 0;
     const maestro = parseFloat(document.getElementById('maestro').value) || 0;
     const businessCard = parseFloat(document.getElementById('businessCard').value) || 0;
-    
-    const totalPercentage = girocard + mastercardVisa + maestro + businessCard;
+
+    let totalPercentage = girocard + mastercardVisa;
+    if (calculationType === 'ausführlich') {
+        totalPercentage += maestro + businessCard;
+    }
 
     if (totalPercentage !== 100) {
         alert("Die Summe der Prozentsätze muss genau 100% ergeben.");
@@ -143,14 +149,25 @@ function calculatePayCosts() {
     const maestroFeePercentage = parseFloat(document.getElementById('maestro').value) || 0;
     const businessCardFeePercentage = parseFloat(document.getElementById('businessCard').value) || 0;
 
+    const competitorGirocardFeePercentage = parseFloat(document.getElementById('competitorGirocardFee').value) || 0;
+    const competitorMastercardVisaFeePercentage = parseFloat(document.getElementById('competitorMastercardVisaFee').value) || 0;
+    const competitorMaestroFeePercentage = parseFloat(document.getElementById('competitorMaestroFee').value) || 0;
+    const competitorBusinessCardFeePercentage = parseFloat(document.getElementById('competitorBusinessCardFee').value) || 0;
+
     const { onceCost, monthlyCost: hardwareMonthlyCost } = updateHardwareCosts();
 
+    // Unsere Gebühren
     const girocardRevenue = monthlyVolume * (girocardFeePercentage / 100);
     const mastercardVisaRevenue = monthlyVolume * (mastercardVisaFeePercentage / 100);
-    const maestroRevenue = monthlyVolume * (maestroFeePercentage / 100);
-    const businessCardRevenue = monthlyVolume * (businessCardFeePercentage / 100);
+    const maestroRevenue = calculationType === 'ausführlich' ? (monthlyVolume * (maestroFeePercentage / 100)) : 0;
+    const businessCardRevenue = calculationType === 'ausführlich' ? (monthlyVolume * (businessCardFeePercentage / 100)) : 0;
 
-    const girocardFee = monthlyVolume > 10000 ? girocardRevenue * 0.0029 : girocardRevenue * 0.0039;
+    let girocardFee;
+    if (monthlyVolume > 10000) {
+        girocardFee = girocardRevenue * 0.0029;
+    } else {
+        girocardFee = girocardRevenue * 0.0039;
+    }
     const mastercardVisaFee = mastercardVisaRevenue * 0.0089;
     const maestroFee = maestroRevenue * 0.0089;
     const businessCardFee = businessCardRevenue * 0.0289;
@@ -177,6 +194,27 @@ function calculatePayCosts() {
     const totalMwSt = totalNetto * 0.19;
     const totalBrutto = totalNetto + totalMwSt;
 
+    // Wettbewerber Gebühren
+    const competitorGirocardFee = monthlyVolume * (competitorGirocardFeePercentage / 100);
+    const competitorMastercardVisaFee = monthlyVolume * (competitorMastercardVisaFeePercentage / 100);
+    const competitorMaestroFee = calculationType === 'ausführlich' ? (monthlyVolume * (competitorMaestroFeePercentage / 100)) : 0;
+    const competitorBusinessCardFee = calculationType === 'ausführlich' ? (monthlyVolume * (competitorBusinessCardFeePercentage / 100)) : 0;
+
+    let competitorTotalFee;
+    if (monthlyVolume > 10000) {
+        competitorTotalFee = competitorGirocardFee * 0.0029 + competitorMastercardVisaFee * 0.0089 + competitorMaestroFee * 0.0089 + competitorBusinessCardFee * 0.0289;
+    } else {
+        competitorTotalFee = competitorGirocardFee * 0.0039 + competitorMastercardVisaFee * 0.0089 + competitorMaestroFee * 0.0089 + competitorBusinessCardFee * 0.0289;
+    }
+
+    const competitorTransactionFee = transactions * 0.06; // Angenommen, gleiche Transaktionsgebühr
+
+    const competitorTotalMonthlyCost = competitorTotalFee + competitorTransactionFee;
+
+    // Ersparnis berechnen
+    const savingsNetto = competitorTotalMonthlyCost - totalMonthlyCost;
+    const savingsBrutto = savingsNetto * 1.19; // Inklusive Mehrwertsteuer
+
     // Ergebnisse anzeigen
     document.getElementById('payOneTimeCostNetto').innerText = oneTimeCost.toFixed(2);
     document.getElementById('payOneTimeCostMwSt').innerText = oneTimeMwSt.toFixed(2);
@@ -188,6 +226,17 @@ function calculatePayCosts() {
     // Ergebnisbereich anzeigen
     const payResult = document.getElementById('payResult');
     payResult.classList.remove('hidden');
+
+    // Speichere die Ergebnisse für den Email-Versand
+    payResult.dataset.oneTimeCostNetto = oneTimeCost.toFixed(2);
+    payResult.dataset.oneTimeCostMwSt = oneTimeMwSt.toFixed(2);
+    payResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
+    payResult.dataset.totalNetto = totalNetto.toFixed(2);
+    payResult.dataset.totalMwSt = totalMwSt.toFixed(2);
+    payResult.dataset.totalBrutto = totalBrutto.toFixed(2);
+    payResult.dataset.competitorTotalMonthlyCost = competitorTotalMonthlyCost.toFixed(2);
+    payResult.dataset.savingsNetto = savingsNetto.toFixed(2);
+    payResult.dataset.savingsBrutto = savingsBrutto.toFixed(2);
 }
 
 /* Funktion zur Erstellung und Anzeige der E-Mail */
@@ -200,41 +249,128 @@ function sendEmail(calculatorType) {
         return;
     }
 
-    let emailContent = `**Sehr gee${salutation === 'Herr' ? 'r Herr' : 'e Frau'} ${customerName},**\n\n`;
-    emailContent += `vielen Dank für Ihr Interesse an unserem DISH Produkt ${calculatorType}. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.\n\n`;
+    let emailSubject = "";
+    let emailBody = "";
 
     if (calculatorType === 'PAY') {
-        emailContent += `### Einmalige Kosten\n\n`;
-        emailContent += `| Produkt / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|-------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| Hardware Kauf     | ${document.getElementById('hardware').value === "mieten" ? '0' : '1'} | ${document.getElementById('hardware').value === "mieten" ? '0.00' : document.getElementById('hardware').options[document.getElementById('hardware').selectedIndex].getAttribute('data-price-once')} | ${document.getElementById('payOneTimeCostNetto').innerText} |\n`;
-        emailContent += `|-------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| **Gesamt einmalige Kosten** | | | **${document.getElementById('payOneTimeCostNetto').innerText}** |\n\n`;
+        emailSubject = "Ihr DISH PAY Angebot";
+        const payResult = document.getElementById('payResult');
+        const oneTimeNetto = payResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = payResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = payResult.dataset.oneTimeCostBrutto;
+        const totalNetto = payResult.dataset.totalNetto;
+        const totalMwSt = payResult.dataset.totalMwSt;
+        const totalBrutto = payResult.dataset.totalBrutto;
+        const competitorTotalMonthlyCost = payResult.dataset.competitorTotalMonthlyCost;
+        const savingsNetto = payResult.dataset.savingsNetto;
+        const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        emailContent += `### Monatliche Kosten\n\n`;
-        emailContent += `| Lizenz / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| Transaktionsgebühr | ${document.getElementById('transactions').value} | 0.06 | ${ (parseFloat(document.getElementById('transactions').value) * 0.06).toFixed(2) } |\n`;
-        emailContent += `| Disagio Gebühren | 1 | - | ${document.getElementById('payTotalNetto').innerText} |\n`;
-        emailContent += `| SIM/Servicegebühr | ${hardwareSelect === "S1F2" || hardwareSelect === "V400C" ? '1' : '0'} | ${simServiceFee.toFixed(2)} | ${simServiceFee.toFixed(2)} |\n`;
-        emailContent += `|------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| **Gesamte monatliche Kosten** | | | **${document.getElementById('payTotalBrutto').innerText}** |\n\n`;
+        emailBody = `
+Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
 
-        emailContent += `### Zusammenfassung\n`;
-        emailContent += `- **Einmalige Kosten:** ${document.getElementById('payOneTimeCostBrutto').innerText} €\n`;
-        emailContent += `- **Monatliche Kosten:** ${document.getElementById('payTotalBrutto').innerText} €\n\n`;
+vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+**Einmalige Kosten:**
+- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
+- Mehrwertsteuer (19%): ${oneTimeMwSt} €
+- **Gesamtbetrag: ${oneTimeBrutto} €**
+
+**Monatliche Kosten:**
+- Gesamte Monatliche Kosten Netto: ${totalNetto} €
+- Mehrwertsteuer (19%): ${totalMwSt} €
+- **Gesamtbetrag: ${totalBrutto} €**
+
+**Wettbewerber Gebühren:**
+- Gesamte Monatliche Kosten Netto: ${competitorTotalMonthlyCost} €
+- **Ihre Ersparnis Netto:** ${savingsNetto} €
+- **Ihre Ersparnis Brutto:** ${savingsBrutto} €
+
+**Details:**
+- Transaktionsgebühr: 0,06 € pro Transaktion
+- SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,  
+Ihr DISH Team
+        `;
     }
 
-    // Hier können ähnliche Blöcke für POS und TOOLS hinzugefügt werden
+    if (calculatorType === 'POS') {
+        emailSubject = "Ihr DISH POS Angebot";
+        const posResult = document.getElementById('posResult');
+        const oneTimeNetto = posResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = posResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = posResult.dataset.oneTimeCostBrutto;
+        const totalNetto = posResult.dataset.totalNetto;
+        const totalMwSt = posResult.dataset.totalMwSt;
+        const totalBrutto = posResult.dataset.totalBrutto;
 
-    emailContent += `---\n\n`;
-    emailContent += `**Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.**\n\n`;
-    emailContent += `**Mit freundlichen Grüßen,\nIhr DISH Team**`;
+        emailBody = `
+Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
 
-    // Inhalt in das Modal einfügen und anzeigen
-    document.getElementById('emailContent').innerText = emailContent;
-    const modal = document.getElementById('emailContentContainer');
-    modal.classList.remove('hidden');
+vielen Dank für Ihr Interesse an unserem DISH POS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+**Einmalige Kosten:**
+- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
+- Mehrwertsteuer (19%): ${oneTimeMwSt} €
+- **Gesamtbetrag: ${oneTimeBrutto} €**
+
+**Monatliche Kosten:**
+- Gesamte Monatliche Kosten Netto: ${totalNetto} €
+- Mehrwertsteuer (19%): ${totalMwSt} €
+- **Gesamtbetrag: ${totalBrutto} €**
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,  
+Ihr DISH Team
+        `;
+    }
+
+    if (calculatorType === 'TOOLS') {
+        emailSubject = "Ihr DISH TOOLS Angebot";
+        const toolsResult = document.getElementById('toolsResult');
+        const oneTimeNetto = toolsResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = toolsResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = toolsResult.dataset.oneTimeCostBrutto;
+        const totalNetto = toolsResult.dataset.totalNetto;
+        const totalMwSt = toolsResult.dataset.totalMwSt;
+        const totalBrutto = toolsResult.dataset.totalBrutto;
+
+        emailBody = `
+Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
+
+vielen Dank für Ihr Interesse an unserem DISH TOOLS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+**Einmalige Kosten:**
+- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
+- Mehrwertsteuer (19%): ${oneTimeMwSt} €
+- **Gesamtbetrag: ${oneTimeBrutto} €**
+
+**Monatliche Kosten:**
+- Gesamte Monatliche Kosten Netto: ${totalNetto} €
+- Mehrwertsteuer (19%): ${totalMwSt} €
+- **Gesamtbetrag: ${totalBrutto} €**
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unseren DISH TOOLS einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,  
+Ihr DISH Team
+        `;
+    }
+
+    // Encoding the email body for mailto
+    const encodedEmailBody = encodeURIComponent(emailBody);
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodedEmailBody}`;
+
+    window.location.href = mailtoLink;
 }
 
 /* Funktion zum Schließen des Modals */
@@ -245,14 +381,8 @@ function closeEmailContent() {
 
 /* POS Rechner Funktionen */
 
-/* Funktion zur Validierung der POS-Prozentwerte (optional, falls benötigt) */
-/* Kann ähnlich wie PAY-Validierung implementiert werden */
-
 /* Funktion zur Berechnung der POS-Kosten */
 function calculatePosCosts() {
-    // Beispielhafte Berechnung - muss an die tatsächlichen Anforderungen angepasst werden
-    // Hier solltest du die Berechnungen basierend auf den eingegebenen Werten durchführen
-
     // Einmalige Kosten
     const screenSunmi = parseFloat(document.getElementById('screenSunmi').value) || 0;
     const tseHardware = parseFloat(document.getElementById('tseHardware').value) || 0;
@@ -303,6 +433,14 @@ function calculatePosCosts() {
     // Ergebnisbereich anzeigen
     const posResult = document.getElementById('posResult');
     posResult.classList.remove('hidden');
+
+    // Speichere die Ergebnisse für den Email-Versand
+    posResult.dataset.oneTimeCostNetto = totalOneTimeNetto.toFixed(2);
+    posResult.dataset.oneTimeCostMwSt = oneTimeMwSt.toFixed(2);
+    posResult.dataset.oneTimeCostBrutto = oneTimeBrutto.toFixed(2);
+    posResult.dataset.totalNetto = totalMonthlyNetto.toFixed(2);
+    posResult.dataset.totalMwSt = monthlyMwSt.toFixed(2);
+    posResult.dataset.totalBrutto = monthlyBrutto.toFixed(2);
 }
 
 /* TOOLS Rechner Funktionen */
@@ -328,9 +466,6 @@ function toggleDishPremiumDuration() {
 
 /* Funktion zur Berechnung der TOOLS-Kosten */
 function calculateToolsCosts() {
-    // Beispielhafte Berechnung - muss an die tatsächlichen Anforderungen angepasst werden
-    // Hier solltest du die Berechnungen basierend auf den eingegebenen Werten durchführen
-
     // Einmalige Kosten
     let oneTimeCostNetto = 0;
     let oneTimeCostMwSt = 0;
@@ -417,27 +552,14 @@ function calculateToolsCosts() {
     // Ergebnisbereich anzeigen
     const toolsResult = document.getElementById('toolsResult');
     toolsResult.classList.remove('hidden');
-}
 
-/* Funktionen für das TOOLS-Rechner Dropdown */
-
-/* Funktion zum Umschalten der Vertragslaufzeiten für TOOLS */
-function toggleDishReservationDuration() {
-    const dishReservation = document.getElementById('dishReservation');
-    const durationSelect = document.getElementById('dishReservationDuration');
-    durationSelect.disabled = !dishReservation.checked;
-}
-
-function toggleDishOrderDuration() {
-    const dishOrder = document.getElementById('dishOrder');
-    const durationSelect = document.getElementById('dishOrderDuration');
-    durationSelect.disabled = !dishOrder.checked;
-}
-
-function toggleDishPremiumDuration() {
-    const dishPremium = document.getElementById('dishPremium');
-    const durationSelect = document.getElementById('dishPremiumDuration');
-    durationSelect.disabled = !dishPremium.checked;
+    // Speichere die Ergebnisse für den Email-Versand
+    toolsResult.dataset.oneTimeCostNetto = oneTimeCostNetto.toFixed(2);
+    toolsResult.dataset.oneTimeCostMwSt = oneTimeCostMwSt.toFixed(2);
+    toolsResult.dataset.oneTimeCostBrutto = oneTimeCostBrutto.toFixed(2);
+    toolsResult.dataset.totalNetto = monthlyCostNetto.toFixed(2);
+    toolsResult.dataset.totalMwSt = monthlyCostMwSt.toFixed(2);
+    toolsResult.dataset.totalBrutto = monthlyCostBrutto.toFixed(2);
 }
 
 /* Funktion zum Erstellen und Anzeigen des Angebots per E-Mail */
@@ -450,95 +572,126 @@ function sendEmail(calculatorType) {
         return;
     }
 
-    let emailContent = `**Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},**\n\n`;
-    emailContent += `vielen Dank für Ihr Interesse an unserem DISH Produkt ${calculatorType}. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.\n\n`;
+    let emailSubject = "";
+    let emailBody = "";
 
     if (calculatorType === 'PAY') {
-        emailContent += `### Einmalige Kosten\n\n`;
-        emailContent += `| Produkt / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|-------------------|-------|---------------------|------------------|\n`;
-        const hardwareValue = document.getElementById('hardware').value;
-        const hardwarePriceOnce = document.getElementById('hardware').selectedOptions[0].getAttribute('data-price-once');
-        const hardwareKauf = hardwareValue !== "mieten" ? 1 : 0;
-        emailContent += `| Hardware Kauf     | ${hardwareKauf} | ${hardwarePriceOnce} | ${document.getElementById('payOneTimeCostNetto').innerText} |\n`;
-        emailContent += `|-------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| **Gesamt einmalige Kosten** | | | **${document.getElementById('payOneTimeCostBrutto').innerText}** |\n\n`;
+        emailSubject = "Ihr DISH PAY Angebot";
+        const payResult = document.getElementById('payResult');
+        const oneTimeNetto = payResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = payResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = payResult.dataset.oneTimeCostBrutto;
+        const totalNetto = payResult.dataset.totalNetto;
+        const totalMwSt = payResult.dataset.totalMwSt;
+        const totalBrutto = payResult.dataset.totalBrutto;
+        const competitorTotalMonthlyCost = payResult.dataset.competitorTotalMonthlyCost;
+        const savingsNetto = payResult.dataset.savingsNetto;
+        const savingsBrutto = payResult.dataset.savingsBrutto;
 
-        emailContent += `### Monatliche Kosten\n\n`;
-        emailContent += `| Lizenz / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| Transaktionsgebühr | ${document.getElementById('transactions').value} | 0.06 | ${(parseFloat(document.getElementById('transactions').value) * 0.06).toFixed(2)} |\n`;
-        emailContent += `| Disagio Gebühren | 1 | - | ${document.getElementById('payTotalNetto').innerText} |\n`;
-        const simServiceFee = document.getElementById('hardware').value === "S1F2" || document.getElementById('hardware').value === "V400C" ? 3.90 : 0;
-        emailContent += `| SIM/Servicegebühr | ${simServiceFee > 0 ? '1' : '0'} | ${simServiceFee.toFixed(2)} | ${simServiceFee.toFixed(2)} |\n`;
-        emailContent += `|------------------|-------|---------------------|------------------|\n`;
-        emailContent += `| **Gesamte monatliche Kosten** | | | **${document.getElementById('payTotalBrutto').innerText}** |\n\n`;
+        emailBody = `
+Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
 
-        emailContent += `### Zusammenfassung\n`;
-        emailContent += `- **Einmalige Kosten:** ${document.getElementById('payOneTimeCostBrutto').innerText} €\n`;
-        emailContent += `- **Monatliche Kosten:** ${document.getElementById('payTotalBrutto').innerText} €\n\n`;
+vielen Dank für Ihr Interesse an unserem DISH PAY Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
+
+**Einmalige Kosten:**
+- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
+- Mehrwertsteuer (19%): ${oneTimeMwSt} €
+- **Gesamtbetrag: ${oneTimeBrutto} €**
+
+**Monatliche Kosten:**
+- Gesamte Monatliche Kosten Netto: ${totalNetto} €
+- Mehrwertsteuer (19%): ${totalMwSt} €
+- **Gesamtbetrag: ${totalBrutto} €**
+
+**Wettbewerber Gebühren:**
+- Gesamte Monatliche Kosten Netto: ${competitorTotalMonthlyCost} €
+- **Ihre Ersparnis Netto:** ${savingsNetto} €
+- **Ihre Ersparnis Brutto:** ${savingsBrutto} €
+
+**Details:**
+- Transaktionsgebühr: 0,06 € pro Transaktion
+- SIM/Servicegebühr: 3,90 € (nur bei Kauf der Hardware)
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,  
+Ihr DISH Team
+        `;
     }
 
     if (calculatorType === 'POS') {
-        emailContent += `### Einmalige Kosten\n\n`;
-        emailContent += `| Produkt / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|-------------------|-------|---------------------|------------------|\n`;
+        emailSubject = "Ihr DISH POS Angebot";
+        const posResult = document.getElementById('posResult');
+        const oneTimeNetto = posResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = posResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = posResult.dataset.oneTimeCostBrutto;
+        const totalNetto = posResult.dataset.totalNetto;
+        const totalMwSt = posResult.dataset.totalMwSt;
+        const totalBrutto = posResult.dataset.totalBrutto;
 
-        const posOneTimeNetto = parseFloat(document.getElementById('posOneTimeCostNetto').innerText) || 0;
-        emailContent += `| Gesamte Einmalige Kosten Netto | - | - | ${posOneTimeNetto.toFixed(2)} |\n`;
-        emailContent += `| Mehrwertsteuer (19%) | - | - | ${document.getElementById('posOneTimeCostMwSt').innerText} |\n`;
-        emailContent += `| **Gesamtbetrag** | - | - | **${document.getElementById('posOneTimeCostBrutto').innerText}** |\n\n`;
+        emailBody = `
+Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
 
-        emailContent += `### Monatliche Kosten\n\n`;
-        emailContent += `| Lizenz / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|------------------|-------|---------------------|------------------|\n`;
+vielen Dank für Ihr Interesse an unserem DISH POS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
 
-        const posTotalNetto = parseFloat(document.getElementById('posTotalNetto').innerText) || 0;
-        emailContent += `| Gesamte Monatliche Kosten Netto | - | - | ${posTotalNetto.toFixed(2)} |\n`;
-        emailContent += `| Mehrwertsteuer (19%) | - | - | ${document.getElementById('posTotalMwSt').innerText} |\n`;
-        emailContent += `| **Gesamtbetrag** | - | - | **${document.getElementById('posTotalBrutto').innerText}** |\n\n`;
+**Einmalige Kosten:**
+- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
+- Mehrwertsteuer (19%): ${oneTimeMwSt} €
+- **Gesamtbetrag: ${oneTimeBrutto} €**
 
-        emailContent += `### Zusammenfassung\n`;
-        emailContent += `- **Einmalige Kosten:** ${document.getElementById('posOneTimeCostBrutto').innerText} €\n`;
-        emailContent += `- **Monatliche Kosten:** ${document.getElementById('posTotalBrutto').innerText} €\n\n`;
+**Monatliche Kosten:**
+- Gesamte Monatliche Kosten Netto: ${totalNetto} €
+- Mehrwertsteuer (19%): ${totalMwSt} €
+- **Gesamtbetrag: ${totalBrutto} €**
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,  
+Ihr DISH Team
+        `;
     }
 
     if (calculatorType === 'TOOLS') {
-        emailContent += `### Einmalige Kosten\n\n`;
-        emailContent += `| Produkt / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|-------------------|-------|---------------------|------------------|\n`;
+        emailSubject = "Ihr DISH TOOLS Angebot";
+        const toolsResult = document.getElementById('toolsResult');
+        const oneTimeNetto = toolsResult.dataset.oneTimeCostNetto;
+        const oneTimeMwSt = toolsResult.dataset.oneTimeCostMwSt;
+        const oneTimeBrutto = toolsResult.dataset.oneTimeCostBrutto;
+        const totalNetto = toolsResult.dataset.totalNetto;
+        const totalMwSt = toolsResult.dataset.totalMwSt;
+        const totalBrutto = toolsResult.dataset.totalBrutto;
 
-        const toolsOneTimeNetto = parseFloat(document.getElementById('toolsOneTimeCostNetto').innerText) || 0;
-        emailContent += `| Gesamte Einmalige Kosten Netto | - | - | ${toolsOneTimeNetto.toFixed(2)} |\n`;
-        emailContent += `| Mehrwertsteuer (19%) | - | - | ${document.getElementById('toolsOneTimeCostMwSt').innerText} |\n`;
-        emailContent += `| **Gesamtbetrag** | - | - | **${document.getElementById('toolsOneTimeCostBrutto').innerText}** |\n\n`;
+        emailBody = `
+Sehr geehr${salutation === 'Herr' ? 'er Herr' : 'e Frau'} ${customerName},
 
-        emailContent += `### Monatliche Kosten\n\n`;
-        emailContent += `| Lizenz / Service | Menge | Preis pro Stück (€) | Gesamtkosten (€) |\n`;
-        emailContent += `|------------------|-------|---------------------|------------------|\n`;
+vielen Dank für Ihr Interesse an unserem DISH TOOLS Produkt. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
 
-        const toolsTotalNetto = parseFloat(document.getElementById('toolsTotalNetto').innerText) || 0;
-        emailContent += `| Gesamte Monatliche Kosten Netto | - | - | ${toolsTotalNetto.toFixed(2)} |\n`;
-        emailContent += `| Mehrwertsteuer (19%) | - | - | ${document.getElementById('toolsTotalMwSt').innerText} |\n`;
-        emailContent += `| **Gesamtbetrag** | - | - | **${document.getElementById('toolsTotalBrutto').innerText}** |\n\n`;
+**Einmalige Kosten:**
+- Gesamte Einmalige Kosten Netto: ${oneTimeNetto} €
+- Mehrwertsteuer (19%): ${oneTimeMwSt} €
+- **Gesamtbetrag: ${oneTimeBrutto} €**
 
-        emailContent += `### Zusammenfassung\n`;
-        emailContent += `- **Einmalige Kosten:** ${document.getElementById('toolsOneTimeCostBrutto').innerText} €\n`;
-        emailContent += `- **Monatliche Kosten:** ${document.getElementById('toolsTotalBrutto').innerText} €\n\n`;
+**Monatliche Kosten:**
+- Gesamte Monatliche Kosten Netto: ${totalNetto} €
+- Mehrwertsteuer (19%): ${totalMwSt} €
+- **Gesamtbetrag: ${totalBrutto} €**
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unseren DISH TOOLS einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,  
+Ihr DISH Team
+        `;
     }
 
-    emailContent += `---\n\n`;
-    emailContent += `**Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.**\n\n`;
-    emailContent += `**Mit freundlichen Grüßen,\nIhr DISH Team**`;
+    // Encoding the email body for mailto
+    const encodedEmailBody = encodeURIComponent(emailBody);
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodedEmailBody}`;
 
-    // Inhalt in das Modal einfügen und anzeigen
-    document.getElementById('emailContent').innerText = emailContent;
-    const modal = document.getElementById('emailContentContainer');
-    modal.classList.remove('hidden');
-}
-
-/* Funktion zum Schließen des Modals */
-function closeEmailContent() {
-    const modal = document.getElementById('emailContentContainer');
-    modal.classList.add('hidden');
+    window.location.href = mailtoLink;
 }
