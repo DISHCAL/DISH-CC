@@ -59,11 +59,13 @@
                 <h2 data-lang="payHeadline">DISH PAY Kostenberechnung</h2>
 
                 <!-- Formularelemente für den PAY-Rechner -->
-                <label for="calculationType">Berechnungsart: <span>*</span></label>
-                <select id="calculationType" onchange="toggleCalculationFields()">
-                    <option value="schnell">Schnelle Berechnung</option>
-                    <option value="ausführlich">Ausführliche Berechnung</option>
-                </select>
+                <div class="form-group">
+                    <label for="calculationType">Berechnungsart: <span>*</span></label>
+                    <select id="calculationType" onchange="toggleCalculationFields()">
+                        <option value="schnell">Schnelle Berechnung</option>
+                        <option value="ausführlich">Ausführliche Berechnung</option>
+                    </select>
+                </div>
 
                 <div class="form-group">
                     <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
@@ -124,9 +126,9 @@
                 <div id="rentalOptions" class="form-group hidden">
                     <label for="rentalPeriod">Mietdauer: <span>*</span></label>
                     <select id="rentalPeriod" onchange="updateRentalPrices()">
-                        <option value="12">12 Monate</option>
-                        <option value="36">36 Monate</option>
-                        <option value="60">60 Monate</option>
+                        <option value="12">12 Monate - 44,90 €/Monat</option>
+                        <option value="36">36 Monate - 18.90 €/Monat</option>
+                        <option value="60">60 Monate - 14.90 €/Monat</option>
                     </select>
                 </div>
 
@@ -219,12 +221,8 @@
                             </tr>
                             <!-- Ersparnis -->
                             <tr>
-                                <td>Ersparnis Netto</td>
-                                <td id="savingsNetto">0.00</td>
-                            </tr>
-                            <tr>
                                 <td>Ersparnis Brutto</td>
-                                <td id="savingsBrutto">0.00</td>
+                                <td id="savingsBrutto" class="savings">0.00</td>
                             </tr>
                         </tbody>
                     </table>
