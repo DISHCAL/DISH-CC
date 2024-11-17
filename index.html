@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>DISH - Digitale Lösungen für die Gastronomie</title>
+    <title>DISH - Multitools</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS-Datei -->
     <link rel="stylesheet" href="styles.css">
@@ -15,7 +15,7 @@
     <div class="container">
         <!-- Ebene 1: Überschrift, Sprache, Kundenname -->
         <header>
-            <h1>DISH - Digitale Lösungen für die Gastronomie</h1>
+            <h1>DISH - Multitools</h1>
             <div class="top-bar">
                 <div class="language-selector">
                     <label for="languageSelect" data-lang="languageLabel">Sprache:</label>
@@ -100,10 +100,18 @@
                 <div id="hardwareOptions">
                     <label for="hardware">Hardware auswählen: <span>*</span></label>
                     <select id="hardware" onchange="updateRentalPrices()">
-                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
-                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
-                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
-                        <option value="TapToPay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap to Pay Lizenz</option>
+                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">
+                            S1F2 Terminal (Kaufpreis: 499,00 €)
+                        </option>
+                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">
+                            V400C Terminal (Kaufpreis: 399,00 €)
+                        </option>
+                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">
+                            Moto G14 Terminal (Kaufpreis: 119,00 €)
+                        </option>
+                        <option value="TapToPay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">
+                            Tap to Pay Lizenz (Kaufpreis: 0,00 €)
+                        </option>
                     </select>
                 </div>
 
@@ -116,6 +124,7 @@
                     </select>
                 </div>
 
+                <!-- Wettbewerber Gebühren -->
                 <div id="competitorSection" class="competitor-section hidden">
                     <h4>Wettbewerber Gebühren:</h4>
                     <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
@@ -135,6 +144,7 @@
                     </div>
                 </div>
 
+                <!-- Rabattfelder -->
                 <div class="input-group">
                     <label>Rabatt:</label>
                     <div class="discount-item">
@@ -143,11 +153,13 @@
                     </div>
                 </div>
 
+                <!-- Buttons -->
                 <div class="button-group">
                     <button onclick="calculatePayCosts()">Berechnen</button>
                     <button onclick="sendEmail('PAY')">Angebot per E-Mail anzeigen</button>
                 </div>
 
+                <!-- Ergebnisbereich -->
                 <div id="payResult" class="result-section hidden">
                     <h3>Ergebnisse:</h3>
                     <table>
@@ -184,6 +196,20 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Hinweis zu unseren Gebühren -->
+                <div class="info-section">
+                    <h4>Unsere Gebühren:</h4>
+                    <ul>
+                        <li><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
+                        <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
+                        <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
+                        <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
+                        <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
+                        <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+                        <li><b>SIM/Servicegebühr:</b> 3,90 € (nur bei Kauf der Hardware)</li>
+                    </ul>
                 </div>
             </div>
 
