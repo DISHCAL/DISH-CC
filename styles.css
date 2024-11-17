@@ -7,7 +7,7 @@
     box-sizing: border-box;
 }
 
-/* Schriftarten */
+/* Schriftarten und Farben */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #f5f5f5;
@@ -166,19 +166,51 @@ header {
     transform: scale(1.2);
 }
 
-.hidden {
-    display: none;
+/* Wettbewerber Gebühren Hervorhebung */
+.competitor-section {
+    background-color: #fff8e1; /* Sanftes Gelb für Hervorhebung */
+    padding: 15px;
+    border: 1px solid #ffe0b2;
+    border-radius: 4px;
+    margin-top: 20px;
 }
 
-/* Optionales Zubehör und DISH Lösungen */
-.tools-item {
-    margin-bottom: 15px;
+.competitor-section h4 {
+    margin-bottom: 10px;
 }
 
-.tools-item p {
-    margin: 5px 0;
-    color: #555;
-    font-size: 0.9rem;
+.competitor-section label {
+    font-weight: 500;
+}
+
+.competitor-section input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Hinweis zu unseren Gebühren */
+.info-section {
+    background-color: #e8f5e9; /* Sanftes Grün für positive Information */
+    padding: 15px;
+    border: 1px solid #c8e6c9;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.info-section h4 {
+    margin-bottom: 10px;
+}
+
+.info-section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.info-section ul li {
+    margin-bottom: 5px;
 }
 
 /* Rabattfelder */
@@ -259,6 +291,10 @@ header {
     color: #fff;
 }
 
+.result-section td {
+    background-color: #fff;
+}
+
 .total-row td {
     font-weight: 600;
     background-color: #ffe5cc;
@@ -294,6 +330,16 @@ header {
     .discount-item input {
         width: 100%;
         margin-right: 0;
+    }
+
+    .competitor-section,
+    .info-section {
+        padding: 10px;
+    }
+
+    .result-section table, 
+    .competitor-section ul {
+        font-size: 0.9rem;
     }
 }
 
@@ -363,4 +409,75 @@ footer {
 /* Tooltips (optional, falls Tippy.js genutzt wird) */
 .tippy-box {
     font-size: 0.9rem;
+}
+
+/* Spezifische Anpassungen für PAY-Rechner */
+
+#pay {
+    /* Zusätzliche Abstände und klare Trennung */
+}
+
+#pay .competitor-section {
+    margin-top: 30px;
+}
+
+#pay .info-section {
+    margin-top: 30px;
+}
+
+/* Detaillierte Ergebnisanzeige für PAY-Rechner */
+#payResult table {
+    background-color: #fff;
+}
+
+#payResult th {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+#payResult .total-row td {
+    background-color: #ffe5cc;
+    font-weight: bold;
+}
+
+/* Detaillierte Ergebnisanzeige für POS-Rechner */
+#posResult table {
+    background-color: #fff;
+}
+
+#posResult th {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+#posResult .total-row td {
+    background-color: #ffe5cc;
+    font-weight: bold;
+}
+
+/* Detaillierte Ergebnisanzeige für TOOLS-Rechner */
+#toolsResult table {
+    background-color: #fff;
+}
+
+#toolsResult th {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+#toolsResult .total-row td {
+    background-color: #ffe5cc;
+    font-weight: bold;
+}
+
+/* Responsive Anpassungen für die E-Mail Modal */
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 15px 20px;
+    }
+
+    .close-button {
+        top: 10px;
+        right: 15px;
+    }
 }
