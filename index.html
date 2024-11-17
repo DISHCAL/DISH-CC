@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>DISH - Digitale Lösungen für die Gastronomie</title>
-    <!-- Responsives Design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS-Datei -->
     <link rel="stylesheet" href="styles.css">
@@ -44,126 +43,98 @@
         <!-- Ebene 2: Rechner-Auswahl -->
         <main>
             <div class="tabs">
-                <button class="tab-link active" onclick="openCalculator(event, 'pay')">
+                <button class="tab-link active" onclick="openTab(event, 'pay')">
                     PAY
                 </button>
-                <button class="tab-link" onclick="openCalculator(event, 'pos')">
+                <button class="tab-link" onclick="openTab(event, 'pos')">
                     POS
                 </button>
-                <button class="tab-link" onclick="openCalculator(event, 'tools')">
+                <button class="tab-link" onclick="openTab(event, 'tools')">
                     TOOLS
                 </button>
             </div>
 
             <!-- PAY Rechner -->
             <div id="pay" class="tab-content active">
-                <h2 data-lang="payHeadline">Kostenberechnung PAY</h2>
+                <h2 data-lang="payHeadline">DISH PAY Kostenberechnung</h2>
 
                 <!-- Formularelemente für den PAY-Rechner -->
-                <!-- Berechnungsart -->
-                <div class="form-group">
-                    <label for="calculationType" data-lang="calculationTypeLabel">Berechnungsart:</label>
-                    <select id="calculationType" onchange="toggleCalculationFields()">
-                        <option value="schnell" data-lang="quickCalculation">Schnelle Berechnung</option>
-                        <option value="detailliert" data-lang="detailedCalculation">Ausführliche Berechnung</option>
-                    </select>
+                <label for="calculationType">Berechnungsart: <span>*</span></label>
+                <select id="calculationType" onchange="toggleCalculationFields()">
+                    <option value="schnell">Schnelle Berechnung</option>
+                    <option value="ausführlich">Ausführliche Berechnung</option>
+                </select>
+
+                <label for="monthlyVolume">Geplanter Kartenumsatz pro Monat (€): <span>*</span></label>
+                <input type="number" id="monthlyVolume" placeholder="z.B. 20000" min="0" required>
+
+                <label for="transactions">Erwartete Anzahl an monatlichen Transaktionen: <span>*</span></label>
+                <input type="number" id="transactions" placeholder="z.B. 400" min="0" required>
+
+                <div id="girocardField">
+                    <label for="girocard">Girocard (%): <span>*</span></label>
+                    <input type="number" id="girocard" placeholder="z.B. 70" step="0.01" min="0" max="100" required>
                 </div>
-                <!-- Geplanter Kartenumsatz -->
-                <div class="form-group">
-                    <label for="monthlyVolume" data-lang="monthlyVolumeLabel">Geplanter Kartenumsatz pro Monat (€):</label>
-                    <input type="number" id="monthlyVolume" min="0">
+
+                <div id="mastercardVisaField">
+                    <label for="mastercardVisa">Mastercard / VISA (%): <span>*</span></label>
+                    <input type="number" id="mastercardVisa" placeholder="z.B. 30" step="0.01" min="0" max="100" required>
                 </div>
-                <!-- Erwartete Transaktionen -->
-                <div class="form-group">
-                    <label for="transactions" data-lang="transactionsLabel">Erwartete Anzahl an monatlichen Transaktionen:</label>
-                    <input type="number" id="transactions" min="0">
+
+                <div id="maestroField" class="hidden">
+                    <label for="maestro">Maestro / VPAY (%):</label>
+                    <input type="number" id="maestro" placeholder="z.B. 0" step="0.01" min="0" max="100">
                 </div>
-                <!-- Kartenarten Prozentangaben (nur Schnell) -->
-                <div class="form-group quick-field">
-                    <label for="girocardQuick" data-lang="girocardLabel">Girocard (%):</label>
-                    <input type="number" id="girocardQuick" min="0" max="100">
+
+                <div id="businessCardField" class="hidden">
+                    <label for="businessCard">Business Card (%):</label>
+                    <input type="number" id="businessCard" placeholder="z.B. 0" step="0.01" min="0" max="100">
                 </div>
-                <div class="form-group quick-field">
-                    <label for="mastercardVisaQuick" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
-                    <input type="number" id="mastercardVisaQuick" min="0" max="100">
-                </div>
-                <!-- Kartenarten Prozentangaben (ausführlich) -->
-                <div class="form-group detailed-field">
-                    <label for="girocardDetailed" data-lang="girocardLabel">Girocard (%):</label>
-                    <input type="number" id="girocardDetailed" min="0" max="100">
-                </div>
-                <div class="form-group detailed-field">
-                    <label for="mastercardVisaDetailed" data-lang="mastercardVisaLabel">Mastercard / VISA (%):</label>
-                    <input type="number" id="mastercardVisaDetailed" min="0" max="100">
-                </div>
-                <div class="form-group detailed-field">
-                    <label for="maestroDetailed" data-lang="maestroLabel">Maestro / VPAY (%):</label>
-                    <input type="number" id="maestroDetailed" min="0" max="100">
-                </div>
-                <div class="form-group detailed-field">
-                    <label for="businessCardDetailed" data-lang="businessCardLabel">Business Card (%):</label>
-                    <input type="number" id="businessCardDetailed" min="0" max="100">
-                </div>
-                <!-- Wettbewerbergebühren (nur ausführlich) -->
-                <div class="competitor-section detailed-field">
-                    <h3 data-lang="competitorFeesHeading">Wettbewerber Gebühren:</h3>
-                    <div class="form-group">
-                        <label for="competitorGirocardFee" data-lang="competitorGirocardFeeLabel">Girocard Gebühr (%):</label>
-                        <input type="number" id="competitorGirocardFee" min="0" max="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="competitorMastercardVisaFee" data-lang="competitorMastercardVisaFeeLabel">Mastercard / VISA Gebühr (%):</label>
-                        <input type="number" id="competitorMastercardVisaFee" min="0" max="100">
-                    </div>
-                </div>
-                <!-- Kauf oder Miete -->
-                <div class="form-group">
-                    <label for="purchaseOption" data-lang="purchaseOptionLabel">Kauf oder Miete:</label>
-                    <select id="purchaseOption" onchange="toggleRentalOptions()">
-                        <option value="mieten" data-lang="rentOption">Mieten</option>
-                        <option value="kaufen" data-lang="buyOption">Kaufen</option>
-                    </select>
-                </div>
-                <!-- Hardware auswählen -->
-                <div class="form-group">
-                    <label for="hardware" data-lang="hardwareLabel">Hardware auswählen:</label>
+
+                <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
+                <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+                    <option value="mieten">Mieten</option>
+                    <option value="kaufen">Kaufen</option>
+                </select>
+
+                <div id="hardwareOptions">
+                    <label for="hardware">Hardware auswählen: <span>*</span></label>
                     <select id="hardware" onchange="updateRentalPrices()">
-                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">
-                            S1F2 - Kauf: 499,00 € / Miete ab 14,90 €
-                        </option>
-                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">
-                            V400C - Kauf: 399,00 € / Miete ab 12,90 €
-                        </option>
-                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">
-                            Moto G14 - Kauf: 119,00 € / Miete: 7,90 € (nur 12M)
-                        </option>
-                        <option value="TapToPay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">
-                            Tap to Pay Lizenz - Miete: 7,90 € (nur 12M)
-                        </option>
+                        <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal</option>
+                        <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal</option>
+                        <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal</option>
+                        <option value="TapToPay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap to Pay Lizenz</option>
                     </select>
                 </div>
-                <!-- Mietdauer -->
-                <div class="form-group" id="rentalOptions">
-                    <label for="rentalPeriod" data-lang="rentalPeriodLabel">Mietdauer:</label>
-                    <select id="rentalPeriod" onchange="updateHardwareCosts()">
+
+                <div id="rentalOptions" style="display: none;">
+                    <label for="rentalPeriod">Mietdauer: <span>*</span></label>
+                    <select id="rentalPeriod" onchange="updateRentalPrices()">
                         <option value="12">12 Monate</option>
                         <option value="36">36 Monate</option>
                         <option value="60">60 Monate</option>
                     </select>
                 </div>
-                <!-- Hinweis zu den Gebühren -->
-                <div class="notes">
-                    <h3 data-lang="feesNoteHeading">Hinweis zu den Gebühren:</h3>
-                    <ul>
-                        <li data-lang="transactionFeeInfo">Transaktionspreis: 0,06 € pro Transaktion</li>
-                        <li data-lang="girocardFeeInfoBelow">Girocard-Gebühr bis 10.000 € monatlich: 0,39%</li>
-                        <li data-lang="girocardFeeInfoAbove">Girocard-Gebühr über 10.000 € monatlich: 0,29%</li>
-                        <li data-lang="maestroFeeInfo">Disagio Maestro / VPAY: 0,89%</li>
-                        <li data-lang="mastercardVisaFeeInfo">Disagio Mastercard/VISA Privatkunden: 0,89%</li>
-                        <li data-lang="businessCardFeeInfo">Disagio Mastercard/VISA Business und NICHT-EWR-RAUM: 2,89%</li>
-                    </ul>
+
+                <div id="competitorSection" class="competitor-section hidden">
+                    <h4>Wettbewerber Gebühren:</h4>
+                    <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
+                    <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+
+                    <div id="competitorMaestroField" class="hidden">
+                        <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
+                        <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                    </div>
+
+                    <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
+                    <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
+
+                    <div id="competitorBusinessCardField" class="hidden">
+                        <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
+                        <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+                    </div>
                 </div>
-                <!-- Rabattfelder -->
+
                 <div class="input-group">
                     <label>Rabatt:</label>
                     <div class="discount-item">
@@ -171,24 +142,54 @@
                         <input type="number" id="payDiscountAmount" min="0" value="0">
                     </div>
                 </div>
-                <!-- Buttons -->
+
                 <div class="button-group">
-                    <button onclick="calculatePay()" data-lang="calculateButton">
-                        Berechnen
-                    </button>
-                    <button onclick="showEmailContent('pay')" data-lang="showEmailButton">
-                        Angebot per E-Mail anzeigen
-                    </button>
+                    <button onclick="calculatePayCosts()">Berechnen</button>
+                    <button onclick="sendEmail('PAY')">Angebot per E-Mail anzeigen</button>
                 </div>
-                <!-- Ergebnisbereich -->
-                <div id="result">
-                    <!-- Ergebnisse werden hier eingefügt -->
+
+                <div id="payResult" class="result-section hidden">
+                    <h3>Ergebnisse:</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Beschreibung</th>
+                                <th>Betrag (€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Gesamte Einmalige Kosten Netto</td>
+                                <td id="payOneTimeCostNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Mehrwertsteuer (19%)</td>
+                                <td id="payOneTimeCostMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Gesamtbetrag</td>
+                                <td id="payOneTimeCostBrutto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Gesamte Monatliche Kosten Netto</td>
+                                <td id="payTotalNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Mehrwertsteuer (19%)</td>
+                                <td id="payTotalMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Gesamtbetrag</td>
+                                <td id="payTotalBrutto">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- POS Rechner -->
             <div id="pos" class="tab-content hidden">
-                <h2 data-lang="posHeadline">POS Kostenberechnung</h2>
+                <h2 data-lang="posHeadline">DISH POS Kostenberechnung</h2>
 
                 <!-- Hardware-Komponenten -->
                 <h3 data-lang="posHardwareLabel">Hardware-Komponenten:</h3>
@@ -266,8 +267,16 @@
                 </div>
                 <!-- Zusatzlizenz für Handgeräte -->
                 <div class="form-group">
-                    <label for="handDeviceLicense">5. Zusatzlizenz für Handgeräte (29,00 €):</label>
-                    <input type="number" id="handDeviceLicense" min="0" value="0">
+                    <label for="handDeviceLicense">5. Zusatzlizenz für Handgeräte:</label>
+                    <select id="handDeviceLicense">
+                        <option value="0">0 Stück</option>
+                        <option value="1">1 Stück</option>
+                        <option value="2">2 Stück</option>
+                        <option value="3">3 Stück</option>
+                        <option value="4">4 Stück</option>
+                        <option value="5">5 Stück</option>
+                        <!-- Weitere Optionen nach Bedarf -->
+                    </select>
                 </div>
                 <!-- Rabattfelder -->
                 <div class="input-group">
@@ -283,22 +292,52 @@
                 </div>
                 <!-- Buttons -->
                 <div class="button-group">
-                    <button onclick="calculatePos()" data-lang="calculateButton">
-                        Berechnen
-                    </button>
-                    <button onclick="showEmailContent('pos')" data-lang="showEmailButton">
-                        Angebot per E-Mail anzeigen
-                    </button>
+                    <button onclick="calculatePosCosts()">Berechnen</button>
+                    <button onclick="sendEmail('POS')">Angebot per E-Mail anzeigen</button>
                 </div>
                 <!-- Ergebnisbereich -->
-                <div id="posResult">
-                    <!-- Ergebnisse werden hier eingefügt -->
+                <div id="posResult" class="result-section hidden">
+                    <h3>Ergebnisse:</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Beschreibung</th>
+                                <th>Betrag (€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Gesamte Einmalige Kosten Netto</td>
+                                <td id="posOneTimeCostNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Mehrwertsteuer (19%)</td>
+                                <td id="posOneTimeCostMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Gesamtbetrag</td>
+                                <td id="posOneTimeCostBrutto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Gesamte Monatliche Kosten Netto</td>
+                                <td id="posTotalNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Mehrwertsteuer (19%)</td>
+                                <td id="posTotalMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Gesamtbetrag</td>
+                                <td id="posTotalBrutto">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- TOOLS Rechner -->
             <div id="tools" class="tab-content hidden">
-                <h2 data-lang="toolsHeadline">TOOLS Kostenberechnung</h2>
+                <h2 data-lang="toolsHeadline">DISH TOOLS Kostenberechnung</h2>
 
                 <!-- DISH Lösungen -->
                 <div class="input-group">
@@ -306,7 +345,7 @@
                     <div id="toolsOptions">
                         <!-- DISH STARTER -->
                         <div class="tools-item">
-                            <input type="checkbox" id="dishStarter">
+                            <input type="checkbox" id="dishStarter" onchange="toggleDishReservationDuration()">
                             <label for="dishStarter">DISH STARTER</label>
                             <p>10,00 € monatlich + 69,00 € einmalige Aktivierungsgebühr</p>
                             <p>Mindestvertragslaufzeit: 12 Monate</p>
@@ -355,23 +394,52 @@
                 </div>
                 <!-- Buttons -->
                 <div class="button-group">
-                    <button onclick="calculateTools()" data-lang="calculateButton">
-                        Berechnen
-                    </button>
-                    <button onclick="showEmailContent('tools')" data-lang="showEmailButton">
-                        Angebot per E-Mail anzeigen
-                    </button>
+                    <button onclick="calculateToolsCosts()">Berechnen</button>
+                    <button onclick="sendEmail('TOOLS')">Angebot per E-Mail anzeigen</button>
                 </div>
                 <!-- Ergebnisbereich -->
-                <div id="toolsResult">
-                    <!-- Ergebnisse werden hier eingefügt -->
+                <div id="toolsResult" class="result-section hidden">
+                    <h3>Ergebnisse:</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Beschreibung</th>
+                                <th>Betrag (€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Gesamte Einmalige Kosten Netto</td>
+                                <td id="toolsOneTimeCostNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Mehrwertsteuer (19%)</td>
+                                <td id="toolsOneTimeCostMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Gesamtbetrag</td>
+                                <td id="toolsOneTimeCostBrutto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Gesamte Monatliche Kosten Netto</td>
+                                <td id="toolsTotalNetto">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Mehrwertsteuer (19%)</td>
+                                <td id="toolsTotalMwSt">0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Gesamtbetrag</td>
+                                <td id="toolsTotalBrutto">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
 
         <!-- Ebene 3: Footer -->
         <footer>
-            <!-- Optionaler Footer-Inhalt -->
             <p>&copy; 2024 DISH - Alle Rechte vorbehalten.</p>
         </footer>
 
