@@ -1,38 +1,41 @@
-/* Tab Umschalt-Funktion */
-function openCalculator(evt, calculatorName) {
-    // Verstecke alle Tab-Inhalte
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => {
-        content.classList.remove('active');
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialisierung: Zeige den PAY-Rechner standardmäßig an
+    document.querySelector('#pay').classList.add('active');
+});
 
+/* Rechnerumschaltung */
+function openCalculator(event, calculatorType) {
     // Entferne die aktive Klasse von allen Tab-Links
     const tabLinks = document.querySelectorAll('.tab-link');
-    tabLinks.forEach(link => {
-        link.classList.remove('active');
-    });
+    tabLinks.forEach(link => link.classList.remove('active'));
 
-    // Zeige den ausgewählten Tab-Inhalt an
-    const activeTab = document.getElementById(calculatorName);
-    activeTab.classList.add('active');
+    // Verstecke alle Tab-Inhalte
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => content.classList.remove('active'));
 
-    // Füge die aktive Klasse zum angeklickten Tab-Link hinzu
-    evt.currentTarget.classList.add('active');
+    // Füge die aktive Klasse zum geklickten Tab-Button hinzu
+    event.currentTarget.classList.add('active');
+
+    // Zeige den ausgewählten Rechner an
+    document.getElementById(calculatorType).classList.add('active');
 
     // Scroll zum oberen Rand des Containers
     document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* Berechnen-Funktion */
+/* Verbesserte Berechnungsfunktion */
 function calculate() {
-    // Bestimme welcher Rechner aktiv ist
-    const activeCalculator = document.querySelector('.tab-content.active').id;
+    const activeCalculator = document.querySelector('.tab-content.active');
+    if (!activeCalculator) {
+        alert('Kein aktiver Rechner ausgewählt.');
+        return;
+    }
 
-    if (activeCalculator === 'pay') {
+    if (activeCalculator.id === 'pay') {
         calculatePay();
-    } else if (activeCalculator === 'pos') {
+    } else if (activeCalculator.id === 'pos') {
         calculatePos();
-    } else if (activeCalculator === 'tools') {
+    } else if (activeCalculator.id === 'tools') {
         calculateTools();
     }
 }
@@ -245,7 +248,7 @@ function calculatePay() {
             <p><em>Hinweis: Die Wettbewerbergebühren wurden in die Berechnung einbezogen.</em></p>
         </div>
     `;
-    
+
     displayResult(payResult);
 }
 
@@ -772,3 +775,11 @@ function displayResult(content) {
     const activeCalculator = document.querySelector('.tab-content.active');
     activeCalculator.insertAdjacentHTML('beforeend', content);
 }
+
+/* Event-Listener für Tabs */
+document.querySelectorAll('.tab-link').forEach(button => {
+    button.addEventListener('click', (event) => {
+        const calculatorType = button.getAttribute('data-calculator');
+        openCalculator(event, calculatorType);
+    });
+});
