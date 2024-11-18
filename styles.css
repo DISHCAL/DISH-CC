@@ -22,14 +22,27 @@ body {
 header {
     background-color: #ff8c00; /* Dunkelorange */
     color: #fff;
-    padding: 20px 0;
+    padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
 }
 
-header h1 {
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.header-content .logo {
+    max-width: 150px;
+    margin-right: 20px;
+}
+
+.header-content h1 {
+    font-size: 24px;
     text-align: center;
-    margin-bottom: 10px;
+    flex: 1 1 300px;
 }
 
 /* Top Bar (nur Kundenname) */
@@ -38,6 +51,7 @@ header h1 {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    margin-top: 10px;
 }
 
 .customer-input {
@@ -176,6 +190,7 @@ input[type="checkbox"] {
     border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 16px;
 }
 
 .quantity-controls button:hover {
@@ -208,6 +223,29 @@ input[type="checkbox"] {
     width: 100%;
 }
 
+/* Hinweis auf eigene Gebühren */
+.info-section {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.info-section h4 {
+    color: #ff8c00;
+    margin-bottom: 10px;
+}
+
+.info-section ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.info-section ul li {
+    margin-bottom: 5px;
+}
+
 /* Buttons im Footer */
 footer {
     display: flex;
@@ -238,6 +276,7 @@ footer button:hover {
     margin-top: 10px;
     color: #333;
     font-size: 14px;
+    width: 100%;
 }
 
 .footer-note::before {
@@ -245,7 +284,7 @@ footer button:hover {
 }
 
 .footer-note::after {
-    content: " 2024. Alle Rechte vorbehalten.";
+    content: " Dish 2024. Alle Rechte vorbehalten.";
 }
 
 /* Ergebnis anzeigen */
@@ -295,6 +334,7 @@ footer button:hover {
     padding: 10px;
     background-color: #f1f1f1;
     border: 1px solid #ddd;
+    border-radius: 5px;
     clear: both;
 }
 
@@ -371,47 +411,16 @@ footer button:hover {
     overflow-x: auto;
 }
 
-/* Info Section */
-.info-section {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f2f2f2;
-    border: 1px solid #ddd;
-}
-
-.info-section h4 {
-    color: #ff8c00;
-    margin-bottom: 10px;
-}
-
-.info-section ul {
-    list-style-type: disc;
-    margin-left: 20px;
-}
-
-.info-section ul li {
-    margin-bottom: 5px;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
-    .top-bar {
+    .header-content {
         flex-direction: column;
         align-items: center;
     }
 
-    .customer-input {
-        width: 100%;
-    }
-
-    .license-section {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .license-section input[type="number"] {
-        width: 100%;
-        margin-top: 5px;
+    .header-content .logo {
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 
     .tabs {
@@ -433,12 +442,20 @@ footer button:hover {
         margin-top: 5px;
     }
 
-    .modal-content {
-        margin: 10% auto;
+    .customer-input input {
+        width: 100%;
     }
 
     footer {
         flex-direction: column;
         align-items: center;
+    }
+
+    .footer-note {
+        margin-top: 20px;
+    }
+
+    .modal-content {
+        margin: 10% auto;
     }
 }
