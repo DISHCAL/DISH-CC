@@ -539,193 +539,9 @@ function calculateTools() {
     const totalMonthlyMwSt = totalMonthlyNetto * mwstRate;
     const totalMonthlyBrutto = totalMonthlyNetto + totalMonthlyMwSt;
 
-    // Ergebnis anzeigen
-    let toolsResult = `
-        <h3>Ergebnisse:</h3>
-        <div class="result-section">
-            <h4>Einmalige Kosten</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Produkt / Service</th>
-                        <th>Menge</th>
-                        <th>Preis pro Stück (€)</th>
-                        <th>Gesamtkosten (€)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${oneTimeDetails}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3"><strong>Gesamt einmalige Kosten</strong></td>
-                        <td>${totalOneTimeBrutto.toFixed(2)} €</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <h4>Monatliche Kosten</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Lizenz / Service</th>
-                        <th>Menge</th>
-                        <th>Preis pro Stück (€)</th>
-                        <th>Gesamtkosten (€)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${monthlyDetails}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3"><strong>Gesamt monatliche Kosten</strong></td>
-                        <td>${totalMonthlyCost.toFixed(2)} €</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <h4>Zusammenfassung</h4>
-            <ul>
-                <li><strong>Einmalige Kosten:</strong> Netto: ${totalOneTimeNetto.toFixed(2)} €, MwSt.: ${totalOneTimeMwSt.toFixed(2)} €, Gesamtbetrag: ${totalOneTimeBrutto.toFixed(2)} €</li>
-                <li><strong>Monatliche Kosten:</strong> Netto: ${totalMonthlyNetto.toFixed(2)} €, MwSt.: ${totalMonthlyMwSt.toFixed(2)} €, Gesamtbetrag: ${totalMonthlyBrutto.toFixed(2)} €</li>
-            </ul>
-        </div>
-    `;
-
-    displayResult(toolsResult);
-}
-
-/* TOOLS Rechner Funktion */
-function calculateTools() {
-    // Erfasse Auswahl der DISH Lösungen
-    const starterChecked = document.getElementById('starter').checked;
-    const reservationValue = document.getElementById('reservation').value;
-    const orderValue = document.getElementById('order').value;
-    const premiumValue = document.getElementById('premium').value;
-
-    let totalOneTimeNetto = 0;
-    let totalMonthlyNetto = 0;
-
-    let oneTimeDetails = '';
-    let monthlyDetails = '';
-
-    // DISH STARTER
-    if (starterChecked) {
-        totalOneTimeNetto += 69.00; // Einmalige Aktivierungsgebühr
-        totalMonthlyNetto += 10.00; // Monatliche Gebühr
-        oneTimeDetails += `
-            <tr>
-                <td>DISH STARTER Aktivierungsgebühr</td>
-                <td>1</td>
-                <td>69,00</td>
-                <td>69,00</td>
-            </tr>
-        `;
-        monthlyDetails += `
-            <tr>
-                <td>DISH STARTER</td>
-                <td>1</td>
-                <td>10,00</td>
-                <td>10,00</td>
-            </tr>
-        `;
-    }
-
-    // DISH RESERVATION
-    if (reservationValue !== 'none') {
-        let reservationPrice = 0;
-        if (reservationValue === '36') {
-            reservationPrice = 34.90;
-        } else if (reservationValue === '12') {
-            reservationPrice = 44.00;
-        } else if (reservationValue === '3') {
-            reservationPrice = 49.00;
-        }
-        totalMonthlyNetto += reservationPrice;
-        oneTimeDetails += `
-            <tr>
-                <td>DISH RESERVATION Aktivierungsgebühr</td>
-                <td>1</td>
-                <td>69,00</td>
-                <td>69,00</td>
-            </tr>
-        `;
-        monthlyDetails += `
-            <tr>
-                <td>DISH RESERVATION (${reservationValue} Monate)</td>
-                <td>1</td>
-                <td>${reservationPrice.toFixed(2)}</td>
-                <td>${reservationPrice.toFixed(2)}</td>
-            </tr>
-        `;
-    }
-
-    // DISH ORDER
-    if (orderValue !== 'none') {
-        let orderPrice = 0;
-        let activationFee = 299.00; // Einmalige Aktivierungsgebühr
-        if (orderValue === '12') {
-            orderPrice = 49.90;
-        } else if (orderValue === '3') {
-            orderPrice = 59.90;
-        }
-        totalMonthlyNetto += orderPrice;
-        totalOneTimeNetto += activationFee;
-        oneTimeDetails += `
-            <tr>
-                <td>DISH ORDER Aktivierungsgebühr</td>
-                <td>1</td>
-                <td>299,00</td>
-                <td>299,00</td>
-            </tr>
-        `;
-        monthlyDetails += `
-            <tr>
-                <td>DISH ORDER (${orderValue} Monate)</td>
-                <td>1</td>
-                <td>${orderPrice.toFixed(2)}</td>
-                <td>${orderPrice.toFixed(2)}</td>
-            </tr>
-        `;
-    }
-
-    // DISH PREMIUM
-    if (premiumValue !== 'none') {
-        let premiumPrice = 0;
-        let activationFee = 279.00; // Einmalige Aktivierungsgebühr
-        if (premiumValue === '12') {
-            premiumPrice = 69.90;
-        } else if (premiumValue === '3') {
-            premiumPrice = 79.90;
-        }
-        totalMonthlyNetto += premiumPrice;
-        totalOneTimeNetto += activationFee;
-        oneTimeDetails += `
-            <tr>
-                <td>DISH PREMIUM Aktivierungsgebühr</td>
-                <td>1</td>
-                <td>279,00</td>
-                <td>279,00</td>
-            </tr>
-        `;
-        monthlyDetails += `
-            <tr>
-                <td>DISH PREMIUM (${premiumValue} Monate)</td>
-                <td>1</td>
-                <td>${premiumPrice.toFixed(2)}</td>
-                <td>${premiumPrice.toFixed(2)}</td>
-            </tr>
-        `;
-    }
-
-    // Berechnung der Mehrwertsteuer (19%)
-    const mwstRate = 0.19;
-    const totalOneTimeMwSt = totalOneTimeNetto * mwstRate;
-    const totalOneTimeBrutto = totalOneTimeNetto + totalOneTimeMwSt;
-
-    const totalMonthlyMwSt = totalMonthlyNetto * mwstRate;
-    const totalMonthlyBrutto = totalMonthlyNetto + totalMonthlyMwSt;
+    // Zusammenfassung der Gesamtkosten
+    const totalOneTimeCost = totalOneTimeBrutto;
+    const totalMonthlyCost = totalMonthlyBrutto;
 
     // Ergebnis anzeigen
     let toolsResult = `
@@ -747,7 +563,7 @@ function calculateTools() {
                 <tfoot>
                     <tr>
                         <td colspan="3"><strong>Gesamt einmalige Kosten</strong></td>
-                        <td>${totalOneTimeBrutto.toFixed(2)} €</td>
+                        <td>${totalOneTimeCost.toFixed(2)} €</td>
                     </tr>
                 </tfoot>
             </table>
@@ -763,7 +579,7 @@ function calculateTools() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${monthlyDetails}
+                    ${monthlyLicensesDetails}
                 </tbody>
                 <tfoot>
                     <tr>
@@ -946,7 +762,7 @@ function updateRentalPrices() {
 
 /* Ergebnis anzeigen */
 function displayResult(content) {
-    // Schließe alle bestehenden Ergebnisse
+    // Entferne bestehende Ergebnisse
     const existingResult = document.querySelector('.result-section');
     if (existingResult) {
         existingResult.parentElement.removeChild(existingResult);
