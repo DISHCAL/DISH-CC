@@ -280,14 +280,6 @@ footer button:hover {
     width: 100%;
 }
 
-.footer-note::before {
-    content: "© ";
-}
-
-.footer-note::after {
-    content: " Dish 2024. Alle Rechte vorbehalten.";
-}
-
 /* Ergebnis-Section Stile */
 .result-section {
     margin-top: 25px;
