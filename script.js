@@ -1,32 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initialisierung: Zeige den PAY-Rechner standardmäßig an
     document.querySelector('#pay').classList.add('active');
-
-    // Event-Listener für Tabs
+    // Event-Listener für Tabs hinzufügen
     document.querySelectorAll('.tab-link').forEach(button => {
         button.addEventListener('click', (event) => {
             const calculatorType = button.getAttribute('data-calculator');
             openCalculator(event, calculatorType);
         });
     });
-
-    // Event-Listener für Berechnungsart Dropdown im PAY-Rechner
-    const calculationTypeSelect = document.getElementById('calculationType');
-    if (calculationTypeSelect) {
-        calculationTypeSelect.addEventListener('change', toggleCalculationFields);
-    }
-
-    // Event-Listener für Kauf/Miete Dropdown im PAY-Rechner
-    const purchaseOptionSelect = document.getElementById('purchaseOption');
-    if (purchaseOptionSelect) {
-        purchaseOptionSelect.addEventListener('change', toggleRentalOptions);
-    }
-
-    // Event-Listener für Hardware Auswahl Dropdown im PAY-Rechner
-    const hardwareSelect = document.getElementById('hardware');
-    if (hardwareSelect) {
-        hardwareSelect.addEventListener('change', updateRentalPrices);
-    }
 });
 
 /* Rechnerumschaltung */
@@ -43,14 +24,13 @@ function openCalculator(event, calculatorType) {
     event.currentTarget.classList.add('active');
 
     // Zeige den ausgewählten Rechner an
-    const activeTab = document.getElementById(calculatorType);
-    activeTab.classList.add('active');
+    document.getElementById(calculatorType).classList.add('active');
 
     // Scroll zum oberen Rand des Containers
     document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* Berechnen-Funktion */
+/* Berechnungsfunktion */
 function calculate() {
     const activeCalculator = document.querySelector('.tab-content.active');
     if (!activeCalculator) {
@@ -485,14 +465,13 @@ function calculateTools() {
             reservationPrice = 49.00;
         }
         totalMonthlyNetto += reservationPrice;
-        // Aktivierungsgebühr für DISH RESERVATION hinzufügen, falls vorhanden
-        // Im Originalcode wurde keine Aktivierungsgebühr für RESERVATION erwähnt
+        // Aktivierungsgebühr hinzufügen, falls benötigt (hier als Beispiel 0 €)
         // oneTimeDetails += `
         //     <tr>
         //         <td>DISH RESERVATION Aktivierungsgebühr</td>
         //         <td>1</td>
-        //         <td>69,00</td>
-        //         <td>69,00</td>
+        //         <td>0,00</td>
+        //         <td>0,00</td>
         //     </tr>
         // `;
         monthlyDetails += `
@@ -787,7 +766,7 @@ function toggleRentalOptions() {
 
 /* Aktualisierung der Mietpreise basierend auf der Auswahl */
 function updateRentalPrices() {
-    // Hier können Sie zusätzliche Logik hinzufügen, falls benötigt
+    // Diese Funktion kann erweitert werden, falls zusätzliche Logik benötigt wird
     // Momentan ist diese Funktion leer, da die Mietpreise bereits im HTML definiert sind
 }
 
