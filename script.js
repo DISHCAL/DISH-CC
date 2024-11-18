@@ -1,6 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initialisierung: Zeige den PAY-Rechner standardmäßig an
     document.querySelector('#pay').classList.add('active');
+
+    // Event-Listener für Tabs
+    document.querySelectorAll('.tab-link').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const calculatorType = button.getAttribute('data-calculator');
+            openCalculator(event, calculatorType);
+        });
+    });
+
+    // Event-Listener für Berechnungsart Dropdown im PAY-Rechner
+    const calculationTypeSelect = document.getElementById('calculationType');
+    if (calculationTypeSelect) {
+        calculationTypeSelect.addEventListener('change', toggleCalculationFields);
+    }
+
+    // Event-Listener für Kauf/Miete Dropdown im PAY-Rechner
+    const purchaseOptionSelect = document.getElementById('purchaseOption');
+    if (purchaseOptionSelect) {
+        purchaseOptionSelect.addEventListener('change', toggleRentalOptions);
+    }
+
+    // Event-Listener für Hardware Auswahl Dropdown im PAY-Rechner
+    const hardwareSelect = document.getElementById('hardware');
+    if (hardwareSelect) {
+        hardwareSelect.addEventListener('change', updateRentalPrices);
+    }
 });
 
 /* Rechnerumschaltung */
@@ -17,13 +43,14 @@ function openCalculator(event, calculatorType) {
     event.currentTarget.classList.add('active');
 
     // Zeige den ausgewählten Rechner an
-    document.getElementById(calculatorType).classList.add('active');
+    const activeTab = document.getElementById(calculatorType);
+    activeTab.classList.add('active');
 
     // Scroll zum oberen Rand des Containers
     document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* Verbesserte Berechnungsfunktion */
+/* Berechnen-Funktion */
 function calculate() {
     const activeCalculator = document.querySelector('.tab-content.active');
     if (!activeCalculator) {
@@ -458,14 +485,16 @@ function calculateTools() {
             reservationPrice = 49.00;
         }
         totalMonthlyNetto += reservationPrice;
-        oneTimeDetails += `
-            <tr>
-                <td>DISH RESERVATION Aktivierungsgebühr</td>
-                <td>1</td>
-                <td>69,00</td>
-                <td>69,00</td>
-            </tr>
-        `;
+        // Aktivierungsgebühr für DISH RESERVATION hinzufügen, falls vorhanden
+        // Im Originalcode wurde keine Aktivierungsgebühr für RESERVATION erwähnt
+        // oneTimeDetails += `
+        //     <tr>
+        //         <td>DISH RESERVATION Aktivierungsgebühr</td>
+        //         <td>1</td>
+        //         <td>69,00</td>
+        //         <td>69,00</td>
+        //     </tr>
+        // `;
         monthlyDetails += `
             <tr>
                 <td>DISH RESERVATION (${reservationValue} Monate)</td>
@@ -759,7 +788,6 @@ function toggleRentalOptions() {
 /* Aktualisierung der Mietpreise basierend auf der Auswahl */
 function updateRentalPrices() {
     // Hier können Sie zusätzliche Logik hinzufügen, falls benötigt
-    // Zum Beispiel, basierend auf der Hardware-Auswahl andere Mietoptionen anzeigen
     // Momentan ist diese Funktion leer, da die Mietpreise bereits im HTML definiert sind
 }
 
@@ -775,11 +803,3 @@ function displayResult(content) {
     const activeCalculator = document.querySelector('.tab-content.active');
     activeCalculator.insertAdjacentHTML('beforeend', content);
 }
-
-/* Event-Listener für Tabs */
-document.querySelectorAll('.tab-link').forEach(button => {
-    button.addEventListener('click', (event) => {
-        const calculatorType = button.getAttribute('data-calculator');
-        openCalculator(event, calculatorType);
-    });
-});
