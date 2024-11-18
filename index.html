@@ -27,9 +27,9 @@
         <!-- Hauptbereich mit Tabs -->
         <main>
             <div class="tabs">
-                <button class="tab-link active" onclick="openCalculator(event, 'pay')">PAY</button>
-                <button class="tab-link" onclick="openCalculator(event, 'pos')">POS</button>
-                <button class="tab-link" onclick="openCalculator(event, 'tools')">TOOLS</button>
+                <button class="tab-link active" data-calculator="pay">PAY</button>
+                <button class="tab-link" data-calculator="pos">POS</button>
+                <button class="tab-link" data-calculator="tools">TOOLS</button>
             </div>
 
             <!-- PAY Rechner -->
@@ -82,10 +82,10 @@
                     <div id="hardwareOptions">
                         <label for="hardware">Hardware auswählen: <span>*</span></label>
                         <select id="hardware" onchange="updateRentalPrices()">
-                            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal - Kauf: 499,00 €</option>
-                            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal - Kauf: 399,00 €</option>
-                            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal - Kauf: 119,00 €</option>
-                            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz - Kauf: 0 €</option>
+                            <option value="S1F2" data-calculator="pay" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal - Kauf: 499,00 €</option>
+                            <option value="V400C" data-calculator="pay" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal - Kauf: 399,00 €</option>
+                            <option value="MotoG14" data-calculator="pay" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal - Kauf: 119,00 €</option>
+                            <option value="Tap2Pay" data-calculator="pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz - Kauf: 0 €</option>
                         </select>
                     </div>
 
