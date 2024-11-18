@@ -1,15 +1,10 @@
 /* Allgemeine Stile */
-* {
-    box-sizing: border-box;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
     background-color: #f9f9f9;
     color: #333;
-    line-height: 1.6;
 }
 
 .container {
@@ -18,63 +13,52 @@ body {
     padding: 20px;
 }
 
-/* Header */
+/* Header Stile */
 header {
-    background-color: #ff8c00; /* Dunkelorange */
-    color: #fff;
+    background-color: #fff;
     padding: 20px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .header-content .logo {
     max-width: 150px;
+    height: auto;
     margin-right: 20px;
 }
 
 .header-content h1 {
-    font-size: 26px;
-    text-align: center;
-    flex: 1 1 300px;
+    font-size: 24px;
+    color: #ff8c00;
 }
 
-/* Top Bar (nur Kundenname) */
+/* Top Bar Stile */
 .top-bar {
+    margin-top: 15px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.customer-input {
-    display: flex;
-    align-items: center;
-    margin: 5px 0;
+    justify-content: flex-end;
 }
 
 .customer-input label {
     margin-right: 10px;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 .customer-input input {
-    padding: 8px 12px;
-    border: none;
+    padding: 8px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    width: 300px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Tabs */
+/* Tabs Stile */
 .tabs {
     display: flex;
     justify-content: center;
@@ -83,16 +67,16 @@ header {
 }
 
 .tab-link {
-    background-color: #ff8c00; /* Dunkelorange */
+    background-color: #ff8c00;
     color: #fff;
-    padding: 12px 24px;
-    margin: 5px;
     border: none;
+    padding: 10px 20px;
+    margin: 5px;
     border-radius: 25px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
     font-size: 16px;
     font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -102,63 +86,43 @@ header {
 }
 
 .tab-link.active {
-    background-color: #d66f00;
-    transform: translateY(-2px);
+    background-color: #e07b00;
 }
 
-/* Tab Content */
+/* Tab Content Stile */
 .tab-content {
     display: none;
     background-color: #fff;
-    padding: 25px;
+    padding: 20px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-content.active {
     display: block;
-    opacity: 1;
 }
 
-/* Formulare */
-form {
-    display: flex;
-    flex-direction: column;
+/* Formulare Stile */
+form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
 }
 
-form h3 {
-    margin-top: 25px;
-    margin-bottom: 15px;
-    color: #ff8c00;
-    font-size: 20px;
-}
-
-label {
-    margin: 12px 0 6px;
-    font-weight: 600;
-}
-
-input[type="number"],
-input[type="text"],
-select {
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+form input[type="number"],
+form input[type="text"],
+form select {
     width: 100%;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-input[type="number"]:focus,
-input[type="text"]:focus,
-select:focus {
-    border-color: #ff8c00;
-    outline: none;
-}
-
-input[type="checkbox"] {
-    margin-right: 10px;
+form input[type="checkbox"] {
+    margin-left: 10px;
     transform: scale(1.2);
 }
 
@@ -166,103 +130,13 @@ input[type="checkbox"] {
     display: none;
 }
 
-/* Lizenz-Abschnitte */
-.license-section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.license-section label {
-    flex: 1;
-    font-weight: 600;
-}
-
-.license-section input[type="number"] {
-    width: 70px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Hardware-Item mit Plus/Minus Buttons */
-.hardware-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.hardware-item label {
-    flex: 1;
-    font-weight: 600;
-}
-
-.quantity-controls {
-    display: flex;
-    align-items: center;
-}
-
-.quantity-controls button {
-    background-color: #ff8c00;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    margin: 0 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.quantity-controls button:hover {
-    background-color: #e07b00;
-    transform: scale(1.05);
-}
-
-.quantity-controls input[type="number"] {
-    width: 60px;
-    text-align: center;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-/* Tools Rechner spezifische Styles */
-.tools-section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.tools-section label {
-    flex: 1;
-    font-weight: 600;
-}
-
-.tools-section select {
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-}
-
-.tools-section select:focus {
-    border-color: #ff8c00;
-    outline: none;
-}
-
-/* Hinweis zu den Gebühren */
+/* Info-Section Stile */
 .info-section {
-    margin-top: 25px;
+    background-color: #fff8e1;
+    border-left: 4px solid #ff8c00;
     padding: 15px 20px;
-    background-color: #f2f2f2;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 4px;
+    margin-top: 20px;
 }
 
 .info-section h4 {
@@ -281,7 +155,96 @@ input[type="checkbox"] {
     margin-bottom: 8px;
 }
 
-/* Buttons im Footer */
+/* Wettbewerber-Section Stile */
+.competitor-section {
+    margin-top: 20px;
+    padding: 15px 20px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.competitor-section h4 {
+    color: #ff8c00;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.competitor-section label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.competitor-section input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Lizenz-Section Stile */
+.license-section {
+    margin-top: 10px;
+}
+
+.license-section label {
+    font-weight: bold;
+}
+
+/* Hardware-Item Stile */
+.hardware-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.hardware-item label {
+    flex: 1;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-controls button {
+    background-color: #ff8c00;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.quantity-controls button:hover {
+    background-color: #e07b00;
+    transform: translateY(-1px);
+}
+
+.quantity-controls input {
+    width: 50px;
+    text-align: center;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Tools-Section Stile */
+.tools-section {
+    margin-top: 15px;
+}
+
+.tools-section label {
+    font-weight: bold;
+}
+
+/* Footer Stile */
 footer {
     display: flex;
     justify-content: center;
@@ -325,7 +288,7 @@ footer button:hover {
     content: " Dish 2024. Alle Rechte vorbehalten.";
 }
 
-/* Ergebnis anzeigen */
+/* Ergebnis-Section Stile */
 .result-section {
     margin-top: 25px;
 }
@@ -369,22 +332,18 @@ footer button:hover {
     font-weight: bold;
 }
 
-/* Competitor Section */
-.competitor-section {
-    margin-top: 20px;
-    padding: 15px 20px;
-    background-color: #f1f1f1;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+.result-section pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #f9f9f9;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    overflow-x: auto;
+    font-size: 16px;
 }
 
-.competitor-section h4 {
-    color: #ff8c00;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-/* Modal Fenster */
+/* Modal Fenster Stile */
 .modal {
     display: none; /* Versteckt standardmäßig */
     position: fixed;
@@ -421,38 +380,6 @@ footer button:hover {
 .close:hover,
 .close:focus {
     color: #000;
-}
-
-.modal-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-.modal-content table, .modal-content th, .modal-content td {
-    border: 1px solid #ccc;
-}
-
-.modal-content th, .modal-content td {
-    padding: 10px;
-    text-align: left;
-    font-size: 16px;
-}
-
-.modal-content th {
-    background-color: #ff8c00;
-    color: #fff;
-}
-
-.modal-content pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    background-color: #f9f9f9;
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    overflow-x: auto;
-    font-size: 16px;
 }
 
 /* Responsive Design */
