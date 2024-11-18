@@ -1,33 +1,31 @@
-// script.js
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialisierung: Zeige den PAY-Rechner standardmäßig an
-    showCalculator('pay');
-});
-
-/* Rechnerumschaltung */
-function openCalculator(event, calculatorType) {
-    // Entferne die aktive Klasse von allen Tab-Links
-    const tabLinks = document.querySelectorAll('.tab-link');
-    tabLinks.forEach(link => link.classList.remove('active'));
-
+/* Tab Umschalt-Funktion */
+function openCalculator(evt, calculatorName) {
     // Verstecke alle Tab-Inhalte
     const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => content.classList.remove('active'));
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
 
-    // Füge die aktive Klasse zum geklickten Tab-Button hinzu
-    event.currentTarget.classList.add('active');
+    // Entferne die aktive Klasse von allen Tab-Links
+    const tabLinks = document.querySelectorAll('.tab-link');
+    tabLinks.forEach(link => {
+        link.classList.remove('active');
+    });
 
-    // Zeige den ausgewählten Rechner an
-    document.getElementById(calculatorType).classList.add('active');
+    // Zeige den ausgewählten Tab-Inhalt an
+    const activeTab = document.getElementById(calculatorName);
+    activeTab.classList.add('active');
 
-    // Scroll to top of the calculator
-    window.scrollTo(0, 0);
+    // Füge die aktive Klasse zum angeklickten Tab-Link hinzu
+    evt.currentTarget.classList.add('active');
+
+    // Scroll zum oberen Rand des Containers
+    document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* Berechnungsfunktionen */
+/* Berechnen-Funktion */
 function calculate() {
-    // Bestimme, welcher Rechner aktiv ist
+    // Bestimme welcher Rechner aktiv ist
     const activeCalculator = document.querySelector('.tab-content.active').id;
 
     if (activeCalculator === 'pay') {
@@ -57,12 +55,12 @@ function calculatePay() {
     }
 
     // Eigene Gebührenberechnung
-    const girocardRevenue = monthlyVolume * (girocardPercent / 100);
-    const mastercardVisaRevenue = monthlyVolume * (mastercardVisaPercent / 100);
-    const maestroRevenue = monthlyVolume * (maestroPercent / 100);
-    const businessCardRevenue = monthlyVolume * (businessCardPercent / 100);
+    let girocardRevenue = monthlyVolume * (girocardPercent / 100);
+    let mastercardVisaRevenue = monthlyVolume * (mastercardVisaPercent / 100);
+    let maestroRevenue = monthlyVolume * (maestroPercent / 100);
+    let businessCardRevenue = monthlyVolume * (businessCardPercent / 100);
 
-    // DISH Gebühren (angenommene Sätze)
+    // DISH Gebühren (Sätze)
     const ownGirocardFeeRate = 0.0039; // 0,39%
     const ownMastercardVisaFeeRate = 0.0089; // 0,89%
     const ownMaestroFeeRate = 0.0089; // 0,89%
@@ -582,7 +580,7 @@ function calculateTools() {
                 <tfoot>
                     <tr>
                         <td colspan="3"><strong>Gesamt monatliche Kosten</strong></td>
-                        <td>${totalMonthlyBrutto.toFixed(2)} €</td>
+                        <td>${totalMonthlyCost.toFixed(2)} €</td>
                     </tr>
                 </tfoot>
             </table>
@@ -598,17 +596,192 @@ function calculateTools() {
     displayResult(toolsResult);
 }
 
-/* Ergebnis anzeigen */
-function displayResult(content) {
-    // Schließe alle bestehenden Ergebnisse
-    const existingResult = document.querySelector('.result-section');
-    if (existingResult) {
-        existingResult.parentElement.removeChild(existingResult);
+/* TOOLS Rechner Funktion */
+function calculateTools() {
+    // Erfasse Auswahl der DISH Lösungen
+    const starterChecked = document.getElementById('starter').checked;
+    const reservationValue = document.getElementById('reservation').value;
+    const orderValue = document.getElementById('order').value;
+    const premiumValue = document.getElementById('premium').value;
+
+    let totalOneTimeNetto = 0;
+    let totalMonthlyNetto = 0;
+
+    let oneTimeDetails = '';
+    let monthlyDetails = '';
+
+    // DISH STARTER
+    if (starterChecked) {
+        totalOneTimeNetto += 69.00; // Einmalige Aktivierungsgebühr
+        totalMonthlyNetto += 10.00; // Monatliche Gebühr
+        oneTimeDetails += `
+            <tr>
+                <td>DISH STARTER Aktivierungsgebühr</td>
+                <td>1</td>
+                <td>69,00</td>
+                <td>69,00</td>
+            </tr>
+        `;
+        monthlyDetails += `
+            <tr>
+                <td>DISH STARTER</td>
+                <td>1</td>
+                <td>10,00</td>
+                <td>10,00</td>
+            </tr>
+        `;
     }
 
-    // Füge das neue Ergebnis dem aktiven Rechner hinzu
-    const activeCalculator = document.querySelector('.tab-content.active');
-    activeCalculator.insertAdjacentHTML('beforeend', content);
+    // DISH RESERVATION
+    if (reservationValue !== 'none') {
+        let reservationPrice = 0;
+        if (reservationValue === '36') {
+            reservationPrice = 34.90;
+        } else if (reservationValue === '12') {
+            reservationPrice = 44.00;
+        } else if (reservationValue === '3') {
+            reservationPrice = 49.00;
+        }
+        totalMonthlyNetto += reservationPrice;
+        oneTimeDetails += `
+            <tr>
+                <td>DISH RESERVATION Aktivierungsgebühr</td>
+                <td>1</td>
+                <td>69,00</td>
+                <td>69,00</td>
+            </tr>
+        `;
+        monthlyDetails += `
+            <tr>
+                <td>DISH RESERVATION (${reservationValue} Monate)</td>
+                <td>1</td>
+                <td>${reservationPrice.toFixed(2)}</td>
+                <td>${reservationPrice.toFixed(2)}</td>
+            </tr>
+        `;
+    }
+
+    // DISH ORDER
+    if (orderValue !== 'none') {
+        let orderPrice = 0;
+        let activationFee = 299.00; // Einmalige Aktivierungsgebühr
+        if (orderValue === '12') {
+            orderPrice = 49.90;
+        } else if (orderValue === '3') {
+            orderPrice = 59.90;
+        }
+        totalMonthlyNetto += orderPrice;
+        totalOneTimeNetto += activationFee;
+        oneTimeDetails += `
+            <tr>
+                <td>DISH ORDER Aktivierungsgebühr</td>
+                <td>1</td>
+                <td>299,00</td>
+                <td>299,00</td>
+            </tr>
+        `;
+        monthlyDetails += `
+            <tr>
+                <td>DISH ORDER (${orderValue} Monate)</td>
+                <td>1</td>
+                <td>${orderPrice.toFixed(2)}</td>
+                <td>${orderPrice.toFixed(2)}</td>
+            </tr>
+        `;
+    }
+
+    // DISH PREMIUM
+    if (premiumValue !== 'none') {
+        let premiumPrice = 0;
+        let activationFee = 279.00; // Einmalige Aktivierungsgebühr
+        if (premiumValue === '12') {
+            premiumPrice = 69.90;
+        } else if (premiumValue === '3') {
+            premiumPrice = 79.90;
+        }
+        totalMonthlyNetto += premiumPrice;
+        totalOneTimeNetto += activationFee;
+        oneTimeDetails += `
+            <tr>
+                <td>DISH PREMIUM Aktivierungsgebühr</td>
+                <td>1</td>
+                <td>279,00</td>
+                <td>279,00</td>
+            </tr>
+        `;
+        monthlyDetails += `
+            <tr>
+                <td>DISH PREMIUM (${premiumValue} Monate)</td>
+                <td>1</td>
+                <td>${premiumPrice.toFixed(2)}</td>
+                <td>${premiumPrice.toFixed(2)}</td>
+            </tr>
+        `;
+    }
+
+    // Berechnung der Mehrwertsteuer (19%)
+    const mwstRate = 0.19;
+    const totalOneTimeMwSt = totalOneTimeNetto * mwstRate;
+    const totalOneTimeBrutto = totalOneTimeNetto + totalOneTimeMwSt;
+
+    const totalMonthlyMwSt = totalMonthlyNetto * mwstRate;
+    const totalMonthlyBrutto = totalMonthlyNetto + totalMonthlyMwSt;
+
+    // Ergebnis anzeigen
+    let toolsResult = `
+        <h3>Ergebnisse:</h3>
+        <div class="result-section">
+            <h4>Einmalige Kosten</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produkt / Service</th>
+                        <th>Menge</th>
+                        <th>Preis pro Stück (€)</th>
+                        <th>Gesamtkosten (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${oneTimeDetails}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3"><strong>Gesamt einmalige Kosten</strong></td>
+                        <td>${totalOneTimeBrutto.toFixed(2)} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h4>Monatliche Kosten</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lizenz / Service</th>
+                        <th>Menge</th>
+                        <th>Preis pro Stück (€)</th>
+                        <th>Gesamtkosten (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${monthlyDetails}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3"><strong>Gesamt monatliche Kosten</strong></td>
+                        <td>${totalMonthlyCost.toFixed(2)} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h4>Zusammenfassung</h4>
+            <ul>
+                <li><strong>Einmalige Kosten:</strong> Netto: ${totalOneTimeNetto.toFixed(2)} €, MwSt.: ${totalOneTimeMwSt.toFixed(2)} €, Gesamtbetrag: ${totalOneTimeBrutto.toFixed(2)} €</li>
+                <li><strong>Monatliche Kosten:</strong> Netto: ${totalMonthlyNetto.toFixed(2)} €, MwSt.: ${totalMonthlyMwSt.toFixed(2)} €, Gesamtbetrag: ${totalMonthlyBrutto.toFixed(2)} €</li>
+            </ul>
+        </div>
+    `;
+
+    displayResult(toolsResult);
 }
 
 /* E-Mail senden Funktion */
@@ -632,7 +805,7 @@ Sehr geehrte/r ${customerName},
 
 vielen Dank für Ihr Interesse an unserem DISH PAY. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
 
-${payResultHTML}
+${stripHTML(payResultHTML)}
 
 ---
 Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH PAY einen echten Mehrwert bieten zu dürfen.
@@ -651,7 +824,7 @@ Sehr geehrte/r ${customerName},
 
 vielen Dank für Ihr Interesse an unserem DISH POS. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
 
-${posResultHTML}
+${stripHTML(posResultHTML)}
 
 ---
 Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unserem Kassensystem DISH POS einen echten Mehrwert bieten zu dürfen.
@@ -670,7 +843,7 @@ Sehr geehrte/r ${customerName},
 
 vielen Dank für Ihr Interesse an unseren DISH-Lösungen. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist. Alle Komponenten und Kosten sind detailliert aufgeführt, um Ihnen eine transparente Übersicht der einmaligen und monatlichen Kosten zu bieten.
 
-${toolsResultHTML}
+${stripHTML(toolsResultHTML)}
 
 ---
 Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen mit unseren DISH-Lösungen einen echten Mehrwert bieten zu dürfen.
@@ -686,13 +859,20 @@ Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecke
     // Öffne das Modal mit dem E-Mail-Inhalt
     document.getElementById('emailContent').innerHTML = `
         <h2>${emailSubject}</h2>
-        ${emailBody}
+        <pre>${emailBody}</pre>
     `;
     openModal();
 
     // Automatisches Öffnen des E-Mail-Clients mit formatierter E-Mail
     const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
     window.location.href = mailtoLink;
+}
+
+/* Funktion zum Entfernen von HTML-Tags */
+function stripHTML(html) {
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
 }
 
 /* Modal Funktionen */
@@ -755,4 +935,24 @@ function toggleRentalOptions() {
     } else {
         rentalOptions.style.display = 'none';
     }
+}
+
+/* Aktualisierung der Mietpreise basierend auf der Auswahl */
+function updateRentalPrices() {
+    // Hier können Sie zusätzliche Logik hinzufügen, falls benötigt
+    // Zum Beispiel, basierend auf der Hardware-Auswahl andere Mietoptionen anzeigen
+    // Momentan ist diese Funktion leer, da die Mietpreise bereits im HTML definiert sind
+}
+
+/* Ergebnis anzeigen */
+function displayResult(content) {
+    // Schließe alle bestehenden Ergebnisse
+    const existingResult = document.querySelector('.result-section');
+    if (existingResult) {
+        existingResult.parentElement.removeChild(existingResult);
+    }
+
+    // Füge das neue Ergebnis dem aktiven Rechner hinzu
+    const activeCalculator = document.querySelector('.tab-content.active');
+    activeCalculator.insertAdjacentHTML('beforeend', content);
 }
