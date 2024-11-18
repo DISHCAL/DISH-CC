@@ -245,7 +245,7 @@ function calculatePay() {
             <p><em>Hinweis: Die Wettbewerbergebühren wurden in die Berechnung einbezogen.</em></p>
         </div>
     `;
-
+    
     displayResult(payResult);
 }
 
