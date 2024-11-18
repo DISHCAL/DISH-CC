@@ -579,7 +579,7 @@ function calculateTools() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${monthlyLicensesDetails}
+                    ${monthlyDetails}
                 </tbody>
                 <tfoot>
                     <tr>
