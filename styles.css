@@ -212,6 +212,7 @@ input[type="checkbox"] {
 footer {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
     flex-wrap: wrap;
 }
@@ -230,6 +231,21 @@ footer button {
 
 footer button:hover {
     background-color: #e07b00;
+}
+
+.footer-note {
+    text-align: center;
+    margin-top: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.footer-note::before {
+    content: "© ";
+}
+
+.footer-note::after {
+    content: " 2024. Alle Rechte vorbehalten.";
 }
 
 /* Ergebnis anzeigen */
@@ -283,7 +299,7 @@ footer button:hover {
 }
 
 .competitor-section h4 {
-    color: #e67e22;
+    color: #ff8c00;
 }
 
 /* Modal Fenster */
@@ -364,7 +380,7 @@ footer button:hover {
 }
 
 .info-section h4 {
-    color: #e67e22;
+    color: #ff8c00;
     margin-bottom: 10px;
 }
 
@@ -419,5 +435,10 @@ footer button:hover {
 
     .modal-content {
         margin: 10% auto;
+    }
+
+    footer {
+        flex-direction: column;
+        align-items: center;
     }
 }
