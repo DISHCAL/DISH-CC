@@ -20,6 +20,9 @@ function openCalculator(event, calculatorType) {
 
     // Zeige den ausgewählten Rechner an
     document.getElementById(calculatorType).classList.add('active');
+
+    // Scroll to top of the calculator
+    window.scrollTo(0, 0);
 }
 
 /* Berechnungsfunktionen */
@@ -75,6 +78,8 @@ function calculatePay() {
     // Wettbewerber Gebührenberechnung (ausführlich)
     const calculationType = document.getElementById('calculationType').value;
     let competitorTotalFees = 0;
+    let competitorSavings = 0;
+
     if (calculationType === 'ausführlich') {
         const competitorGirocardFee = parseFloat(document.getElementById('competitorGirocardFee').value) / 100 || 0;
         const competitorMaestroFee = parseFloat(document.getElementById('competitorMaestroFee').value) / 100 || 0;
@@ -98,16 +103,14 @@ function calculatePay() {
     // Wettbewerber Gesamte Gebühren inklusive Transaktionen
     if (calculationType === 'ausführlich') {
         competitorTotalFees += transactionFee;
+        competitorSavings = competitorTotalFees - ownTotalFeesWithTransaction;
     }
-
-    // Ersparnis berechnen
-    const savings = calculationType === 'ausführlich' ? (competitorTotalFees - ownTotalFeesWithTransaction) : 0;
 
     // Berechnung der Mehrwertsteuer (19%)
     const mwstRate = 0.19;
     const ownTotalFeesBrutto = ownTotalFeesWithTransaction * (1 + mwstRate);
     const competitorTotalFeesBrutto = calculationType === 'ausführlich' ? competitorTotalFees * (1 + mwstRate) : 0;
-    const savingsBrutto = calculationType === 'ausführlich' ? savings * (1 + mwstRate) : 0;
+    const savingsBrutto = calculationType === 'ausführlich' ? competitorSavings * (1 + mwstRate) : 0;
 
     // Ergebnis anzeigen
     let payResult = `
@@ -209,11 +212,11 @@ function calculatePay() {
                         <td><strong>Gesamt Wettbewerber Gebühren</strong></td>
                         <td><strong>${competitorTotalFees.toFixed(2)}</strong></td>
                         <td><strong>${(competitorTotalFees * mwstRate).toFixed(2)}</strong></td>
-                        <td><strong>${competitorTotalFees * (1 + mwstRate).toFixed(2)}</strong></td>
+                        <td><strong>${(competitorTotalFees * (1 + mwstRate)).toFixed(2)}</strong></td>
                     </tr>
                 </tfoot>
             </table>
-    
+
             <h4>Ersparnis mit DISH PAY:</h4>
             <table>
                 <thead>
@@ -227,17 +230,17 @@ function calculatePay() {
                 <tbody>
                     <tr>
                         <td>Ersparnis Netto</td>
-                        <td>${savings.toFixed(2)}</td>
-                        <td>${(savings * mwstRate).toFixed(2)}</td>
-                        <td>${(savings * (1 + mwstRate)).toFixed(2)}</td>
+                        <td>${competitorSavings.toFixed(2)}</td>
+                        <td>${(competitorSavings * mwstRate).toFixed(2)}</td>
+                        <td>${(competitorSavings * (1 + mwstRate)).toFixed(2)}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td><strong>Gesamt Ersparnis</strong></td>
-                        <td><strong>${savings.toFixed(2)}</strong></td>
-                        <td><strong>${(savings * mwstRate).toFixed(2)}</strong></td>
-                        <td><strong>${(savings * (1 + mwstRate)).toFixed(2)}</strong></td>
+                        <td><strong>${competitorSavings.toFixed(2)}</strong></td>
+                        <td><strong>${(competitorSavings * mwstRate).toFixed(2)}</strong></td>
+                        <td><strong>${(competitorSavings * (1 + mwstRate)).toFixed(2)}</strong></td>
                     </tr>
                 </tfoot>
             </table>
@@ -683,7 +686,7 @@ Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecke
     // Öffne das Modal mit dem E-Mail-Inhalt
     document.getElementById('emailContent').innerHTML = `
         <h2>${emailSubject}</h2>
-        ${emailBody.replace(/\n/g, '<br>')}
+        ${emailBody}
     `;
     openModal();
 
@@ -753,17 +756,3 @@ function toggleRentalOptions() {
         rentalOptions.style.display = 'none';
     }
 }
-
-/* Mietdauer Preise aktualisieren (falls benötigt) */
-function updateRentalPrices() {
-    const hardwareSelect = document.getElementById('hardware');
-    const selectedHardware = hardwareSelect.options[hardwareSelect.selectedIndex];
-    const rentalPeriodSelect = document.getElementById('rentalPeriod');
-
-    // Die Mietpreise sind bereits in den Optionen festgelegt, daher ist keine dynamische Aktualisierung notwendig
-    // Diese Funktion kann erweitert werden, falls Mietpreise dynamisch angepasst werden sollen
-}
-
-/* Sprachwechsel Funktion (Entfernt) */
-// Die Sprachauswahl wurde entfernt, daher ist keine Funktion notwendig
-
