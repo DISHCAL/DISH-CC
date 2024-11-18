@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Ebene 1: Überschrift, Kundenname -->
+        <!-- Header mit DISH - Digitale Lösungen -->
         <header>
             <h1>DISH - Digitale Lösungen für die Gastronomie</h1>
             <div class="top-bar">
@@ -20,7 +20,7 @@
             </div>
         </header>
 
-        <!-- Ebene 2: Rechnerauswahl -->
+        <!-- Hauptbereich mit Tabs -->
         <main>
             <div class="tabs">
                 <button class="tab-link active" onclick="openCalculator(event, 'pay')">PAY</button>
@@ -69,7 +69,7 @@
 
                     <!-- Kauf oder Miete -->
                     <label for="purchaseOption">Kauf oder Miete: <span>*</span></label>
-                    <select id="purchaseOption" onchange="toggleRentalOptions(); updateRentalPrices();">
+                    <select id="purchaseOption" onchange="toggleRentalOptions();">
                         <option value="mieten">Mieten</option>
                         <option value="kaufen">Kaufen</option>
                     </select>
@@ -313,10 +313,11 @@
             </div>
         </main>
 
-        <!-- Ebene 3: Buttons -->
+        <!-- Footer mit Buttons und Hinweis -->
         <footer>
             <button onclick="calculate()">Berechnen</button>
             <button onclick="sendEmail()">E-Mail senden</button>
+            <p class="footer-note">© Dish 2024. Alle Rechte vorbehalten.</p>
         </footer>
     </div>
 
