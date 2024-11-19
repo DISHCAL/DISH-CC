@@ -1,13 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initialisierung: Zeige den PAY-Rechner standardmäßig an
-    document.querySelector('#pay').classList.add('active');
+    const payCalculator = document.querySelector('#pay');
+    if (payCalculator) {
+        payCalculator.classList.add('active');
+    }
+
     // Event-Listener für Tabs hinzufügen
-    document.querySelectorAll('.tab-link').forEach(button => {
+    const tabLinks = document.querySelectorAll('.tab-link');
+    tabLinks.forEach(button => {
+        if (!button) return; // Fehlerbehandlung für fehlende Buttons
         button.addEventListener('click', (event) => {
             const calculatorType = button.getAttribute('data-calculator');
+            if (!calculatorType) {
+                console.error('Calculator type not found!');
+                return;
+            }
             openCalculator(event, calculatorType);
         });
     });
+
+    // Event-Listener für Berechnen und E-Mail senden Buttons
+    const calculateButton = document.querySelector('footer button[onclick="calculate()"]');
+    const emailButton = document.querySelector('footer button[onclick="sendEmail()"]');
+
+    if (calculateButton) {
+        calculateButton.addEventListener('click', calculate);
+    }
+
+    if (emailButton) {
+        emailButton.addEventListener('click', sendEmail);
+    }
 });
 
 /* Rechnerumschaltung */
@@ -23,10 +45,13 @@ function openCalculator(event, calculatorType) {
     // Füge die aktive Klasse zum geklickten Tab-Button hinzu
     event.currentTarget.classList.add('active');
 
-    // Zeige den ausgewählten Rechner an
-    document.getElementById(calculatorType).classList.add('active');
+    // Zeige den entsprechenden Tab-Inhalt an
+    const activeContent = document.querySelector(`#${calculatorType}`);
+    if (activeContent) {
+        activeContent.classList.add('active');
+    }
 
-    // Scroll zum oberen Rand des Containers
+    // Optional: Scroll zum oberen Rand des Containers
     document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -684,11 +709,14 @@ Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecke
     }
 
     // Öffne das Modal mit dem E-Mail-Inhalt
-    document.getElementById('emailContent').innerHTML = `
-        <h2>${emailSubject}</h2>
-        <pre>${emailBody}</pre>
-    `;
-    openModal();
+    const emailContent = document.getElementById('emailContent');
+    if (emailContent) {
+        emailContent.innerHTML = `
+            <h2>${emailSubject}</h2>
+            <pre>${emailBody}</pre>
+        `;
+        openModal();
+    }
 
     // Automatisches Öffnen des E-Mail-Clients mit formatierter E-Mail
     const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
@@ -704,17 +732,23 @@ function stripHTML(html) {
 
 /* Modal Funktionen */
 function openModal() {
-    document.getElementById('emailModal').style.display = 'block';
+    const modal = document.getElementById('emailModal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
 }
 
 function closeModal() {
-    document.getElementById('emailModal').style.display = 'none';
+    const modal = document.getElementById('emailModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 // Schließe das Modal, wenn der Benutzer außerhalb des Inhalts klickt
 window.onclick = function(event) {
     const modal = document.getElementById('emailModal');
-    if (event.target == modal) {
+    if (modal && event.target == modal) {
         modal.style.display = 'none';
     }
 }
@@ -722,15 +756,19 @@ window.onclick = function(event) {
 /* Plus/Minus Funktionen für POS Rechner */
 function increment(id) {
     const input = document.getElementById(id);
-    let currentValue = parseInt(input.value) || 0;
-    input.value = currentValue + 1;
+    if (input) {
+        let currentValue = parseInt(input.value) || 0;
+        input.value = currentValue + 1;
+    }
 }
 
 function decrement(id) {
     const input = document.getElementById(id);
-    let currentValue = parseInt(input.value) || 0;
-    if (currentValue > 0) {
-        input.value = currentValue - 1;
+    if (input) {
+        let currentValue = parseInt(input.value) || 0;
+        if (currentValue > 0) {
+            input.value = currentValue - 1;
+        }
     }
 }
 
@@ -742,13 +780,13 @@ function toggleCalculationFields() {
     const competitorSection = document.getElementById('competitorSection');
 
     if (calculationType === 'ausführlich') {
-        maestroField.classList.remove('hidden');
-        businessCardField.classList.remove('hidden');
-        competitorSection.classList.remove('hidden');
+        if (maestroField) maestroField.classList.remove('hidden');
+        if (businessCardField) businessCardField.classList.remove('hidden');
+        if (competitorSection) competitorSection.classList.remove('hidden');
     } else {
-        maestroField.classList.add('hidden');
-        businessCardField.classList.add('hidden');
-        competitorSection.classList.add('hidden');
+        if (maestroField) maestroField.classList.add('hidden');
+        if (businessCardField) businessCardField.classList.add('hidden');
+        if (competitorSection) competitorSection.classList.add('hidden');
     }
 }
 
@@ -758,9 +796,13 @@ function toggleRentalOptions() {
     const rentalOptions = document.getElementById('rentalOptions');
 
     if (purchaseOption === "mieten") {
-        rentalOptions.style.display = 'block';
+        if (rentalOptions) {
+            rentalOptions.style.display = 'block';
+        }
     } else {
-        rentalOptions.style.display = 'none';
+        if (rentalOptions) {
+            rentalOptions.style.display = 'none';
+        }
     }
 }
 
@@ -780,5 +822,7 @@ function displayResult(content) {
 
     // Füge das neue Ergebnis dem aktiven Rechner hinzu
     const activeCalculator = document.querySelector('.tab-content.active');
-    activeCalculator.insertAdjacentHTML('beforeend', content);
+    if (activeCalculator) {
+        activeCalculator.insertAdjacentHTML('beforeend', content);
+    }
 }
