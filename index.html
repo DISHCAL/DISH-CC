@@ -79,7 +79,7 @@
                     <!-- Hardware Auswahl -->
                     <div id="hardwareOptions">
                         <label for="hardware">Hardware auswählen: <span>*</span></label>
-                        <select id="hardware">
+                        <select id="hardware" onchange="updateSimServiceFee();">
                             <!-- Optionen werden dynamisch durch JavaScript geladen -->
                         </select>
                     </div>
@@ -144,7 +144,8 @@
                         <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
                         <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
                         <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
-                        <li><b>SIM/Service-Gebühr:</b> 3,90 € pro Monat</li>
+                        <li><b>SIM/Service-Gebühr:</b> 3,90 € pro Monat (bei Kauf, außer Moto G14: 7,90 €)</li>
+                        <li><b>Keine SIM/Service-Gebühren bei Miete</b></li>
                     </ul>
                 </div>
             </div>
@@ -393,9 +394,6 @@
     <div id="offerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div class="notice">
-                <p>Kopieren Sie das Angebot, klicken Sie auf "E-Mail senden" und fügen Sie es in Ihr E-Mail-Programm ein.</p>
-            </div>
             <div id="offerContent"></div>
             <button onclick="copyOfferToClipboard()">Angebot kopieren</button>
             <button onclick="openEmailClient()">E-Mail senden</button>
