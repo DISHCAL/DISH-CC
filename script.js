@@ -311,9 +311,29 @@ function calculatePay() {
         </table>
         ${competitorContent}
         ${savingsContent}
+        ${getFeeNotes()}
     `;
 
     displayResult(resultContent);
+}
+
+// Funktion zum Abrufen des Gebührenhinweises
+function getFeeNotes() {
+    return `
+    <div class="info-section">
+        <h4>Hinweis zu den Gebühren:</h4>
+        <ul>
+            <li><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
+            <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
+            <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
+            <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
+            <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
+            <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+            <li><b>SIM/Service-Gebühr:</b> 3,90 € pro Monat (bei Kauf)</li>
+            <li><b>Keine SIM/Service-Gebühren bei Miete</b></li>
+        </ul>
+    </div>
+    `;
 }
 
 // POS Berechnung
@@ -735,27 +755,28 @@ function sendEmail() {
     }
 
     var offerContent = `
-    Sehr geehrte/r ${customerName},
+Sehr geehrte/r ${customerName},
 
-    vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
+vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
 
-    ${bodyContent}
+${bodyContent}
 
-    ---
+---
 
-    Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
 
-    Mit freundlichen Grüßen,
-    Ihr DISH Team
+Mit freundlichen Grüßen,
 
-    Rechtlicher Hinweis:
-    Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
+Ihr DISH Team
+
+**Rechtlicher Hinweis:**
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
     `;
 
     // Angebot im Modal anzeigen
     var offerModal = document.getElementById('offerModal');
     var offerContentDiv = document.getElementById('offerContent');
-    offerContentDiv.innerHTML = offerContent;
+    offerContentDiv.innerText = offerContent;
     offerModal.style.display = 'block';
 }
 
