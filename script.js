@@ -32,7 +32,7 @@ function populateHardwareOptions() {
         {
             name: 'S1F2 Terminal',
             purchasePrice: 499.00,
-            rentPrices: { '12': 44.90, '36': 18.90, '60': 14.90 }
+            rentPrices: { '12': 34.90, '36': 18.90, '60': 14.90 }
         },
         {
             name: 'V400C Terminal',
@@ -42,7 +42,7 @@ function populateHardwareOptions() {
         {
             name: 'Moto G14 Terminal',
             purchasePrice: 119.00,
-            rentPrices: { '12': 7.90 }
+            rentPrices: {} // Keine Mietoptionen
         },
         {
             name: 'Tap2Pay Lizenz',
@@ -61,14 +61,25 @@ function populateHardwareOptions() {
             optionElement.text = option.name + ' - Kauf: ' + option.purchasePrice.toFixed(2) + ' €';
             optionElement.setAttribute('data-price-once', option.purchasePrice);
         } else if (purchaseOption === 'mieten') {
-            optionElement.text = option.name;
-            optionElement.setAttribute('data-rent-prices', JSON.stringify(option.rentPrices));
+            if (Object.keys(option.rentPrices).length > 0) {
+                optionElement.text = option.name;
+                optionElement.setAttribute('data-rent-prices', JSON.stringify(option.rentPrices));
+            } else {
+                // Gerät nicht verfügbar zur Miete
+                return;
+            }
+        }
+
+        // Zusätzliche Datenattribute für spezielle Gebühren
+        if (option.name === 'Moto G14 Terminal') {
+            optionElement.setAttribute('data-sim-fee', '7.90');
         }
 
         hardwareSelect.add(optionElement);
     });
 
     updateRentalPrices();
+    updateSimServiceFee();
 }
 
 // Berechnungsfunktion
@@ -152,18 +163,29 @@ function calculatePay() {
     var hardwareMonthly = 0;
     var oneTimeCosts = 0;
 
+    var simServiceFee = 0;
+
     if (purchaseOption === 'kaufen') {
         hardwareCost = parseFloat(hardwareSelect.options[hardwareSelect.selectedIndex].getAttribute('data-price-once')) || 0;
         oneTimeCosts += hardwareCost;
+
+        // SIM/Service-Gebühr beim Kauf
+        if (hardwareName === 'Moto G14 Terminal') {
+            simServiceFee = 7.90;
+        } else if (hardwareName === 'Tap2Pay Lizenz') {
+            simServiceFee = 0; // Keine SIM/Service-Gebühr
+        } else {
+            simServiceFee = 3.90;
+        }
     } else {
         var rentalPeriodSelect = document.getElementById('rentalPeriod');
         var rentalPeriod = rentalPeriodSelect.value;
         var hardwareMonthlyPrice = parseFloat(rentalPeriodSelect.options[rentalPeriodSelect.selectedIndex].text.split(' - ')[1].replace(' €/Monat', '').replace(',', '.')) || 0;
         hardwareMonthly = hardwareMonthlyPrice;
-    }
 
-    // SIM/Service-Gebühr
-    var simServiceFee = 3.90;
+        // Keine SIM/Service-Gebühr bei Miete
+        simServiceFee = 0;
+    }
 
     // Gesamte monatliche Gebühren
     var totalMonthlyFees = hardwareMonthly + simServiceFee + totalFees;
@@ -184,7 +206,7 @@ function calculatePay() {
     // Wettbewerbergebühren berechnen, falls angegeben
     var competitorContent = '';
     var competitorTotalFees = 0;
-    if (document.getElementById('competitorGirocardFee').value || document.getElementById('competitorMastercardVisaFee').value) {
+    if (document.getElementById('competitorGirocardFee').value || document.getElementById('competitorMastercardVisaFee').value || document.getElementById('competitorMaestroFee').value || document.getElementById('competitorBusinessCardFee').value) {
         var competitorGirocardFeePercent = parseFloat(document.getElementById('competitorGirocardFee').value) || 0;
         var competitorMastercardVisaFeePercent = parseFloat(document.getElementById('competitorMastercardVisaFee').value) || 0;
         var competitorMaestroFeePercent = parseFloat(document.getElementById('competitorMaestroFee').value) || 0;
@@ -265,10 +287,12 @@ function calculatePay() {
                     <td>${hardwareMonthly.toFixed(2)} / Monat</td>
                 </tr>
                 `}
+                ${simServiceFee > 0 ? `
                 <tr>
                     <td>SIM/Service-Gebühr</td>
                     <td>${simServiceFee.toFixed(2)} / Monat</td>
                 </tr>
+                ` : ''}
                 <tr>
                     <td>Kartenumsatzgebühren</td>
                     <td>${(totalFees).toFixed(2)} / Monat</td>
@@ -662,7 +686,7 @@ function updateRentalPrices() {
     var rentalPeriodSelect = document.getElementById('rentalPeriod');
 
     var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
-    var rentPrices = JSON.parse(selectedOption.getAttribute('data-rent-prices'));
+    var rentPrices = JSON.parse(selectedOption.getAttribute('data-rent-prices') || '{}');
 
     rentalPeriodSelect.innerHTML = '';
 
@@ -672,6 +696,14 @@ function updateRentalPrices() {
         option.text = period + ' Monate - ' + rentPrices[period] + ' €/Monat';
         rentalPeriodSelect.add(option);
     }
+}
+
+function updateSimServiceFee() {
+    var hardwareSelect = document.getElementById('hardware');
+    var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
+    var simFee = parseFloat(selectedOption.getAttribute('data-sim-fee')) || 0;
+
+    // Aktualisiere die SIM/Service-Gebühr-Anzeige, falls nötig
 }
 
 // E-Mail senden
@@ -703,27 +735,27 @@ function sendEmail() {
     }
 
     var offerContent = `
-Sehr geehrte/r ${customerName},
+    Sehr geehrte/r ${customerName},
 
-vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
+    vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
 
-${bodyContent}
+    ${bodyContent}
 
----
+    ---
 
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
+    Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
 
-Mit freundlichen Grüßen,
-Ihr DISH Team
+    Mit freundlichen Grüßen,
+    Ihr DISH Team
 
-Rechtlicher Hinweis:
-Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
+    Rechtlicher Hinweis:
+    Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
     `;
 
     // Angebot im Modal anzeigen
     var offerModal = document.getElementById('offerModal');
     var offerContentDiv = document.getElementById('offerContent');
-    offerContentDiv.innerText = offerContent;
+    offerContentDiv.innerHTML = offerContent;
     offerModal.style.display = 'block';
 }
 
@@ -751,11 +783,21 @@ function copyOfferToClipboard() {
     document.body.removeChild(textarea);
 }
 
-// Öffnet das E-Mail-Programm mit vorausgefülltem Betreff
+// Öffnet das E-Mail-Programm mit vorausgefülltem Betreff und Inhalt
 function openEmailClient() {
-    var subject = document.querySelector('#offerModal h2').innerText;
+    var subject = '';
+    var activeTab = document.querySelector('.tab-link.active').getAttribute('data-calculator');
 
-    var mailtoLink = 'mailto:?subject=' + encodeURIComponent(subject);
+    if (activeTab === 'pay') {
+        subject = 'Ihr DISH PAY Angebot';
+    } else if (activeTab === 'pos') {
+        subject = 'Ihr DISH POS Angebot';
+    } else if (activeTab === 'tools') {
+        subject = 'Ihr DISH TOOLS Angebot';
+    }
+
+    var offerContent = document.getElementById('offerContent').innerText;
+    var mailtoLink = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(offerContent);
     window.location.href = mailtoLink;
 }
 
