@@ -1,38 +1,27 @@
 /* Allgemeine Stile */
-* {
-    box-sizing: border-box;
+body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: #f9f9f9;
-    color: #333;
-    line-height: 1.6;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 960px;
     margin: 0 auto;
     padding: 20px;
 }
 
 /* Header Stile */
 header {
-    background-color: #ff8c00; /* Dunkelorange */
-    color: #fff;
+    background-color: #f5f5f5;
     padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .header-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
 }
 
 .header-content .logo {
@@ -41,170 +30,79 @@ header {
 }
 
 .header-content h1 {
-    font-size: 26px;
-    text-align: center;
-    flex: 1 1 300px;
+    font-size: 24px;
+    margin: 0;
 }
 
 /* Top Bar Stile */
 .top-bar {
-    margin-top: 15px;
-    display: flex;
-    justify-content: flex-end;
+    margin-top: 10px;
+    text-align: right;
 }
 
 .customer-input label {
     margin-right: 10px;
-    font-weight: bold;
 }
 
 .customer-input input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 5px;
 }
 
 /* Tabs Stile */
 .tabs {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 20px 0;
 }
 
 .tab-link {
-    background-color: #ccc;
-    color: #333;
-    border: none;
     padding: 10px 20px;
-    margin: 5px;
-    border-radius: 5px;
+    background-color: #ddd;
+    border: none;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.tab-link:hover {
-    background-color: #b3b3b3;
-    transform: translateY(-2px);
 }
 
 .tab-link.active {
-    background-color: #ff8c00;
+    background-color: #f7941d; /* Orange Farbe */
     color: #fff;
-    transform: translateY(-2px);
 }
 
 /* Tab Content Stile */
 .tab-content {
     display: none;
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-content.active {
     display: block;
 }
 
-/* Formulare Stile */
+/* Formular Stile */
 form label {
     display: block;
-    margin-top: 15px;
-    font-weight: bold;
+    margin-top: 10px;
 }
 
 form input[type="number"],
 form input[type="text"],
 form select {
     width: 100%;
-    padding: 8px;
+    padding: 5px;
     margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
 }
 
 form input[type="checkbox"] {
     margin-left: 10px;
-    transform: scale(1.2);
 }
 
 .hidden {
     display: none;
 }
 
-/* Info-Section Stile */
-.info-section {
-    background-color: #fff8e1;
-    border-left: 4px solid #ff8c00;
-    padding: 15px 20px;
-    border-radius: 4px;
-    margin-top: 20px;
-}
-
-.info-section h4 {
-    color: #ff8c00;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.info-section ul {
-    list-style-type: disc;
-    margin-left: 20px;
-    font-size: 16px;
-}
-
-.info-section ul li {
-    margin-bottom: 8px;
-}
-
-/* Wettbewerber-Section Stile */
-.competitor-section {
-    margin-top: 20px;
-    padding: 15px 20px;
-    background-color: #f1f1f1;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-}
-
-.competitor-section h4 {
-    color: #ff8c00;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.competitor-section label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-.competitor-section input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Lizenz-Section Stile */
-.license-section {
-    margin-top: 10px;
-}
-
-.license-section label {
-    font-weight: bold;
-}
-
 /* Hardware-Item Stile */
 .hardware-item {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     margin-top: 10px;
 }
 
@@ -218,128 +116,37 @@ form input[type="checkbox"] {
 }
 
 .quantity-controls button {
-    background-color: #ff8c00;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    margin: 0 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.quantity-controls button:hover {
-    background-color: #e07b00;
-    transform: translateY(-1px);
+    padding: 5px 10px;
 }
 
 .quantity-controls input {
     width: 50px;
     text-align: center;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin: 0 5px;
 }
 
-/* Tools-Section Stile */
-.tools-section {
-    margin-top: 15px;
-}
-
-.tools-section label {
-    font-weight: bold;
+/* Info-Section Stile */
+.info-section {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-top: 20px;
 }
 
 /* Footer Stile */
 footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 30px;
-    flex-wrap: wrap;
+    margin-top: 20px;
+    text-align: center;
 }
 
 footer button {
-    background-color: #ff8c00; /* Dunkelorange */
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    margin: 10px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-footer button:hover {
-    background-color: #e07b00;
-    transform: translateY(-2px);
+    padding: 10px 20px;
+    margin: 0 10px;
 }
 
 .footer-note {
-    text-align: center;
-    margin-top: 15px;
-    color: #555;
-    font-size: 14px;
-    width: 100%;
-}
-
-/* Ergebnis-Section Stile */
-.result-section {
-    margin-top: 25px;
-}
-
-.result-section h4 {
-    margin-bottom: 15px;
-    color: #ff8c00;
-    font-size: 18px;
-}
-
-.result-section ul {
-    list-style-type: none;
     margin-top: 10px;
-}
-
-.result-section ul li {
-    margin-bottom: 8px;
-    font-size: 16px;
-}
-
-.result-section table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-.result-section table th,
-.result-section table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-    font-size: 16px;
-}
-
-.result-section table th {
-    background-color: #ff8c00;
-    color: #fff;
-}
-
-.result-section table tfoot td {
-    font-weight: bold;
-}
-
-.result-section pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    background-color: #f9f9f9;
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    overflow-x: auto;
-    font-size: 16px;
+    font-size: 12px;
+    color: #777;
 }
 
 /* Modal Fenster Stile */
@@ -359,74 +166,4 @@ footer button:hover {
     background-color: #fff;
     margin: 5% auto;
     padding: 25px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 800px;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.close {
-    color: #aaa;
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .header-content .logo {
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
-
-    .tabs {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .tab-link {
-        width: 100%;
-        text-align: center;
-        margin: 5px 0;
-    }
-
-    .hardware-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .quantity-controls {
-        margin-top: 8px;
-    }
-
-    .customer-input input {
-        width: 100%;
-    }
-
-    footer {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer-note {
-        margin-top: 25px;
-    }
-
-    .modal-content {
-        margin: 15% auto;
-    }
-}
+    border-radius: 8px
