@@ -95,23 +95,44 @@
                         </select>
                     </div>
 
+                    <!-- Rabatt -->
+                    <h3>Rabatt</h3>
+                    <label for="discountTypePay">Rabattart:</label>
+                    <select id="discountTypePay" onchange="toggleDiscountFields('pay')">
+                        <option value="none">Kein Rabatt</option>
+                        <option value="freeMonths">Monatlich freie Monate</option>
+                        <option value="oneTimeAmount">Einmaliger freier Betrag</option>
+                    </select>
+
+                    <div id="freeMonthsFieldPay" class="hidden">
+                        <label for="freeMonthsPay">Anzahl freier Monate:</label>
+                        <input type="number" id="freeMonthsPay" min="0">
+                    </div>
+
+                    <div id="oneTimeAmountFieldPay" class="hidden">
+                        <label for="oneTimeAmountPay">Einmaliger freier Betrag (€):</label>
+                        <input type="number" id="oneTimeAmountPay" min="0" step="0.01">
+                    </div>
+
                     <!-- Wettbewerber Gebühren -->
                     <div id="competitorSection" class="competitor-section hidden">
                         <h4>Wettbewerber Gebühren:</h4>
-                        <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
-                        <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
+                        <div class="competitor-fields">
+                            <label for="competitorGirocardFee">Girocard Gebühr (%):</label>
+                            <input type="number" id="competitorGirocardFee" placeholder="z.B. 0.39" step="0.01" min="0">
 
-                        <div id="competitorMaestroField" class="hidden">
-                            <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
-                            <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
-                        </div>
+                            <div id="competitorMaestroField">
+                                <label for="competitorMaestroFee">Maestro / VPAY Gebühr (%):</label>
+                                <input type="number" id="competitorMaestroFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                            </div>
 
-                        <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
-                        <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
+                            <label for="competitorMastercardVisaFee">Mastercard / VISA Gebühr (%):</label>
+                            <input type="number" id="competitorMastercardVisaFee" placeholder="z.B. 0.89" step="0.01" min="0">
 
-                        <div id="competitorBusinessCardField" class="hidden">
-                            <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
-                            <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+                            <div id="competitorBusinessCardField">
+                                <label for="competitorBusinessCardFee">Business Card Gebühr (%):</label>
+                                <input type="number" id="competitorBusinessCardFee" placeholder="z.B. 2.89" step="0.01" min="0">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -126,6 +147,7 @@
                         <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
                         <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
                         <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
+                        <li><b>SIM/Service-Gebühr:</b> 5,00 € pro Monat</li>
                     </ul>
                 </div>
             </div>
@@ -145,6 +167,7 @@
                             <button type="button" onclick="increment('sunmiScreen')">+</button>
                         </div>
                     </div>
+                    <!-- Weitere Hardware-Artikel -->
                     <!-- TSE Hardwarenutzung für 5 Jahre -->
                     <div class="hardware-item">
                         <label for="tseUsage">TSE Hardwarenutzung für 5 Jahre (€ 159,00):</label>
@@ -176,9 +199,9 @@
                     <div class="hardware-item">
                         <label for="mobileDevicePos">Mobiles Handgerät (€ 220,00):</label>
                         <div class="quantity-controls">
-                            <button type="button" onclick="decrement('mobileDevicePos')">-</button>
-                            <input type="number" id="mobileDevicePos" value="0" min="0">
-                            <button type="button" onclick="increment('mobileDevicePos')">+</button>
+                            <button type="button" onclick="decrement('mobileDevicePos'); updateMobileLicenses()">-</button>
+                            <input type="number" id="mobileDevicePos" value="0" min="0" onchange="updateMobileLicenses()">
+                            <button type="button" onclick="increment('mobileDevicePos'); updateMobileLicenses()">+</button>
                         </div>
                     </div>
                     <!-- Epson Drucker -->
@@ -226,8 +249,6 @@
                             <button type="button" onclick="increment('switchLite')">+</button>
                         </div>
                     </div>
-                    <!-- Optionales Zubehör -->
-                    <h3>Optionales Zubehör</h3>
                     <!-- Kassenschublade -->
                     <div class="hardware-item">
                         <label for="cashDrawer">Kassenschublade (€ 69,00):</label>
@@ -235,24 +256,6 @@
                             <button type="button" onclick="decrement('cashDrawer')">-</button>
                             <input type="number" id="cashDrawer" value="0" min="0">
                             <button type="button" onclick="increment('cashDrawer')">+</button>
-                        </div>
-                    </div>
-                    <!-- QR Ordering -->
-                    <div class="hardware-item">
-                        <label for="qrOrdering">QR Ordering (€ 49,00):</label>
-                        <div class="quantity-controls">
-                            <button type="button" onclick="decrement('qrOrdering')">-</button>
-                            <input type="number" id="qrOrdering" value="0" min="0">
-                            <button type="button" onclick="increment('qrOrdering')">+</button>
-                        </div>
-                    </div>
-                    <!-- DISH Aggregator -->
-                    <div class="hardware-item">
-                        <label for="dishAggregator">DISH Aggregator (API für Lieferando, UberEats etc.) (€ 59,00):</label>
-                        <div class="quantity-controls">
-                            <button type="button" onclick="decrement('dishAggregator')">-</button>
-                            <input type="number" id="dishAggregator" value="0" min="0">
-                            <button type="button" onclick="increment('dishAggregator')">+</button>
                         </div>
                     </div>
 
@@ -275,12 +278,40 @@
                         <label for="tapToPay">Tap to Pay Lizenz (€ 7,50 / Monat):</label>
                         <input type="checkbox" id="tapToPay">
                     </div>
+                    <div class="license-section">
+                        <label for="qrOrderingLicense">QR Ordering (€ 49,00 / Monat):</label>
+                        <input type="checkbox" id="qrOrderingLicense">
+                    </div>
+                    <div class="license-section">
+                        <label for="dishAggregatorLicense">DISH Aggregator (€ 59,00 / Monat):</label>
+                        <input type="checkbox" id="dishAggregatorLicense">
+                    </div>
+                    <!-- Zusatzlizenz für mobile Geräte -->
+                    <div class="license-section">
+                        <label for="mobileDeviceLicense">Zusatzlizenz für mobile Geräte (€ 29,00 / Monat pro Gerät):</label>
+                        <input type="number" id="mobileDeviceLicense" value="0" min="0" readonly>
+                    </div>
+                    <div id="mobileLicenseWarning" class="info-message hidden">
+                        Die Anzahl der mobilen Gerätelizenzen wurde automatisch an die Anzahl der mobilen Handgeräte angepasst.
+                    </div>
 
-                    <!-- Rabatt Eingabe -->
+                    <!-- Rabatt -->
                     <h3>Rabatt</h3>
-                    <div class="discount-section">
-                        <label for="discountPercent">Rabatt (%):</label>
-                        <input type="number" id="discountPercent" placeholder="z.B. 10" step="0.01" min="0" max="100">
+                    <label for="discountTypePos">Rabattart:</label>
+                    <select id="discountTypePos" onchange="toggleDiscountFields('pos')">
+                        <option value="none">Kein Rabatt</option>
+                        <option value="freeMonths">Monatlich freie Monate</option>
+                        <option value="oneTimeAmount">Einmaliger freier Betrag</option>
+                    </select>
+
+                    <div id="freeMonthsFieldPos" class="hidden">
+                        <label for="freeMonthsPos">Anzahl freier Monate:</label>
+                        <input type="number" id="freeMonthsPos" min="0">
+                    </div>
+
+                    <div id="oneTimeAmountFieldPos" class="hidden">
+                        <label for="oneTimeAmountPos">Einmaliger freier Betrag (€):</label>
+                        <input type="number" id="oneTimeAmountPos" min="0" step="0.01">
                     </div>
                 </form>
             </div>
@@ -328,6 +359,32 @@
                             <option value="3">3 Monate - 79,90 €</option>
                         </select>
                     </div>
+
+                    <!-- Installationsgebühren -->
+                    <h3>Installationsgebühren</h3>
+                    <div class="tools-section">
+                        <label for="installationFee">Installation (€ 99,00 einmalig):</label>
+                        <input type="checkbox" id="installationFee">
+                    </div>
+
+                    <!-- Rabatt -->
+                    <h3>Rabatt</h3>
+                    <label for="discountTypeTools">Rabattart:</label>
+                    <select id="discountTypeTools" onchange="toggleDiscountFields('tools')">
+                        <option value="none">Kein Rabatt</option>
+                        <option value="freeMonths">Monatlich freie Monate</option>
+                        <option value="oneTimeAmount">Einmaliger freier Betrag</option>
+                    </select>
+
+                    <div id="freeMonthsFieldTools" class="hidden">
+                        <label for="freeMonthsTools">Anzahl freier Monate:</label>
+                        <input type="number" id="freeMonthsTools" min="0">
+                    </div>
+
+                    <div id="oneTimeAmountFieldTools" class="hidden">
+                        <label for="oneTimeAmountTools">Einmaliger freier Betrag (€):</label>
+                        <input type="number" id="oneTimeAmountTools" min="0" step="0.01">
+                    </div>
                 </form>
             </div>
         </main>
@@ -336,7 +393,7 @@
         <footer>
             <button onclick="calculate()">Berechnen</button>
             <button onclick="sendEmail()">E-Mail senden</button>
-            <p class="footer-note">© Dish 2024. Alle Rechte vorbehalten.</p>
+            <p class="footer-note">© DISH 2024. Alle Rechte vorbehalten.</p>
         </footer>
     </div>
 
@@ -344,7 +401,9 @@
     <div id="offerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <p>Bitte klicken Sie auf "Angebot kopieren", um das Angebot in die Zwischenablage zu kopieren. Anschließend können Sie auf "E-Mail senden" klicken, um Ihr E-Mail-Programm zu öffnen. Fügen Sie dann das Angebot in die E-Mail ein (Strg+V oder Rechtsklick -> Einfügen).</p>
+            <div class="notice">
+                <p>Kopieren Sie das Angebot, klicken Sie auf "E-Mail senden" und fügen Sie es in Ihr E-Mail-Programm ein.</p>
+            </div>
             <div id="offerContent"></div>
             <button onclick="copyOfferToClipboard()">Angebot kopieren</button>
             <button onclick="openEmailClient()">E-Mail senden</button>
