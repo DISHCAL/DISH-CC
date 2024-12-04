@@ -159,16 +159,6 @@ form input[type="checkbox"] {
     display: none;
 }
 
-/* Rabattfeld Stile */
-#freeMonthsFieldPay,
-#oneTimeAmountFieldPay,
-#freeMonthsFieldPos,
-#oneTimeAmountFieldPos,
-#freeMonthsFieldTools,
-#oneTimeAmountFieldTools {
-    margin-top: 10px;
-}
-
 h3 {
     border-bottom: 2px solid #e0e0e0;
     padding-bottom: 10px;
