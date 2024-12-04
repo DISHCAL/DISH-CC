@@ -73,6 +73,10 @@ function populateHardwareOptions() {
         // Zusätzliche Datenattribute für spezielle Gebühren
         if (option.name === 'Moto G14 Terminal') {
             optionElement.setAttribute('data-sim-fee', '7.90');
+        } else if (option.name === 'Tap2Pay Lizenz') {
+            optionElement.setAttribute('data-sim-fee', '0.00');
+        } else {
+            optionElement.setAttribute('data-sim-fee', '3.90');
         }
 
         hardwareSelect.add(optionElement);
@@ -170,17 +174,11 @@ function calculatePay() {
         oneTimeCosts += hardwareCost;
 
         // SIM/Service-Gebühr beim Kauf
-        if (hardwareName === 'Moto G14 Terminal') {
-            simServiceFee = 7.90;
-        } else if (hardwareName === 'Tap2Pay Lizenz') {
-            simServiceFee = 0; // Keine SIM/Service-Gebühr
-        } else {
-            simServiceFee = 3.90;
-        }
+        simServiceFee = parseFloat(hardwareSelect.options[hardwareSelect.selectedIndex].getAttribute('data-sim-fee')) || 0;
     } else {
         var rentalPeriodSelect = document.getElementById('rentalPeriod');
         var rentalPeriod = rentalPeriodSelect.value;
-        var hardwareMonthlyPrice = parseFloat(rentalPeriodSelect.options[rentalPeriodSelect.selectedIndex].text.split(' - ')[1].replace(' €/Monat', '').replace(',', '.')) || 0;
+        var hardwareMonthlyPrice = parseFloat(rentalPeriodSelect.options[rentalPeriodSelect.selectedIndex].getAttribute('data-monthly-price')) || 0;
         hardwareMonthly = hardwareMonthlyPrice;
 
         // Keine SIM/Service-Gebühr bei Miete
@@ -216,7 +214,7 @@ function calculatePay() {
         var competitorMastercardVisaFee = mastercardVisaVolume * (competitorMastercardVisaFeePercent / 100);
         var competitorMaestroFee = maestroVolume * (competitorMaestroFeePercent / 100);
         var competitorBusinessCardFee = businessCardVolume * (competitorBusinessCardFeePercent / 100);
-        var competitorTransactionFee = transactionFee; // Angenommen, gleiche Transaktionsgebühren
+        var competitorTransactionFee = 0; // Wettbewerber haben keine Transaktionsgebühren
 
         competitorTotalFees = competitorGirocardFee + competitorMastercardVisaFee + competitorMaestroFee + competitorBusinessCardFee + competitorTransactionFee;
 
@@ -246,10 +244,6 @@ function calculatePay() {
                         <tr>
                             <td>Business Card</td>
                             <td>${competitorBusinessCardFee.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Transaktionsgebühren</td>
-                            <td>${competitorTransactionFee.toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -713,7 +707,8 @@ function updateRentalPrices() {
     for (var period in rentPrices) {
         var option = document.createElement('option');
         option.value = period;
-        option.text = period + ' Monate - ' + rentPrices[period] + ' €/Monat';
+        option.text = period + ' Monate - ' + rentPrices[period].toFixed(2) + ' €/Monat';
+        option.setAttribute('data-monthly-price', rentPrices[period]);
         rentalPeriodSelect.add(option);
     }
 }
@@ -754,12 +749,17 @@ function sendEmail() {
         return;
     }
 
+    // Erstelle eine saubere Textversion für die E-Mail
+    var tempDiv = document.createElement('div');
+    tempDiv.innerHTML = bodyContent;
+    var textContent = tempDiv.innerText;
+
     var offerContent = `
 Sehr geehrte/r ${customerName},
 
 vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
 
-${bodyContent}
+${textContent}
 
 ---
 
@@ -769,14 +769,16 @@ Mit freundlichen Grüßen,
 
 Ihr DISH Team
 
-**Rechtlicher Hinweis:**
+Rechtlicher Hinweis:
 Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
     `;
 
     // Angebot im Modal anzeigen
     var offerModal = document.getElementById('offerModal');
     var offerContentDiv = document.getElementById('offerContent');
-    offerContentDiv.innerText = offerContent;
+    offerContentDiv.innerHTML = `
+        <pre>${offerContent}</pre>
+    `;
     offerModal.style.display = 'block';
 }
 
