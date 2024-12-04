@@ -2,16 +2,13 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="DISH - Digitale Lösungen für die Gastronomie">
     <title>DISH - Digitale Lösungen</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
         <!-- Header mit DISH Logo und Titel -->
-        <header role="banner" aria-label="Header mit Logo und Kundeneingabe">
+        <header>
             <div class="header-content">
                 <!-- Eingefügtes Logo -->
                 <img src="image.png" alt="Dish by Metro Logo" class="logo">
@@ -26,11 +23,11 @@
         </header>
 
         <!-- Hauptbereich mit Tabs -->
-        <main role="main">
+        <main>
             <div class="tabs">
-                <button class="tab-link active" data-calculator="pay">PAY</button>
-                <button class="tab-link" data-calculator="pos">POS</button>
-                <button class="tab-link" data-calculator="tools">TOOLS</button>
+                <button class="tab-link active" data-calculator="pay" onclick="openCalculator(event, 'pay')">PAY</button>
+                <button class="tab-link" data-calculator="pos" onclick="openCalculator(event, 'pos')">POS</button>
+                <button class="tab-link" data-calculator="tools" onclick="openCalculator(event, 'tools')">TOOLS</button>
             </div>
 
             <!-- PAY Rechner -->
@@ -83,10 +80,10 @@
                     <div id="hardwareOptions">
                         <label for="hardware">Hardware auswählen: <span>*</span></label>
                         <select id="hardware" onchange="updateRentalPrices()">
-                            <option value="S1F2" data-calculator="pay" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal - Kauf: 499,00 €</option>
-                            <option value="V400C" data-calculator="pay" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal - Kauf: 399,00 €</option>
-                            <option value="MotoG14" data-calculator="pay" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal - Kauf: 119,00 €</option>
-                            <option value="Tap2Pay" data-calculator="pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz - Kauf: 0 €</option>
+                            <option value="S1F2" data-price-once="499.00" data-price-12="44.90" data-price-36="18.90" data-price-60="14.90">S1F2 Terminal - Kauf: 499,00 €</option>
+                            <option value="V400C" data-price-once="399.00" data-price-12="39.90" data-price-36="16.90" data-price-60="12.90">V400C Terminal - Kauf: 399,00 €</option>
+                            <option value="MotoG14" data-price-once="119.00" data-price-12="7.90" data-price-36="0" data-price-60="0">Moto G14 Terminal - Kauf: 119,00 €</option>
+                            <option value="Tap2Pay" data-price-once="0" data-price-12="7.90" data-price-36="0" data-price-60="0">Tap2Pay Lizenz - Kauf: 0 €</option>
                         </select>
                     </div>
 
@@ -94,9 +91,7 @@
                     <div id="rentalOptions">
                         <label for="rentalPeriod">Mietdauer: <span>*</span></label>
                         <select id="rentalPeriod">
-                            <option value="12">12 Monate - 44,90 €/Monat</option>
-                            <option value="36">36 Monate - 18,90 €/Monat</option>
-                            <option value="60">60 Monate - 14,90 €/Monat</option>
+                            <!-- Optionen werden durch JavaScript aktualisiert -->
                         </select>
                     </div>
 
@@ -141,6 +136,7 @@
                 <form id="posForm">
                     <!-- Hardware Auswahl mit Plus/Minus Buttons -->
                     <h3>Hardware</h3>
+                    <!-- Bildschirm Sunmi -->
                     <div class="hardware-item">
                         <label for="sunmiScreen">Bildschirm Sunmi (€ 493,00):</label>
                         <div class="quantity-controls">
@@ -149,7 +145,7 @@
                             <button type="button" onclick="increment('sunmiScreen')">+</button>
                         </div>
                     </div>
-
+                    <!-- TSE Hardwarenutzung für 5 Jahre -->
                     <div class="hardware-item">
                         <label for="tseUsage">TSE Hardwarenutzung für 5 Jahre (€ 159,00):</label>
                         <div class="quantity-controls">
@@ -158,7 +154,7 @@
                             <button type="button" onclick="increment('tseUsage')">+</button>
                         </div>
                     </div>
-
+                    <!-- Menü-Eingabeservice -->
                     <div class="hardware-item">
                         <label for="menuInputService">Menü-Eingabeservice (€ 300,00):</label>
                         <div class="quantity-controls">
@@ -167,7 +163,7 @@
                             <button type="button" onclick="increment('menuInputService')">+</button>
                         </div>
                     </div>
-
+                    <!-- Einrichtungsservice vor Ort -->
                     <div class="hardware-item">
                         <label for="setupService">Einrichtungsservice vor Ort (€ 599,00):</label>
                         <div class="quantity-controls">
@@ -176,7 +172,7 @@
                             <button type="button" onclick="increment('setupService')">+</button>
                         </div>
                     </div>
-
+                    <!-- Mobiles Handgerät -->
                     <div class="hardware-item">
                         <label for="mobileDevicePos">Mobiles Handgerät (€ 220,00):</label>
                         <div class="quantity-controls">
@@ -185,7 +181,7 @@
                             <button type="button" onclick="increment('mobileDevicePos')">+</button>
                         </div>
                     </div>
-
+                    <!-- Epson Drucker -->
                     <div class="hardware-item">
                         <label for="epsonPrinter">Epson Drucker (€ 229,00):</label>
                         <div class="quantity-controls">
@@ -194,7 +190,7 @@
                             <button type="button" onclick="increment('epsonPrinter')">+</button>
                         </div>
                     </div>
-
+                    <!-- Ladestation für mobiles Handgerät -->
                     <div class="hardware-item">
                         <label for="chargingStation">Ladestation für mobiles Handgerät (€ 79,00):</label>
                         <div class="quantity-controls">
@@ -203,7 +199,7 @@
                             <button type="button" onclick="increment('chargingStation')">+</button>
                         </div>
                     </div>
-
+                    <!-- Access Point -->
                     <div class="hardware-item">
                         <label for="accessPoint">Access Point (€ 189,00):</label>
                         <div class="quantity-controls">
@@ -212,7 +208,7 @@
                             <button type="button" onclick="increment('accessPoint')">+</button>
                         </div>
                     </div>
-
+                    <!-- POS Router ER605 -->
                     <div class="hardware-item">
                         <label for="posRouter">POS Router ER605 (€ 55,00):</label>
                         <div class="quantity-controls">
@@ -221,7 +217,7 @@
                             <button type="button" onclick="increment('posRouter')">+</button>
                         </div>
                     </div>
-
+                    <!-- Switch Lite Ubiquiti UniFi -->
                     <div class="hardware-item">
                         <label for="switchLite">Switch Lite Ubiquiti UniFi (€ 107,00):</label>
                         <div class="quantity-controls">
@@ -230,9 +226,9 @@
                             <button type="button" onclick="increment('switchLite')">+</button>
                         </div>
                     </div>
-
                     <!-- Optionales Zubehör -->
                     <h3>Optionales Zubehör</h3>
+                    <!-- Kassenschublade -->
                     <div class="hardware-item">
                         <label for="cashDrawer">Kassenschublade (€ 69,00):</label>
                         <div class="quantity-controls">
@@ -241,7 +237,7 @@
                             <button type="button" onclick="increment('cashDrawer')">+</button>
                         </div>
                     </div>
-
+                    <!-- QR Ordering -->
                     <div class="hardware-item">
                         <label for="qrOrdering">QR Ordering (€ 49,00):</label>
                         <div class="quantity-controls">
@@ -250,7 +246,7 @@
                             <button type="button" onclick="increment('qrOrdering')">+</button>
                         </div>
                     </div>
-
+                    <!-- DISH Aggregator -->
                     <div class="hardware-item">
                         <label for="dishAggregator">DISH Aggregator (API für Lieferando, UberEats etc.) (€ 59,00):</label>
                         <div class="quantity-controls">
@@ -262,39 +258,31 @@
 
                     <!-- Monatliche Lizenzen und Services -->
                     <h3>Monatliche Lizenzen und Services</h3>
+                    <!-- Lizenzen -->
                     <div class="license-section">
                         <label for="mainLicensePos">Hauptlizenz Software (€ 69,00 / Monat):</label>
                         <input type="checkbox" id="mainLicensePos">
                     </div>
-
                     <div class="license-section">
                         <label for="datevApi">DATEV „MeinFiskal“ API (€ 25,00 / Monat):</label>
                         <input type="checkbox" id="datevApi">
                     </div>
-
                     <div class="license-section">
                         <label for="voucherFunction">Gutschein Funktion (€ 10,00 / Monat):</label>
                         <input type="checkbox" id="voucherFunction">
                     </div>
-
                     <div class="license-section">
                         <label for="tapToPay">Tap to Pay Lizenz (€ 7,50 / Monat):</label>
                         <input type="checkbox" id="tapToPay">
                     </div>
-                </form>
 
-                <!-- Hinweis zu den Gebühren -->
-                <div class="info-section">
-                    <h4>Hinweis zu den Gebühren:</h4>
-                    <ul>
-                        <li><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
-                        <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
-                        <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
-                        <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
-                        <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
-                        <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
-                    </ul>
-                </div>
+                    <!-- Rabatt Eingabe -->
+                    <h3>Rabatt</h3>
+                    <div class="discount-section">
+                        <label for="discountPercent">Rabatt (%):</label>
+                        <input type="number" id="discountPercent" placeholder="z.B. 10" step="0.01" min="0" max="100">
+                    </div>
+                </form>
             </div>
 
             <!-- TOOLS Rechner -->
@@ -303,7 +291,7 @@
                 <form id="toolsForm">
                     <!-- DISH Lösungen -->
                     <h3>DISH-Lösungen auf einen Blick</h3>
-                    
+
                     <!-- DISH STARTER -->
                     <div class="tools-section">
                         <label for="starter">DISH STARTER (€ 10,00 / Monat + 69,00 € einmalige Aktivierungsgebühr):</label>
@@ -352,12 +340,18 @@
         </footer>
     </div>
 
-    <!-- Modal für E-Mail -->
-    <div id="emailModal" class="modal">
+    <!-- Modal für Angebot -->
+    <div id="offerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div id="emailContent"></div>
+            <p>Bitte klicken Sie auf "Angebot kopieren", um das Angebot in die Zwischenablage zu kopieren. Anschließend können Sie auf "E-Mail senden" klicken, um Ihr E-Mail-Programm zu öffnen. Fügen Sie dann das Angebot in die E-Mail ein (Strg+V oder Rechtsklick -> Einfügen).</p>
+            <div id="offerContent"></div>
+            <button onclick="copyOfferToClipboard()">Angebot kopieren</button>
+            <button onclick="openEmailClient()">E-Mail senden</button>
         </div>
     </div>
+
+    <!-- Einbindung des Skripts -->
+    <script src="script.js"></script>
 </body>
 </html>
