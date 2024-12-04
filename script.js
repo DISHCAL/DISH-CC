@@ -311,25 +311,6 @@ function calculatePay() {
     displayResult(resultContent);
 }
 
-// Funktion zum Abrufen des Gebührenhinweises
-function getFeeNotes() {
-    return `
-    <div class="info-section">
-        <h4>Hinweis zu den Gebühren:</h4>
-        <ul>
-            <li><b>Transaktionspreis:</b> 0,06 € pro Transaktion</li>
-            <li><b>Girocard-Gebühr bis 10.000 € monatlich:</b> 0,39%</li>
-            <li><b>Girocard-Gebühr über 10.000 € monatlich:</b> 0,29%</li>
-            <li><b>Disagio Maestro / VPAY:</b> 0,89%</li>
-            <li><b>Disagio Mastercard/VISA Privatkunden:</b> 0,89%</li>
-            <li><b>Disagio Mastercard/VISA Business und NICHT-EWR-RAUM:</b> 2,89%</li>
-            <li><b>SIM/Service-Gebühr:</b> 3,90 € pro Monat (bei Kauf)</li>
-            <li><b>Keine SIM/Service-Gebühren bei Miete</b></li>
-        </ul>
-    </div>
-    `;
-}
-
 // POS Berechnung
 function calculatePos() {
     // Erfasse Hardware-Eingaben mit Mengen
@@ -489,8 +470,8 @@ function calculateTools() {
     if (starterChecked) {
         totalOnce += 69.00; // Aktivierungsgebühr
         totalMonthly += 10.00;
-        detailsOnce += '<tr><td>DISH STARTER Aktivierungsgebühr</td><td>1</td><td>69.00 €</td><td>69.00 €</td></tr>';
-        detailsMonthly += '<tr><td>DISH STARTER</td><td>1</td><td>10.00 €</td><td>10.00 €</td></tr>';
+        detailsOnce += '<tr><td>DISH STARTER Aktivierungsgebühr</td><td>1</td><td>69,00 €</td><td>69,00 €</td></tr>';
+        detailsMonthly += '<tr><td>DISH STARTER</td><td>1</td><td>10,00 €</td><td>10,00 €</td></tr>';
     }
 
     // Reservation
@@ -505,7 +486,7 @@ function calculateTools() {
         }
         totalOnce += 69.00; // Aktivierungsgebühr
         totalMonthly += reservationPrice;
-        detailsOnce += '<tr><td>DISH RESERVATION Aktivierungsgebühr</td><td>1</td><td>69.00 €</td><td>69.00 €</td></tr>';
+        detailsOnce += '<tr><td>DISH RESERVATION Aktivierungsgebühr</td><td>1</td><td>69,00 €</td><td>69,00 €</td></tr>';
         detailsMonthly += '<tr><td>DISH RESERVATION (' + reservationValue + ' Monate)</td><td>1</td><td>' + reservationPrice.toFixed(2) + ' €</td><td>' + reservationPrice.toFixed(2) + ' €</td></tr>';
     }
 
@@ -519,7 +500,7 @@ function calculateTools() {
         }
         totalOnce += 279.00; // Aktivierungsgebühr
         totalMonthly += orderPrice;
-        detailsOnce += '<tr><td>DISH ORDER Aktivierungsgebühr</td><td>1</td><td>279.00 €</td><td>279.00 €</td></tr>';
+        detailsOnce += '<tr><td>DISH ORDER Aktivierungsgebühr</td><td>1</td><td>279,00 €</td><td>279,00 €</td></tr>';
         detailsMonthly += '<tr><td>DISH ORDER (' + orderDurationValue + ' Monate)</td><td>1</td><td>' + orderPrice.toFixed(2) + ' €</td><td>' + orderPrice.toFixed(2) + ' €</td></tr>';
     }
 
@@ -533,7 +514,7 @@ function calculateTools() {
         }
         totalOnce += 299.00; // Aktivierungsgebühr
         totalMonthly += premiumPrice;
-        detailsOnce += '<tr><td>DISH PREMIUM Aktivierungsgebühr</td><td>1</td><td>299.00 €</td><td>299.00 €</td></tr>';
+        detailsOnce += '<tr><td>DISH PREMIUM Aktivierungsgebühr</td><td>1</td><td>299,00 €</td><td>299,00 €</td></tr>';
         detailsMonthly += '<tr><td>DISH PREMIUM (' + premiumDurationValue + ' Monate)</td><td>1</td><td>' + premiumPrice.toFixed(2) + ' €</td><td>' + premiumPrice.toFixed(2) + ' €</td></tr>';
     }
 
@@ -708,6 +689,24 @@ function toggleRentalOptions() {
     populateHardwareOptions();
 }
 
+function updateRentalPrices() {
+    var hardwareSelect = document.getElementById('hardware');
+    var rentalPeriodSelect = document.getElementById('rentalPeriod');
+
+    var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
+    var rentPrices = JSON.parse(selectedOption.getAttribute('data-rent-prices') || '{}');
+
+    rentalPeriodSelect.innerHTML = '';
+
+    for (var period in rentPrices) {
+        var option = document.createElement('option');
+        option.value = period;
+        option.text = period + ' Monate - ' + rentPrices[period].toFixed(2) + ' €/Monat';
+        option.setAttribute('data-monthly-price', rentPrices[period]);
+        rentalPeriodSelect.add(option);
+    }
+}
+
 function updateSimServiceFee() {
     var hardwareSelect = document.getElementById('hardware');
     var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
@@ -749,6 +748,7 @@ function sendEmail() {
     tempDiv.innerHTML = bodyContent;
     var textContent = tempDiv.innerText;
 
+    // Angebot formatieren
     var offerContent = `
 Sehr geehrte/r ${customerName},
 
@@ -761,8 +761,8 @@ ${textContent}
 ---
 
 Kontaktieren Sie uns gerne, 
-wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, 
-Ihnen einen echten Mehrwert bieten zu dürfen.
+wenn Sie weitere Informationen benötigen oder Fragen haben. 
+Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
 
 Mit freundlichen Grüßen,
 
@@ -777,9 +777,9 @@ Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
     // Angebot im Modal anzeigen
     var offerModal = document.getElementById('offerModal');
     var offerContentDiv = document.getElementById('offerContent');
-    offerContentDiv.innerHTML = `
-        <pre>${offerContent}</pre>
-    `;
+
+    // Angebot mit Zeilenumbrüchen und Formatierung
+    offerContentDiv.innerHTML = '<pre style="white-space: pre-wrap;">' + offerContent + '</pre>';
     offerModal.style.display = 'block';
 }
 
