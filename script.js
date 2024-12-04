@@ -21,6 +21,7 @@ function openCalculator(evt, calculatorName) {
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('pay').classList.add('active');
     populateHardwareOptions();
+    toggleCalculationFields();
 });
 
 // Hardware-Optionen initialisieren
@@ -305,7 +306,6 @@ function calculatePay() {
         </table>
         ${competitorContent}
         ${savingsContent}
-        ${getFeeNotes()}
     `;
 
     displayResult(resultContent);
@@ -417,42 +417,55 @@ function calculatePos() {
     var totalBrutto = total + mwstAmount;
 
     // Ergebnisse anzeigen
-    var resultContent = `
-        <h3>Einmalige Kosten:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Produkt</th>
-                    <th>Menge</th>
-                    <th>Preis/Stück</th>
-                    <th>Gesamtpreis</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${details}
-            </tbody>
-        </table>
-        <p><strong>Zwischensumme netto: ${total.toFixed(2)} €</strong></p>
-        <p><strong>MwSt. (19%): ${mwstAmount.toFixed(2)} €</strong></p>
-        <p><strong>Gesamtsumme brutto: ${totalBrutto.toFixed(2)} €</strong></p>
-        <h3>Monatliche Kosten:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Lizenz</th>
-                    <th>Menge</th>
-                    <th>Preis/Monat</th>
-                    <th>Gesamtpreis</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${monthlyDetails}
-            </tbody>
-        </table>
-        <p><strong>Monatliche Gesamtsumme netto: ${monthlyTotal.toFixed(2)} €</strong></p>
-        <p><strong>MwSt. (19%): ${(monthlyTotal * mwstRate).toFixed(2)} €</strong></p>
-        <p><strong>Monatliche Gesamtsumme brutto: ${(monthlyTotal * (1 + mwstRate)).toFixed(2)} €</strong></p>
-    `;
+    var resultContent = '';
+
+    if (details !== '') {
+        resultContent += `
+            <h3>Einmalige Kosten:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produkt</th>
+                        <th>Menge</th>
+                        <th>Preis/Stück</th>
+                        <th>Gesamtpreis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${details}
+                </tbody>
+            </table>
+            <p><strong>Zwischensumme netto: ${total.toFixed(2)} €</strong></p>
+            <p><strong>MwSt. (19%): ${mwstAmount.toFixed(2)} €</strong></p>
+            <p><strong>Gesamtsumme brutto: ${totalBrutto.toFixed(2)} €</strong></p>
+        `;
+    }
+
+    if (monthlyDetails !== '') {
+        resultContent += `
+            <h3>Monatliche Kosten:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lizenz</th>
+                        <th>Menge</th>
+                        <th>Preis/Monat</th>
+                        <th>Gesamtpreis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${monthlyDetails}
+                </tbody>
+            </table>
+            <p><strong>Monatliche Gesamtsumme netto: ${monthlyTotal.toFixed(2)} €</strong></p>
+            <p><strong>MwSt. (19%): ${(monthlyTotal * mwstRate).toFixed(2)} €</strong></p>
+            <p><strong>Monatliche Gesamtsumme brutto: ${(monthlyTotal * (1 + mwstRate)).toFixed(2)} €</strong></p>
+        `;
+    }
+
+    if (resultContent === '') {
+        resultContent = '<p>Bitte wählen Sie mindestens ein Produkt aus.</p>';
+    }
 
     displayResult(resultContent);
 }
@@ -695,24 +708,6 @@ function toggleRentalOptions() {
     populateHardwareOptions();
 }
 
-function updateRentalPrices() {
-    var hardwareSelect = document.getElementById('hardware');
-    var rentalPeriodSelect = document.getElementById('rentalPeriod');
-
-    var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
-    var rentPrices = JSON.parse(selectedOption.getAttribute('data-rent-prices') || '{}');
-
-    rentalPeriodSelect.innerHTML = '';
-
-    for (var period in rentPrices) {
-        var option = document.createElement('option');
-        option.value = period;
-        option.text = period + ' Monate - ' + rentPrices[period].toFixed(2) + ' €/Monat';
-        option.setAttribute('data-monthly-price', rentPrices[period]);
-        rentalPeriodSelect.add(option);
-    }
-}
-
 function updateSimServiceFee() {
     var hardwareSelect = document.getElementById('hardware');
     var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
@@ -757,20 +752,26 @@ function sendEmail() {
     var offerContent = `
 Sehr geehrte/r ${customerName},
 
-vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
+vielen Dank für Ihr Interesse an unseren Produkten. 
+Im Folgenden finden Sie unser unverbindliches Angebot, 
+das individuell auf Ihre Anforderungen zugeschnitten ist:
 
 ${textContent}
 
 ---
 
-Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
+Kontaktieren Sie uns gerne, 
+wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, 
+Ihnen einen echten Mehrwert bieten zu dürfen.
 
 Mit freundlichen Grüßen,
 
 Ihr DISH Team
 
 Rechtlicher Hinweis:
-Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. 
+Die angegebenen Preise und Konditionen können sich ändern. 
+Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
     `;
 
     // Angebot im Modal anzeigen
