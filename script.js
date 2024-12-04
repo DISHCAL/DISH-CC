@@ -20,7 +20,56 @@ function openCalculator(evt, calculatorName) {
 // Standardmäßig PAY anzeigen
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('pay').classList.add('active');
+    populateHardwareOptions();
 });
+
+// Hardware-Optionen initialisieren
+function populateHardwareOptions() {
+    var hardwareSelect = document.getElementById('hardware');
+    var purchaseOption = document.getElementById('purchaseOption').value;
+
+    var hardwareOptions = [
+        {
+            name: 'S1F2 Terminal',
+            purchasePrice: 499.00,
+            rentPrices: { '12': 44.90, '36': 18.90, '60': 14.90 }
+        },
+        {
+            name: 'V400C Terminal',
+            purchasePrice: 399.00,
+            rentPrices: { '12': 39.90, '36': 16.90, '60': 12.90 }
+        },
+        {
+            name: 'Moto G14 Terminal',
+            purchasePrice: 119.00,
+            rentPrices: { '12': 7.90 }
+        },
+        {
+            name: 'Tap2Pay Lizenz',
+            purchasePrice: 0.00,
+            rentPrices: { '12': 7.90 }
+        }
+    ];
+
+    hardwareSelect.innerHTML = '';
+
+    hardwareOptions.forEach(function(option) {
+        var optionElement = document.createElement('option');
+        optionElement.value = option.name;
+
+        if (purchaseOption === 'kaufen') {
+            optionElement.text = option.name + ' - Kauf: ' + option.purchasePrice.toFixed(2) + ' €';
+            optionElement.setAttribute('data-price-once', option.purchasePrice);
+        } else if (purchaseOption === 'mieten') {
+            optionElement.text = option.name;
+            optionElement.setAttribute('data-rent-prices', JSON.stringify(option.rentPrices));
+        }
+
+        hardwareSelect.add(optionElement);
+    });
+
+    updateRentalPrices();
+}
 
 // Berechnungsfunktion
 function calculate() {
@@ -81,7 +130,12 @@ function calculatePay() {
     }
 
     // Gebühren berechnen
-    var girocardFee = girocardVolume * 0.0039;
+    var girocardFeeRate = 0.0039;
+    if (monthlyVolume > 10000) {
+        girocardFeeRate = 0.0029;
+    }
+
+    var girocardFee = girocardVolume * girocardFeeRate;
     var mastercardVisaFee = mastercardVisaVolume * 0.0089;
     var maestroFee = maestroVolume * 0.0089;
     var businessCardFee = businessCardVolume * 0.0289;
@@ -109,7 +163,7 @@ function calculatePay() {
     }
 
     // SIM/Service-Gebühr
-    var simServiceFee = 5.00;
+    var simServiceFee = 3.90;
 
     // Gesamte monatliche Gebühren
     var totalMonthlyFees = hardwareMonthly + simServiceFee + totalFees;
@@ -145,38 +199,40 @@ function calculatePay() {
         competitorTotalFees = competitorGirocardFee + competitorMastercardVisaFee + competitorMaestroFee + competitorBusinessCardFee + competitorTransactionFee;
 
         competitorContent = `
-            <h3>Wettbewerber Gebühren</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Kartentyp</th>
-                        <th>Gebühr (€)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Girocard</td>
-                        <td>${competitorGirocardFee.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Mastercard/VISA</td>
-                        <td>${competitorMastercardVisaFee.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Maestro/VPAY</td>
-                        <td>${competitorMaestroFee.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Business Card</td>
-                        <td>${competitorBusinessCardFee.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Transaktionsgebühren</td>
-                        <td>${competitorTransactionFee.toFixed(2)}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p><strong>Gesamtgebühren beim Wettbewerber: ${competitorTotalFees.toFixed(2)} €</strong></p>
+            <div class="competitor-section">
+                <h3>Wettbewerber Gebühren</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kartentyp</th>
+                            <th>Gebühr (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Girocard</td>
+                            <td>${competitorGirocardFee.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Mastercard/VISA</td>
+                            <td>${competitorMastercardVisaFee.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Maestro/VPAY</td>
+                            <td>${competitorMaestroFee.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Business Card</td>
+                            <td>${competitorBusinessCardFee.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Transaktionsgebühren</td>
+                            <td>${competitorTransactionFee.toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Gesamtgebühren beim Wettbewerber: ${competitorTotalFees.toFixed(2)} €</strong></p>
+            </div>
         `;
     }
 
@@ -368,9 +424,10 @@ function calculateTools() {
     // Erfasse die Auswahl des Benutzers
     var starterChecked = document.getElementById('starter').checked;
     var reservationValue = document.getElementById('reservation').value;
-    var orderValue = document.getElementById('order').value;
-    var premiumValue = document.getElementById('premium').value;
-    var installationChecked = document.getElementById('installationFee').checked;
+    var orderChecked = document.getElementById('order').checked;
+    var orderDurationValue = document.getElementById('orderDuration').value;
+    var premiumChecked = document.getElementById('premium').checked;
+    var premiumDurationValue = document.getElementById('premiumDuration').value;
 
     var totalOnce = 0;
     var totalMonthly = 0;
@@ -385,12 +442,6 @@ function calculateTools() {
         detailsMonthly += '<tr><td>DISH STARTER</td><td>1</td><td>10.00 €</td><td>10.00 €</td></tr>';
     }
 
-    // Installation
-    if (installationChecked) {
-        totalOnce += 99.00;
-        detailsOnce += '<tr><td>Installation</td><td>1</td><td>99.00 €</td><td>99.00 €</td></tr>';
-    }
-
     // Reservation
     if (reservationValue !== 'none') {
         var reservationPrice = 0;
@@ -401,32 +452,38 @@ function calculateTools() {
         } else if (reservationValue === '3') {
             reservationPrice = 49.00;
         }
+        totalOnce += 69.00; // Aktivierungsgebühr
         totalMonthly += reservationPrice;
+        detailsOnce += '<tr><td>DISH RESERVATION Aktivierungsgebühr</td><td>1</td><td>69.00 €</td><td>69.00 €</td></tr>';
         detailsMonthly += '<tr><td>DISH RESERVATION (' + reservationValue + ' Monate)</td><td>1</td><td>' + reservationPrice.toFixed(2) + ' €</td><td>' + reservationPrice.toFixed(2) + ' €</td></tr>';
     }
 
     // Order
-    if (orderValue !== 'none') {
+    if (orderChecked && orderDurationValue !== 'none') {
         var orderPrice = 0;
-        if (orderValue === '12') {
+        if (orderDurationValue === '12') {
             orderPrice = 49.90;
-        } else if (orderValue === '3') {
+        } else if (orderDurationValue === '3') {
             orderPrice = 59.90;
         }
+        totalOnce += 279.00; // Aktivierungsgebühr
         totalMonthly += orderPrice;
-        detailsMonthly += '<tr><td>DISH ORDER (' + orderValue + ' Monate)</td><td>1</td><td>' + orderPrice.toFixed(2) + ' €</td><td>' + orderPrice.toFixed(2) + ' €</td></tr>';
+        detailsOnce += '<tr><td>DISH ORDER Aktivierungsgebühr</td><td>1</td><td>279.00 €</td><td>279.00 €</td></tr>';
+        detailsMonthly += '<tr><td>DISH ORDER (' + orderDurationValue + ' Monate)</td><td>1</td><td>' + orderPrice.toFixed(2) + ' €</td><td>' + orderPrice.toFixed(2) + ' €</td></tr>';
     }
 
     // Premium
-    if (premiumValue !== 'none') {
+    if (premiumChecked && premiumDurationValue !== 'none') {
         var premiumPrice = 0;
-        if (premiumValue === '12') {
+        if (premiumDurationValue === '12') {
             premiumPrice = 69.90;
-        } else if (premiumValue === '3') {
+        } else if (premiumDurationValue === '3') {
             premiumPrice = 79.90;
         }
+        totalOnce += 299.00; // Aktivierungsgebühr
         totalMonthly += premiumPrice;
-        detailsMonthly += '<tr><td>DISH PREMIUM (' + premiumValue + ' Monate)</td><td>1</td><td>' + premiumPrice.toFixed(2) + ' €</td><td>' + premiumPrice.toFixed(2) + ' €</td></tr>';
+        detailsOnce += '<tr><td>DISH PREMIUM Aktivierungsgebühr</td><td>1</td><td>299.00 €</td><td>299.00 €</td></tr>';
+        detailsMonthly += '<tr><td>DISH PREMIUM (' + premiumDurationValue + ' Monate)</td><td>1</td><td>' + premiumPrice.toFixed(2) + ' €</td><td>' + premiumPrice.toFixed(2) + ' €</td></tr>';
     }
 
     // Rabatt anwenden
@@ -593,10 +650,11 @@ function toggleRentalOptions() {
 
     if (purchaseOption === 'mieten') {
         rentalOptions.style.display = 'block';
-        updateRentalPrices();
     } else {
         rentalOptions.style.display = 'none';
     }
+
+    populateHardwareOptions();
 }
 
 function updateRentalPrices() {
@@ -604,29 +662,15 @@ function updateRentalPrices() {
     var rentalPeriodSelect = document.getElementById('rentalPeriod');
 
     var selectedOption = hardwareSelect.options[hardwareSelect.selectedIndex];
-    var price12 = selectedOption.getAttribute('data-price-12');
-    var price36 = selectedOption.getAttribute('data-price-36');
-    var price60 = selectedOption.getAttribute('data-price-60');
+    var rentPrices = JSON.parse(selectedOption.getAttribute('data-rent-prices'));
 
     rentalPeriodSelect.innerHTML = '';
 
-    if (price12 && price12 !== '0') {
-        var option12 = document.createElement('option');
-        option12.value = '12';
-        option12.text = '12 Monate - ' + price12 + ' €/Monat';
-        rentalPeriodSelect.add(option12);
-    }
-    if (price36 && price36 !== '0') {
-        var option36 = document.createElement('option');
-        option36.value = '36';
-        option36.text = '36 Monate - ' + price36 + ' €/Monat';
-        rentalPeriodSelect.add(option36);
-    }
-    if (price60 && price60 !== '0') {
-        var option60 = document.createElement('option');
-        option60.value = '60';
-        option60.text = '60 Monate - ' + price60 + ' €/Monat';
-        rentalPeriodSelect.add(option60);
+    for (var period in rentPrices) {
+        var option = document.createElement('option');
+        option.value = period;
+        option.text = period + ' Monate - ' + rentPrices[period] + ' €/Monat';
+        rentalPeriodSelect.add(option);
     }
 }
 
@@ -659,20 +703,27 @@ function sendEmail() {
     }
 
     var offerContent = `
-        <h2>${subject}</h2>
-        <p>Sehr geehrte/r ${customerName},</p>
-        <p>vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:</p>
-        ${bodyContent}
-        <p>---</p>
-        <p>Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.</p>
-        <p>Mit freundlichen Grüßen,<br>Ihr DISH Team</p>
-        <p><strong>Rechtlicher Hinweis:</strong><br>Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.</p>
+Sehr geehrte/r ${customerName},
+
+vielen Dank für Ihr Interesse an unseren Produkten. Im Folgenden finden Sie unser unverbindliches Angebot, das individuell auf Ihre Anforderungen zugeschnitten ist:
+
+${bodyContent}
+
+---
+
+Kontaktieren Sie uns gerne, wenn Sie weitere Informationen benötigen oder Fragen haben. Wir freuen uns darauf, Ihnen einen echten Mehrwert bieten zu dürfen.
+
+Mit freundlichen Grüßen,
+Ihr DISH Team
+
+Rechtlicher Hinweis:
+Dieses Angebot ist unverbindlich und dient ausschließlich zu Informationszwecken. Die angegebenen Preise und Konditionen können sich ändern. Für eine rechtsverbindliche Auskunft kontaktieren Sie uns bitte direkt.
     `;
 
     // Angebot im Modal anzeigen
     var offerModal = document.getElementById('offerModal');
     var offerContentDiv = document.getElementById('offerContent');
-    offerContentDiv.innerHTML = offerContent;
+    offerContentDiv.innerText = offerContent;
     offerModal.style.display = 'block';
 }
 
@@ -680,9 +731,9 @@ function sendEmail() {
 function copyOfferToClipboard() {
     var offerContentDiv = document.getElementById('offerContent');
 
-    // Erstellen eines versteckten Textbereichs
+    // Erstellen eines Textbereichs
     var textarea = document.createElement('textarea');
-    textarea.innerHTML = offerContentDiv.innerHTML;
+    textarea.value = offerContentDiv.innerText;
     document.body.appendChild(textarea);
     textarea.select();
 
