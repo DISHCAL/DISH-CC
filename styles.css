@@ -3,6 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f2f2f2;
 }
 
 .container {
@@ -13,9 +14,10 @@ body {
 
 /* Header Stile */
 header {
-    background-color: #f5f5f5;
+    background-color: #fff;
     padding: 20px;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .header-content {
@@ -32,6 +34,7 @@ header {
 .header-content h1 {
     font-size: 24px;
     margin: 0;
+    color: #333;
 }
 
 /* Top Bar Stile */
@@ -42,10 +45,13 @@ header {
 
 .customer-input label {
     margin-right: 10px;
+    font-weight: bold;
 }
 
 .customer-input input {
     padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 /* Tabs Stile */
@@ -60,16 +66,25 @@ header {
     background-color: #ddd;
     border: none;
     cursor: pointer;
+    flex: 1;
+    margin: 0 5px;
+    border-radius: 4px;
+    color: #333;
+    font-weight: bold;
 }
 
 .tab-link.active {
     background-color: #f7941d; /* Orange Farbe */
     color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 /* Tab Content Stile */
 .tab-content {
     display: none;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 4px;
 }
 
 .tab-content.active {
@@ -79,15 +94,19 @@ header {
 /* Formular Stile */
 form label {
     display: block;
-    margin-top: 10px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
 }
 
 form input[type="number"],
 form input[type="text"],
 form select {
     width: 100%;
-    padding: 5px;
+    padding: 8px;
     margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 form input[type="checkbox"] {
@@ -98,38 +117,52 @@ form input[type="checkbox"] {
     display: none;
 }
 
-/* Hardware-Item Stile */
-.hardware-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Rabattfeld Stile */
+#freeMonthsFieldPay,
+#oneTimeAmountFieldPay,
+#freeMonthsFieldPos,
+#oneTimeAmountFieldPos,
+#freeMonthsFieldTools,
+#oneTimeAmountFieldTools {
     margin-top: 10px;
-}
-
-.hardware-item label {
-    flex: 1;
-}
-
-.quantity-controls {
-    display: flex;
-    align-items: center;
-}
-
-.quantity-controls button {
-    padding: 5px 10px;
-}
-
-.quantity-controls input {
-    width: 50px;
-    text-align: center;
-    margin: 0 5px;
 }
 
 /* Info-Section Stile */
 .info-section {
-    background-color: #f9f9f9;
-    padding: 10px;
+    background-color: #fff3e0;
+    padding: 15px;
     margin-top: 20px;
+    border-radius: 4px;
+}
+
+.info-section h4 {
+    margin-top: 0;
+    color: #f7941d;
+}
+
+.info-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* Wettbewerber-Sektion */
+.competitor-section {
+    background-color: #e0f7fa;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+.competitor-section h4 {
+    margin-top: 0;
+    color: #00796b;
+}
+
+.competitor-fields label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
 }
 
 /* Footer Stile */
@@ -141,6 +174,15 @@ footer {
 footer button {
     padding: 10px 20px;
     margin: 0 10px;
+    background-color: #f7941d;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+footer button:hover {
+    background-color: #e6831a;
 }
 
 .footer-note {
@@ -166,4 +208,137 @@ footer button {
     background-color: #fff;
     margin: 5% auto;
     padding: 25px;
-    border-radius: 8px
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.modal-content h2 {
+    color: #f7941d; /* Orange Farbe */
+}
+
+.modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.modal-content table, .modal-content th, .modal-content td {
+    border: 1px solid #ddd;
+}
+
+.modal-content th, .modal-content td {
+    padding: 8px;
+    text-align: left;
+}
+
+.modal-content th {
+    background-color: #f7941d;
+    color: #fff;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+button {
+    background-color: #f7941d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #e6831a;
+}
+
+.result-section h3 {
+    color: #f7941d;
+    margin-top: 30px;
+}
+
+.result-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.result-section table, .result-section th, .result-section td {
+    border: 1px solid #ddd;
+}
+
+.result-section th, .result-section td {
+    padding: 8px;
+    text-align: left;
+}
+
+.result-section th {
+    background-color: #f7941d;
+    color: #fff;
+}
+
+.result-section tfoot td {
+    font-weight: bold;
+}
+
+.result-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.result-section ul li {
+    margin-top: 5px;
+}
+
+.result-section .highlight {
+    color: red;
+    font-weight: bold;
+}
+
+/* Infofeld bei fehlenden Eingaben */
+.info-message {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+    }
+    .header-content .logo {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .tabs {
+        flex-direction: column;
+    }
+    .tab-link {
+        margin: 5px 0;
+    }
+    .hardware-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .quantity-controls {
+        margin-top: 10px;
+    }
+}
