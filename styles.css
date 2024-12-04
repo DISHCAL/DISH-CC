@@ -76,13 +76,13 @@ header {
 }
 
 .tab-link.active {
-    background-color: #FF5722; /* Orange Farbe */
+    background-color: #FF9800; /* Orange Farbe */
     color: #fff;
     box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
 }
 
 .tab-link:hover {
-    background-color: #E64A19; /* Dunkleres Orange */
+    background-color: #F57C00; /* Dunkleres Orange */
     color: #fff;
 }
 
@@ -136,7 +136,7 @@ form input[type="checkbox"] {
 .quantity-controls button {
     padding: 5px 10px;
     margin: 0 5px;
-    background-color: #FF5722; /* Orange Farbe */
+    background-color: #FF9800; /* Orange Farbe */
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -152,7 +152,7 @@ form input[type="checkbox"] {
 }
 
 .quantity-controls button:hover {
-    background-color: #E64A19; /* Dunkleres Orange */
+    background-color: #F57C00; /* Dunkleres Orange */
 }
 
 .hidden {
@@ -172,12 +172,12 @@ form input[type="checkbox"] {
 h3 {
     border-bottom: 2px solid #e0e0e0;
     padding-bottom: 10px;
-    color: #FF5722; /* Orange Farbe */
+    color: #FF9800; /* Orange Farbe */
 }
 
 /* Info-Section Stile */
 .info-section {
-    background-color: #ffe0b2;
+    background-color: #FFE0B2;
     padding: 15px;
     margin-top: 20px;
     border-radius: 4px;
@@ -185,7 +185,7 @@ h3 {
 
 .info-section h4 {
     margin-top: 0;
-    color: #FF5722; /* Orange Farbe */
+    color: #FF9800; /* Orange Farbe */
 }
 
 .info-section ul {
@@ -195,16 +195,16 @@ h3 {
 
 /* Wettbewerber-Sektion */
 .competitor-section {
-    background-color: #fff3e0;
+    background-color: #FFF3E0;
     padding: 15px;
     margin-top: 20px;
     border-radius: 4px;
-    border: 1px dashed #ffa726;
+    border: 1px dashed #FFA726;
 }
 
 .competitor-section h4 {
     margin-top: 0;
-    color: #fb8c00;
+    color: #FB8C00;
 }
 
 .competitor-fields label {
@@ -223,7 +223,7 @@ footer {
 footer button {
     padding: 12px 20px;
     margin: 0 10px;
-    background-color: #FF5722; /* Orange Farbe */
+    background-color: #FF9800; /* Orange Farbe */
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -232,7 +232,7 @@ footer button {
 }
 
 footer button:hover {
-    background-color: #E64A19; /* Dunkleres Orange */
+    background-color: #F57C00; /* Dunkleres Orange */
 }
 
 .footer-note {
@@ -266,7 +266,7 @@ footer button:hover {
 }
 
 .modal-content h2 {
-    color: #FF5722; /* Orange Farbe */
+    color: #FF9800; /* Orange Farbe */
 }
 
 .modal-content table {
@@ -285,7 +285,7 @@ footer button:hover {
 }
 
 .modal-content th {
-    background-color: #FF5722; /* Orange Farbe */
+    background-color: #FF9800; /* Orange Farbe */
     color: #fff;
 }
 
@@ -305,7 +305,7 @@ footer button:hover {
 }
 
 button {
-    background-color: #FF5722; /* Orange Farbe */
+    background-color: #FF9800; /* Orange Farbe */
     color: #fff;
     border: none;
     padding: 12px 20px;
@@ -315,11 +315,11 @@ button {
 }
 
 button:hover {
-    background-color: #E64A19; /* Dunkleres Orange */
+    background-color: #F57C00; /* Dunkleres Orange */
 }
 
 .result-section h3 {
-    color: #FF5722; /* Orange Farbe */
+    color: #FF9800; /* Orange Farbe */
     margin-top: 30px;
 }
 
@@ -339,7 +339,7 @@ button:hover {
 }
 
 .result-section th {
-    background-color: #FF5722; /* Orange Farbe */
+    background-color: #FF9800; /* Orange Farbe */
     color: #fff;
 }
 
@@ -363,8 +363,8 @@ button:hover {
 
 /* Infofeld bei fehlenden Eingaben */
 .info-message {
-    background-color: #ffe082;
-    color: #e65100;
+    background-color: #FFE082;
+    color: #E65100;
     padding: 10px;
     margin-top: 20px;
     border-radius: 4px;
